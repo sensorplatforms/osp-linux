@@ -1,0 +1,316 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ASensorType_t	MQ_sensors.h	/^} ASensorType_t;$/;"	t	typeref:enum:_ASensorType
+AttrByte2	SensorPackets.h	/^    uint8_t AttrByte2;$/;"	m	struct:_HifSensorEnable
+AttributeByte	SensorPackets.h	/^    uint8_t AttributeByte;$/;"	m	struct:_HifSensorPktQualifier
+Axis	MQ_sensors.h	/^    int32_t      Axis[3];$/;"	m	struct:TriAxisRawData_t
+Axis	SensorPackets.h	/^    int32_t     Axis[3];   \/\/X,Y,Z order$/;"	m	struct:_UncalibratedFixP
+Axis	SensorPackets.h	/^    int32_t     Axis[3]; \/\/X,Y,Z,$/;"	m	struct:_CalibratedFixP
+BYTE0	SensorPackets.h	150;"	d
+BYTE1	SensorPackets.h	149;"	d
+BYTE2	SensorPackets.h	148;"	d
+BYTE3	SensorPackets.h	147;"	d
+BYTES_TO_LONG	SensorPackets.h	155;"	d
+BYTES_TO_LONG_ARR	SensorPackets.h	154;"	d
+BYTES_TO_SHORT	SensorPackets.h	153;"	d
+CALIBRATED_FIXP_DATA_PKT_SZ	SensorPackets.h	230;"	d
+CHECK_SUM_PRESENT	SensorPackets.h	72;"	d
+CONTEXT_CARRY_IN_HAND	MQ_sensors.h	/^    CONTEXT_CARRY_IN_HAND,$/;"	e	enum:_ContextCarrySubType
+CONTEXT_CARRY_IN_HAND_FRONT	MQ_sensors.h	/^    CONTEXT_CARRY_IN_HAND_FRONT,$/;"	e	enum:_ContextCarrySubType
+CONTEXT_CARRY_IN_HAND_SIDE	MQ_sensors.h	/^    CONTEXT_CARRY_IN_HAND_SIDE,$/;"	e	enum:_ContextCarrySubType
+CONTEXT_CARRY_IN_POCKET	MQ_sensors.h	/^    CONTEXT_CARRY_IN_POCKET     = SENSOR_SUBTYPE_START,$/;"	e	enum:_ContextCarrySubType
+CONTEXT_CARRY_NOT_ON_PERSON	MQ_sensors.h	/^    CONTEXT_CARRY_NOT_ON_PERSON,$/;"	e	enum:_ContextCarrySubType
+CONTEXT_DEIVCE_MOTION_TRANSLATING	MQ_sensors.h	/^    CONTEXT_DEIVCE_MOTION_TRANSLATING,$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_ACCELERATING	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_ACCELERATING,$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_CHANGE_DETECTOR	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_CHANGE_DETECTOR,           \/\/!< low compute trigger for seeing if context may have changed$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_FREE_FALLING	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_FREE_FALLING,$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_ROTATING	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_ROTATING,$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_SIGNIFICANT_MOTION	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_SIGNIFICANT_MOTION,        \/\/!< significant motion (as specified by Android HAL 1.0)$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_SIGNIFICANT_STILLNESS	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_SIGNIFICANT_STILLNESS,     \/\/!< complement to significant motion$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_DEVICE_MOTION_STILL	MQ_sensors.h	/^    CONTEXT_DEVICE_MOTION_STILL  = SENSOR_SUBTYPE_START,$/;"	e	enum:_ContextDeviceMotionSubType
+CONTEXT_POSTURE_JOGGING	MQ_sensors.h	/^    CONTEXT_POSTURE_JOGGING,$/;"	e	enum:_ContextPostureSubType
+CONTEXT_POSTURE_RUNNING	MQ_sensors.h	/^    CONTEXT_POSTURE_RUNNING,$/;"	e	enum:_ContextPostureSubType
+CONTEXT_POSTURE_SITTING	MQ_sensors.h	/^    CONTEXT_POSTURE_SITTING,$/;"	e	enum:_ContextPostureSubType
+CONTEXT_POSTURE_STANDING	MQ_sensors.h	/^    CONTEXT_POSTURE_STANDING,$/;"	e	enum:_ContextPostureSubType
+CONTEXT_POSTURE_WALKING	MQ_sensors.h	/^    CONTEXT_POSTURE_WALKING     = SENSOR_SUBTYPE_START,$/;"	e	enum:_ContextPostureSubType
+CONTEXT_STEP	MQ_sensors.h	/^    CONTEXT_STEP  = SENSOR_SUBTYPE_START,  \/\/!< only one kind of step now$/;"	e	enum:_StepSubType
+CONTEXT_TRANSPORT_CAR	MQ_sensors.h	/^    CONTEXT_TRANSPORT_CAR,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_DOWN_ELEVATOR	MQ_sensors.h	/^    CONTEXT_TRANSPORT_DOWN_ELEVATOR,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_DOWN_STAIRS	MQ_sensors.h	/^    CONTEXT_TRANSPORT_DOWN_STAIRS,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_ON_BIKE	MQ_sensors.h	/^    CONTEXT_TRANSPORT_ON_BIKE,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_TRAIN	MQ_sensors.h	/^    CONTEXT_TRANSPORT_TRAIN,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_UP_ELEVATOR	MQ_sensors.h	/^    CONTEXT_TRANSPORT_UP_ELEVATOR,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_UP_STAIRS	MQ_sensors.h	/^    CONTEXT_TRANSPORT_UP_STAIRS,$/;"	e	enum:_ContextTransportSubType
+CONTEXT_TRANSPORT_VEHICLE	MQ_sensors.h	/^    CONTEXT_TRANSPORT_VEHICLE   = SENSOR_SUBTYPE_START,$/;"	e	enum:_ContextTransportSubType
+CRC_ENABLE	SensorPackets.h	79;"	d
+CTRL_PKT_DF_DOUBLE	SensorPackets.h	120;"	d
+CTRL_PKT_DF_FIXPOINT	SensorPackets.h	118;"	d
+CTRL_PKT_DF_FLOAT	SensorPackets.h	119;"	d
+CTRL_PKT_DF_INTEGER	SensorPackets.h	117;"	d
+CalFixP	SensorPackets.h	/^        CalibratedFixP_t    CalFixP;$/;"	m	union:_SensorPacketTypes::__anon1
+CalPktFixP	SensorPackets.h	/^    HifCalibratedFixPoint_t   CalPktFixP;$/;"	m	union:_HostIFPackets
+CalibratedFixP_t	SensorPackets.h	/^} CalibratedFixP_t;$/;"	t	typeref:struct:_CalibratedFixP
+ContextCarrySubType_t	MQ_sensors.h	/^} ContextCarrySubType_t;$/;"	t	typeref:enum:_ContextCarrySubType
+ContextDeviceMotionSubType_t	MQ_sensors.h	/^} ContextDeviceMotionSubType_t;$/;"	t	typeref:enum:_ContextDeviceMotionSubType
+ContextPostureSubType_t	MQ_sensors.h	/^} ContextPostureSubType_t;$/;"	t	typeref:enum:_ContextPostureSubType
+ContextTransportSubType_t	MQ_sensors.h	/^} ContextTransportSubType_t;$/;"	t	typeref:enum:_ContextTransportSubType
+ControlByte	SensorPackets.h	/^    uint8_t ControlByte;$/;"	m	struct:_HifSensorPktQualifier
+DATA_FORMAT_FIXPOINT	SensorPackets.h	86;"	d
+DATA_FORMAT_MASK	SensorPackets.h	87;"	d
+DATA_FORMAT_RAW	SensorPackets.h	85;"	d
+DATA_SIZE_16_BIT	SensorPackets.h	101;"	d
+DATA_SIZE_32_BIT	SensorPackets.h	102;"	d
+DATA_SIZE_64_BIT	SensorPackets.h	103;"	d
+DATA_SIZE_8_BIT	SensorPackets.h	100;"	d
+DATA_SIZE_MASK	SensorPackets.h	104;"	d
+Data	SensorPackets.h	/^    uint8_t Data[12];       \/\/3-Axis Fixed point 32-bit calibrated data$/;"	m	struct:_HifCalibratedFixPoint
+Data	SensorPackets.h	/^    uint8_t Data[12];       \/\/3-Axis Fixed point 32-bit uncalibrated data$/;"	m	struct:_HifUncalibratedFixPoint
+Data	SensorPackets.h	/^    uint8_t Data[16];       \/\/4-Axis Fixed point 32-bit quaternion data$/;"	m	struct:_HifQuaternionFixPoint
+DataRaw	SensorPackets.h	/^    uint8_t DataRaw[6];     \/\/3-Axis Raw 16-bit sensor data$/;"	m	struct:_HifSensorDataRaw
+Enable	SensorPackets.h	/^    HifSensorEnable_t         Enable;$/;"	m	union:_HostIFPackets
+FLAT	osp-sh.c	35;"	d	file:
+FUZZ	osp-sh.c	34;"	d	file:
+G_MAX	osp-sh.c	36;"	d	file:
+GestureSubType_t	MQ_sensors.h	/^} GestureSubType_t;$/;"	t	typeref:enum:_GestureSubType
+HifCalibratedFixPoint_t	SensorPackets.h	/^} HifCalibratedFixPoint_t;$/;"	t	typeref:struct:_HifCalibratedFixPoint
+HifQuaternionFixPoint_t	SensorPackets.h	/^} HifQuaternionFixPoint_t;$/;"	t	typeref:struct:_HifQuaternionFixPoint
+HifSensorDataRaw_t	SensorPackets.h	/^} HifSensorDataRaw_t;$/;"	t	typeref:struct:_HifSensorDataRaw
+HifSensorEnable_t	SensorPackets.h	/^} HifSensorEnable_t;$/;"	t	typeref:struct:_HifSensorEnable
+HifSnsrPktQualifier_t	SensorPackets.h	/^} HifSnsrPktQualifier_t;$/;"	t	typeref:struct:_HifSensorPktQualifier
+HifUncalibratedFixPoint_t	SensorPackets.h	/^} HifUncalibratedFixPoint_t;$/;"	t	typeref:struct:_HifUncalibratedFixPoint
+HostIFPackets_t	SensorPackets.h	/^} HostIFPackets_t;$/;"	t	typeref:union:_HostIFPackets
+META_DATA_OFFSET_CHANGE	SensorPackets.h	96;"	d
+META_DATA_UNUSED	SensorPackets.h	95;"	d
+MQ_SENSORS_H	MQ_sensors.h	34;"	d
+M_GetParamId	SensorPackets.h	130;"	d
+M_GetParamSize	SensorPackets.h	134;"	d
+M_GetSensorType	SensorPackets.h	59;"	d
+M_PSensorToAndroidBase	MQ_sensors.h	50;"	d
+M_ParseSensorMetaData	SensorPackets.h	64;"	d
+M_ParseSensorSubType	SensorPackets.h	69;"	d
+M_SensorMetaData	SensorPackets.h	63;"	d
+M_SensorSubType	SensorPackets.h	68;"	d
+M_SensorType	SensorPackets.h	65;"	d
+M_SequenceNum	SensorPackets.h	126;"	d
+M_SetParamId	SensorPackets.h	131;"	d
+NAME	osp-sh.c	32;"	d	file:
+NUM_ANDROID_SENSOR_TYPE	MQ_sensors.h	/^    NUM_ANDROID_SENSOR_TYPE                      \/\/!< Total number of Android sensor type$/;"	e	enum:_ASensorType
+NUM_PRIVATE_SENSOR_TYPE	MQ_sensors.h	/^    NUM_PRIVATE_SENSOR_TYPE                        \/\/!< Total number of Private sensor type$/;"	e	enum:_PSensorType
+NUM_PSENSOR_CONTEXT_CARRY_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_CONTEXT_CARRY_SUBTYPE$/;"	e	enum:_ContextCarrySubType
+NUM_PSENSOR_CONTEXT_DEVICE_MOTION_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_CONTEXT_DEVICE_MOTION_SUBTYPE$/;"	e	enum:_ContextDeviceMotionSubType
+NUM_PSENSOR_CONTEXT_POSTURE_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_CONTEXT_POSTURE_SUBTYPE$/;"	e	enum:_ContextPostureSubType
+NUM_PSENSOR_CONTEXT_TRANSPORT_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_CONTEXT_TRANSPORT_SUBTYPE$/;"	e	enum:_ContextTransportSubType
+NUM_PSENSOR_GESTURE_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_GESTURE_SUBTYPE$/;"	e	enum:_GestureSubType
+NUM_PSENSOR_STEP_SUBTYPE	MQ_sensors.h	/^    NUM_PSENSOR_STEP_SUBTYPE$/;"	e	enum:_StepSubType
+NUM_SENSOR_PARAM	MQ_sensors.h	/^    NUM_SENSOR_PARAM$/;"	e	enum:_SensorParamId
+OSP_CONFIG	osp_i2c_map.h	15;"	d
+OSP_DATA_IN	osp_i2c_map.h	28;"	d
+OSP_DATA_IN_END	osp_i2c_map.h	29;"	d
+OSP_DATA_LEN	osp_i2c_map.h	14;"	d
+OSP_DATA_LEN_H	osp_i2c_map.h	17;"	d
+OSP_DATA_LEN_L	osp_i2c_map.h	16;"	d
+OSP_DATA_OUT	osp_i2c_map.h	26;"	d
+OSP_DATA_OUT_END	osp_i2c_map.h	27;"	d
+OSP_ENABLE0	osp_i2c_map.h	21;"	d
+OSP_ENABLE1	osp_i2c_map.h	22;"	d
+OSP_INT_DRDY	osp_i2c_map.h	12;"	d
+OSP_INT_LEN	osp_i2c_map.h	18;"	d
+OSP_INT_NONE	osp_i2c_map.h	11;"	d
+OSP_INT_OVER	osp_i2c_map.h	13;"	d
+OSP_INT_REASON	osp_i2c_map.h	10;"	d
+OSP_NIOBE_H	osp_i2c_map.h	2;"	d
+OSP_ParseSensorDataPkt	osp-sh.c	/^static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,$/;"	f	file:
+OSP_ParseSensorDataPkt_Android	osp-sh.c	/^static int OSP_ParseSensorDataPkt_Android($/;"	f	file:
+OSP_ParseSensorDataPkt_Private	osp-sh.c	/^static int OSP_ParseSensorDataPkt_Private($/;"	f	file:
+OSP_RESULT	osp_i2c_map.h	23;"	d
+OSP_RESULT_END	osp_i2c_map.h	24;"	d
+OSP_ReportSensor	osp-sh.c	/^static void OSP_ReportSensor(struct osp_data *osp, $/;"	f	file:
+OSP_VERSION0	osp_i2c_map.h	8;"	d
+OSP_VERSION1	osp_i2c_map.h	9;"	d
+OSP_WHOAMI	osp_i2c_map.h	7;"	d
+Offset	SensorPackets.h	/^    int32_t     Offset[3]; \/\/XOFF,YOFF,ZOFF order$/;"	m	struct:_UncalibratedFixP
+Offset	SensorPackets.h	/^    uint8_t Offset[12];     \/\/3-Axis Fixed point 32-bit Offset$/;"	m	struct:_HifUncalibratedFixPoint
+P	SensorPackets.h	/^    } P;$/;"	m	struct:_SensorPacketTypes	typeref:union:_SensorPacketTypes::__anon1
+PARAM_DATA_SZ_16_BIT	SensorPackets.h	138;"	d
+PARAM_DATA_SZ_32_BIT	SensorPackets.h	139;"	d
+PARAM_DATA_SZ_64_BIT	SensorPackets.h	140;"	d
+PARAM_DATA_SZ_8_BIT	SensorPackets.h	137;"	d
+PARAM_DATA_SZ_BOOL_FALSE	SensorPackets.h	141;"	d
+PARAM_DATA_SZ_BOOL_TRUE	SensorPackets.h	142;"	d
+PARAM_DATA_SZ_UNKNOWN	SensorPackets.h	143;"	d
+PKID_CONTROL_REQ	SensorPackets.h	53;"	d
+PKID_CONTROL_RESP	SensorPackets.h	54;"	d
+PKID_MASK_VER0	SensorPackets.h	56;"	d
+PKID_SENSOR_DATA	SensorPackets.h	52;"	d
+PKID_TEST_DATA	SensorPackets.h	55;"	d
+PSENSOR_ACCELEROMETER_RAW	MQ_sensors.h	/^    PSENSOR_ACCELEROMETER_RAW                =  1, \/\/!< raw accelerometer data (direct from sensor)$/;"	e	enum:_PSensorType
+PSENSOR_ACCELEROMETER_UNCALIBRATED	MQ_sensors.h	/^    PSENSOR_ACCELEROMETER_UNCALIBRATED       =  7, \/\/!< uncalibrated accelerometer data (Android Units)$/;"	e	enum:_PSensorType
+PSENSOR_CONTEXT_CARRY	MQ_sensors.h	/^    PSENSOR_CONTEXT_CARRY                    = 10, \/\/!< context of device relative to user$/;"	e	enum:_PSensorType
+PSENSOR_CONTEXT_DEVICE_MOTION	MQ_sensors.h	/^    PSENSOR_CONTEXT_DEVICE_MOTION            =  9, \/\/!< context of device relative to world frame$/;"	e	enum:_PSensorType
+PSENSOR_CONTEXT_POSTURE	MQ_sensors.h	/^    PSENSOR_CONTEXT_POSTURE                  = 11, \/\/!< context of user relative to world frame$/;"	e	enum:_PSensorType
+PSENSOR_CONTEXT_TRANSPORT	MQ_sensors.h	/^    PSENSOR_CONTEXT_TRANSPORT                = 12, \/\/!< context of environment relative to world frame$/;"	e	enum:_PSensorType
+PSENSOR_DEBUG_TUNNEL	MQ_sensors.h	/^    PSENSOR_DEBUG_TUNNEL                     =  PSENSOR_ENUM_FIRST_SENSOR, \/\/!< Debug message pipe to host$/;"	e	enum:_PSensorType
+PSENSOR_ENUM_FIRST_SENSOR	MQ_sensors.h	/^    PSENSOR_ENUM_FIRST_SENSOR                =  0,$/;"	e	enum:_PSensorType
+PSENSOR_GESTURE_EVENT	MQ_sensors.h	/^    PSENSOR_GESTURE_EVENT                    = 13, \/\/!< gesture event such as a double-tap or shake$/;"	e	enum:_PSensorType
+PSENSOR_GYROSCOPE_RAW	MQ_sensors.h	/^    PSENSOR_GYROSCOPE_RAW                    =  3, \/\/!< calibrated gyroscope data (direct from sensor)$/;"	e	enum:_PSensorType
+PSENSOR_HEART_RATE	MQ_sensors.h	/^    PSENSOR_HEART_RATE                       = 15, \/\/!< heart-rate data$/;"	e	enum:_PSensorType
+PSENSOR_LIGHT_RGB	MQ_sensors.h	/^    PSENSOR_LIGHT_RGB                        =  5, \/\/!< RGB light sensor data (Android Units)$/;"	e	enum:_PSensorType
+PSENSOR_LIGHT_UV	MQ_sensors.h	/^    PSENSOR_LIGHT_UV                         =  4, \/\/!< UV light sensor data (Android Units)$/;"	e	enum:_PSensorType
+PSENSOR_MAGNETIC_FIELD_RAW	MQ_sensors.h	/^    PSENSOR_MAGNETIC_FIELD_RAW               =  2, \/\/!< magnetometer data (direct from sensor)$/;"	e	enum:_PSensorType
+PSENSOR_ORIENTATION	MQ_sensors.h	/^    PSENSOR_ORIENTATION                      =  8, \/\/!< yaw, pitch, roll (also use this for Win8 Inclinometer)$/;"	e	enum:_PSensorType
+PSENSOR_STEP	MQ_sensors.h	/^    PSENSOR_STEP                             =  6, \/\/!< step data$/;"	e	enum:_PSensorType
+PSensorType_t	MQ_sensors.h	/^} PSensorType_t;$/;"	t	typeref:enum:_PSensorType
+Q	SensorPackets.h	/^    HifSnsrPktQualifier_t Q;$/;"	m	struct:_HifCalibratedFixPoint
+Q	SensorPackets.h	/^    HifSnsrPktQualifier_t Q;$/;"	m	struct:_HifQuaternionFixPoint
+Q	SensorPackets.h	/^    HifSnsrPktQualifier_t Q;$/;"	m	struct:_HifSensorDataRaw
+Q	SensorPackets.h	/^    HifSnsrPktQualifier_t Q;$/;"	m	struct:_HifSensorEnable
+Q	SensorPackets.h	/^    HifSnsrPktQualifier_t Q;$/;"	m	struct:_HifUncalibratedFixPoint
+QUATERNION_FIXP_DATA_PKT_SZ	SensorPackets.h	239;"	d
+Quat	SensorPackets.h	/^    int32_t     Quat[4]; \/\/W,X,Y,Z order$/;"	m	struct:_QuaternionFixP
+QuatFixP	SensorPackets.h	/^        QuaternionFixP_t    QuatFixP;$/;"	m	union:_SensorPacketTypes::__anon1
+QuatPktFixP	SensorPackets.h	/^    HifQuaternionFixPoint_t   QuatPktFixP;$/;"	m	union:_HostIFPackets
+QuaternionFixP_t	SensorPackets.h	/^} QuaternionFixP_t;$/;"	t	typeref:struct:_QuaternionFixP
+RawSensor	SensorPackets.h	/^        TriAxisRawData_t    RawSensor;$/;"	m	union:_SensorPacketTypes::__anon1
+SENSOR_ACCELEROMETER	MQ_sensors.h	/^    SENSOR_ACCELEROMETER                    = 1,$/;"	e	enum:_ASensorType
+SENSOR_AMBIENT_TEMPERATURE	MQ_sensors.h	/^    SENSOR_AMBIENT_TEMPERATURE              = 13,$/;"	e	enum:_ASensorType
+SENSOR_ANDROID_TYPE_MASK	SensorPackets.h	82;"	d
+SENSOR_DEVICE_PRIVATE_BASE	MQ_sensors.h	48;"	d
+SENSOR_ENABLE_REQ_PKT_SZ	SensorPackets.h	247;"	d
+SENSOR_GAME_ROTATION_VECTOR	MQ_sensors.h	/^    SENSOR_GAME_ROTATION_VECTOR             = 15,$/;"	e	enum:_ASensorType
+SENSOR_GEOMAGNETIC_FIELD	MQ_sensors.h	/^    SENSOR_GEOMAGNETIC_FIELD                = 2,$/;"	e	enum:_ASensorType
+SENSOR_GEOMAGNETIC_ROTATION_VECTOR	MQ_sensors.h	/^    SENSOR_GEOMAGNETIC_ROTATION_VECTOR      = 20,$/;"	e	enum:_ASensorType
+SENSOR_GESTURE_DOUBLE_TAP	MQ_sensors.h	/^    SENSOR_GESTURE_DOUBLE_TAP,$/;"	e	enum:_GestureSubType
+SENSOR_GESTURE_SHAKE	MQ_sensors.h	/^    SENSOR_GESTURE_SHAKE,$/;"	e	enum:_GestureSubType
+SENSOR_GESTURE_TAP	MQ_sensors.h	/^    SENSOR_GESTURE_TAP          = SENSOR_SUBTYPE_START,$/;"	e	enum:_GestureSubType
+SENSOR_GRAVITY	MQ_sensors.h	/^    SENSOR_GRAVITY                          = 9,$/;"	e	enum:_ASensorType
+SENSOR_GYROSCOPE	MQ_sensors.h	/^    SENSOR_GYROSCOPE                        = 4,$/;"	e	enum:_ASensorType
+SENSOR_GYROSCOPE_UNCALIBRATED	MQ_sensors.h	/^    SENSOR_GYROSCOPE_UNCALIBRATED           = 16,$/;"	e	enum:_ASensorType
+SENSOR_LIGHT	MQ_sensors.h	/^    SENSOR_LIGHT                            = 5,$/;"	e	enum:_ASensorType
+SENSOR_LINEAR_ACCELERATION	MQ_sensors.h	/^    SENSOR_LINEAR_ACCELERATION              = 10,$/;"	e	enum:_ASensorType
+SENSOR_MAGNETIC_FIELD	MQ_sensors.h	/^    SENSOR_MAGNETIC_FIELD                   = SENSOR_GEOMAGNETIC_FIELD,$/;"	e	enum:_ASensorType
+SENSOR_MAGNETIC_FIELD_UNCALIBRATED	MQ_sensors.h	/^    SENSOR_MAGNETIC_FIELD_UNCALIBRATED      = 14,$/;"	e	enum:_ASensorType
+SENSOR_META_DATA	MQ_sensors.h	/^    SENSOR_META_DATA                        = 0,$/;"	e	enum:_ASensorType
+SENSOR_ORIENTATION	MQ_sensors.h	/^    SENSOR_ORIENTATION                      = 3,$/;"	e	enum:_ASensorType
+SENSOR_PACKETS_H	SensorPackets.h	34;"	d
+SENSOR_PARAM_BAND_WIDTH	MQ_sensors.h	/^    SENSOR_PARAM_BAND_WIDTH                 = 3, \/\/!< Bandwidth setting for the sensor$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_DATA_RATE	MQ_sensors.h	/^    SENSOR_PARAM_DATA_RATE                  = 2, \/\/!< Datarate for the sensor$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_ENABLE	MQ_sensors.h	/^    SENSOR_PARAM_ENABLE                     = 6, \/\/!< Sensor Enable control$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_ERROR_CODE	MQ_sensors.h	/^    SENSOR_PARAM_ERROR_CODE                 = 0, \/\/!< Used to convey error code instead of parameter value$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_HP_FILTER	MQ_sensors.h	/^    SENSOR_PARAM_HP_FILTER                  = 4, \/\/!< High Pass filter setting for the sensor$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_LP_FILTER	MQ_sensors.h	/^    SENSOR_PARAM_LP_FILTER                  = 5, \/\/!< Low Pass filter setting for the sensor$/;"	e	enum:_SensorParamId
+SENSOR_PARAM_OFFSET	MQ_sensors.h	/^    SENSOR_PARAM_OFFSET                     = 1, \/\/!< Offset or bias of a sensor$/;"	e	enum:_SensorParamId
+SENSOR_PRESSURE	MQ_sensors.h	/^    SENSOR_PRESSURE                         = 6,$/;"	e	enum:_ASensorType
+SENSOR_PROXIMITY	MQ_sensors.h	/^    SENSOR_PROXIMITY                        = 8,$/;"	e	enum:_ASensorType
+SENSOR_RAW_DATA_PKT_SZ	SensorPackets.h	210;"	d
+SENSOR_RELATIVE_HUMIDITY	MQ_sensors.h	/^    SENSOR_RELATIVE_HUMIDITY                = 12,$/;"	e	enum:_ASensorType
+SENSOR_ROTATION_VECTOR	MQ_sensors.h	/^    SENSOR_ROTATION_VECTOR                  = 11,$/;"	e	enum:_ASensorType
+SENSOR_SIGNIFICANT_MOTION	MQ_sensors.h	/^    SENSOR_SIGNIFICANT_MOTION               = 17,$/;"	e	enum:_ASensorType
+SENSOR_STEP_COUNTER	MQ_sensors.h	/^    SENSOR_STEP_COUNTER                     = 19,$/;"	e	enum:_ASensorType
+SENSOR_STEP_DETECTOR	MQ_sensors.h	/^    SENSOR_STEP_DETECTOR                    = 18,$/;"	e	enum:_ASensorType
+SENSOR_SUBTYPE_START	MQ_sensors.h	47;"	d
+SENSOR_SUBTYPE_UNUSED	MQ_sensors.h	46;"	d
+SENSOR_TEMPERATURE	MQ_sensors.h	/^    SENSOR_TEMPERATURE                      = 7,$/;"	e	enum:_ASensorType
+SENSOR_TYPE_ANDROID	SensorPackets.h	60;"	d
+SENSOR_TYPE_PRIVATE	SensorPackets.h	61;"	d
+STEP_SEGMENT_DETECTOR	MQ_sensors.h	/^    STEP_SEGMENT_DETECTOR,                 \/\/!< low compute trigger for analyzing if step may have occured$/;"	e	enum:_StepSubType
+SType	SensorPackets.h	/^    ASensorType_t SType;$/;"	m	struct:_SensorPacketTypes
+SYSTEM_REAL_TIME_CLOCK	MQ_sensors.h	/^    SYSTEM_REAL_TIME_CLOCK                   = 16, \/\/!< Real time clock used for time stamp$/;"	e	enum:_PSensorType
+SensPktRaw	SensorPackets.h	/^    HifSensorDataRaw_t        SensPktRaw;$/;"	m	union:_HostIFPackets
+SensorIdByte	SensorPackets.h	/^    uint8_t SensorIdByte;$/;"	m	struct:_HifSensorPktQualifier
+SensorPacketTypes_t	SensorPackets.h	/^} SensorPacketTypes_t;$/;"	t	typeref:struct:_SensorPacketTypes
+SensorParamId_t	MQ_sensors.h	/^} SensorParamId_t;$/;"	t	typeref:enum:_SensorParamId
+StepSubType_t	MQ_sensors.h	/^} StepSubType_t;$/;"	t	typeref:enum:_StepSubType
+SubType	SensorPackets.h	/^    uint8_t SubType;$/;"	m	struct:_SensorPacketTypes
+TIME_FORMAT_FIXPOINT	SensorPackets.h	91;"	d
+TIME_FORMAT_MASK	SensorPackets.h	92;"	d
+TIME_FORMAT_RAW	SensorPackets.h	90;"	d
+TIME_STAMP_32_BIT	SensorPackets.h	107;"	d
+TIME_STAMP_64_BIT	SensorPackets.h	108;"	d
+TIME_STAMP_SIZE_MASK	SensorPackets.h	109;"	d
+TS32	MQ_sensors.h	/^    uint32_t TS32[2];$/;"	m	union:_TimeStamp
+TS64	MQ_sensors.h	/^    uint64_t TS64;$/;"	m	union:_TimeStamp
+TS8	MQ_sensors.h	/^    uint8_t  TS8[8];$/;"	m	union:_TimeStamp
+TStamp	MQ_sensors.h	/^    TimeStamp_t  TStamp;$/;"	m	struct:TriAxisRawData_t
+TimeStamp	SensorPackets.h	/^    TimeStamp_t TimeStamp;$/;"	m	struct:_CalibratedFixP
+TimeStamp	SensorPackets.h	/^    TimeStamp_t TimeStamp;$/;"	m	struct:_QuaternionFixP
+TimeStamp	SensorPackets.h	/^    TimeStamp_t TimeStamp;$/;"	m	struct:_UncalibratedFixP
+TimeStamp	SensorPackets.h	/^    uint8_t TimeStamp[4];   \/\/32-bit Time Stamp$/;"	m	struct:_HifSensorDataRaw
+TimeStamp	SensorPackets.h	/^    uint8_t TimeStamp[8];   \/\/64-bit Time Stamp in fixed point format$/;"	m	struct:_HifCalibratedFixPoint
+TimeStamp	SensorPackets.h	/^    uint8_t TimeStamp[8];   \/\/64-bit Time Stamp in fixed point format$/;"	m	struct:_HifQuaternionFixPoint
+TimeStamp	SensorPackets.h	/^    uint8_t TimeStamp[8];   \/\/64-bit Time Stamp in fixed point format$/;"	m	struct:_HifUncalibratedFixPoint
+TimeStamp_t	MQ_sensors.h	/^} TimeStamp_t;$/;"	t	typeref:union:_TimeStamp
+TriAxisRawData_t	MQ_sensors.h	/^typedef struct TriAxisRawData_t$/;"	s
+TriAxisRawData_t	MQ_sensors.h	/^} TriAxisRawData_t;$/;"	t	typeref:struct:TriAxisRawData_t
+UNCALIB_FIXP_DATA_OFFSET_PKT_SZ	SensorPackets.h	221;"	d
+UNCALIB_FIXP_DATA_PKT_SZ	SensorPackets.h	220;"	d
+UncalFixP	SensorPackets.h	/^        UncalibratedFixP_t  UncalFixP;$/;"	m	union:_SensorPacketTypes::__anon1
+UncalPktFixP	SensorPackets.h	/^    HifUncalibratedFixPoint_t UncalPktFixP;$/;"	m	union:_HostIFPackets
+UncalibratedFixP_t	SensorPackets.h	/^} UncalibratedFixP_t;$/;"	t	typeref:struct:_UncalibratedFixP
+_ASensorType	MQ_sensors.h	/^typedef enum _ASensorType {$/;"	g
+_CalibratedFixP	SensorPackets.h	/^typedef struct _CalibratedFixP {$/;"	s
+_ContextCarrySubType	MQ_sensors.h	/^typedef enum _ContextCarrySubType {$/;"	g
+_ContextDeviceMotionSubType	MQ_sensors.h	/^typedef enum _ContextDeviceMotionSubType {$/;"	g
+_ContextPostureSubType	MQ_sensors.h	/^typedef enum _ContextPostureSubType {$/;"	g
+_ContextTransportSubType	MQ_sensors.h	/^typedef enum _ContextTransportSubType {$/;"	g
+_GestureSubType	MQ_sensors.h	/^typedef enum _GestureSubType {$/;"	g
+_HifCalibratedFixPoint	SensorPackets.h	/^typedef struct _HifCalibratedFixPoint {$/;"	s
+_HifQuaternionFixPoint	SensorPackets.h	/^typedef struct _HifQuaternionFixPoint {$/;"	s
+_HifSensorDataRaw	SensorPackets.h	/^typedef struct _HifSensorDataRaw {$/;"	s
+_HifSensorEnable	SensorPackets.h	/^typedef struct _HifSensorEnable {$/;"	s
+_HifSensorPktQualifier	SensorPackets.h	/^typedef struct _HifSensorPktQualifier {$/;"	s
+_HifUncalibratedFixPoint	SensorPackets.h	/^typedef struct _HifUncalibratedFixPoint {$/;"	s
+_HostIFPackets	SensorPackets.h	/^typedef union _HostIFPackets {$/;"	u
+_PSensorType	MQ_sensors.h	/^typedef enum _PSensorType {$/;"	g
+_QuaternionFixP	SensorPackets.h	/^typedef struct _QuaternionFixP {$/;"	s
+_SensorPacketTypes	SensorPackets.h	/^typedef struct _SensorPacketTypes {$/;"	s
+_SensorParamId	MQ_sensors.h	/^typedef enum _SensorParamId {$/;"	g
+_StepSubType	MQ_sensors.h	/^typedef enum _StepSubType {$/;"	g
+_TimeStamp	MQ_sensors.h	/^typedef union _TimeStamp {$/;"	u
+_UncalibratedFixP	SensorPackets.h	/^typedef struct _UncalibratedFixP {$/;"	s
+client	osp-sh.c	/^	struct i2c_client *client;$/;"	m	struct:osp_data	typeref:struct:osp_data::i2c_client	file:
+gOSP	osp-sh.c	/^static struct osp_data *gOSP;$/;"	v	typeref:struct:osp_data	file:
+in_dev	osp-sh.c	/^	struct input_dev *in_dev[NUM_ANDROID_SENSOR_TYPE];$/;"	m	struct:osp_data	typeref:struct:osp_data::input_dev	file:
+in_name	osp-sh.c	/^static char *in_name[NUM_ANDROID_SENSOR_TYPE] = {$/;"	v	file:
+in_pdev	osp-sh.c	/^	struct input_dev *in_pdev[NUM_PRIVATE_SENSOR_TYPE];$/;"	m	struct:osp_data	typeref:struct:osp_data::input_dev	file:
+in_pname	osp-sh.c	/^static char *in_pname[NUM_PRIVATE_SENSOR_TYPE] = {$/;"	v	file:
+input_dev	osp-sh.c	/^	struct input_dev *input_dev;$/;"	m	struct:osp_data	typeref:struct:osp_data::input_dev	file:
+osp_attribute_group	osp-sh.c	/^static struct attribute_group osp_attribute_group = {$/;"	v	typeref:struct:attribute_group	file:
+osp_attributes	osp-sh.c	/^static struct attribute *osp_attributes[] = {$/;"	v	typeref:struct:attribute	file:
+osp_data	osp-sh.c	/^struct osp_data {$/;"	s	file:
+osp_disable	osp-sh.c	/^static void osp_disable(struct osp_data *osp)$/;"	f	file:
+osp_driver	osp-sh.c	/^static struct i2c_driver osp_driver = {$/;"	v	typeref:struct:i2c_driver	file:
+osp_enable	osp-sh.c	/^static int osp_enable(struct osp_data *osp)$/;"	f	file:
+osp_get_enable	osp-sh.c	/^static ssize_t osp_get_enable(struct device *dev, struct device_attribute *attr,	char *buf)$/;"	f	file:
+osp_i2c_read	osp-sh.c	/^static int osp_i2c_read(struct osp_data *osp, u8 addr, u8 *data, int len)$/;"	f	file:
+osp_id	osp-sh.c	/^static const struct i2c_device_id osp_id[] = {$/;"	v	typeref:struct:i2c_device_id	file:
+osp_init	osp-sh.c	/^module_init(osp_init);$/;"	v
+osp_init	osp-sh.c	/^static int __init osp_init(void)$/;"	f	file:
+osp_init_input_device	osp-sh.c	/^static void osp_init_input_device(struct osp_data *osp,$/;"	f	file:
+osp_input_close	osp-sh.c	/^static void osp_input_close(struct input_dev *dev)$/;"	f	file:
+osp_input_open	osp-sh.c	/^static int osp_input_open(struct input_dev *input)$/;"	f	file:
+osp_irq_thread	osp-sh.c	/^static irqreturn_t osp_irq_thread(int irq, void *dev)$/;"	f	file:
+osp_pack	osp-sh.c	/^static unsigned char *osp_pack;$/;"	v	file:
+osp_pack2	osp-sh.c	/^static unsigned char *osp_pack2;$/;"	v	file:
+osp_poll	osp-sh.c	/^static void osp_poll(struct input_polled_dev *dev)$/;"	f	file:
+osp_poll_timer	osp-sh.c	/^static void osp_poll_timer(unsigned long _osp)$/;"	f	file:
+osp_polled_input_close	osp-sh.c	/^static void osp_polled_input_close(struct input_polled_dev *dev)$/;"	f	file:
+osp_polled_input_open	osp-sh.c	/^static void osp_polled_input_open(struct input_polled_dev *dev)$/;"	f	file:
+osp_probe	osp-sh.c	/^static int osp_probe(struct i2c_client *client,$/;"	f	file:
+osp_remove	osp-sh.c	/^static int osp_remove(struct i2c_client *client)$/;"	f	file:
+osp_resume	osp-sh.c	/^static int osp_resume(struct device *dev)$/;"	f	file:
+osp_set_enable	osp-sh.c	/^static ssize_t osp_set_enable(struct device *dev, struct device_attribute *attr,$/;"	f	file:
+osp_setup_input_device	osp-sh.c	/^static int osp_setup_input_device(struct osp_data *osp)$/;"	f	file:
+osp_setup_other_input	osp-sh.c	/^static int osp_setup_other_input(struct osp_data *osp)$/;"	f	file:
+osp_setup_polled_device	osp-sh.c	/^static int osp_setup_polled_device(struct osp_data *osp)$/;"	f	file:
+osp_suspend	osp-sh.c	/^static int osp_suspend(struct device *dev)$/;"	f	file:
+osp_teardown_polled_device	osp-sh.c	/^static void osp_teardown_polled_device(struct osp_data *osp)$/;"	f	file:
+osp_timer	osp-sh.c	/^	struct timer_list osp_timer;$/;"	m	struct:osp_data	typeref:struct:osp_data::timer_list	file:
+osp_verify	osp-sh.c	/^static int osp_verify(struct osp_data *osp)$/;"	f	file:
+osp_work	osp-sh.c	/^	struct work_struct osp_work;$/;"	m	struct:osp_data	typeref:struct:osp_data::work_struct	file:
+osp_work_q	osp-sh.c	/^static void osp_work_q(struct work_struct *work)$/;"	f	file:
+osp_workq	osp-sh.c	/^static struct work_queue *osp_workq;$/;"	v	typeref:struct:work_queue	file:
+poll_dev	osp-sh.c	/^	struct input_polled_dev *poll_dev;$/;"	m	struct:osp_data	typeref:struct:osp_data::input_polled_dev	file:
