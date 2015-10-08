@@ -1,0 +1,63 @@
+Linux kernel driver for OSP sensor hub
+--------------------------------------
+The driver is composed of 2 parts. A core OSP packet parsing driver 
+and a driver responsible for outputing to userland in the desire fashion.
+The 2 parts communicate with a defined API. The userland driver attaches
+as a child driver of the main OSP driver. 
+
+The API between the 2 parts is defined by linux/osp-sh.h. The API 
+consist of a callback registration to claim output for a particular 
+sensor type along with an enable/disable call. Once registered, the call
+back will be called wit the sensor data.
+
+Provided is 2 userland interface drivers. One provides data using the
+input event system. The other driver provides it using the IIO subsystem.
+
+Installation
+------------
+Copy the contents of the linux directory into include/linux on your 
+kernel tree.
+
+Place osp-sh.c in an appropriate place and modify the Makefile to build it.
+It needs to be able to access the following header files.
+MQ_sensors.h
+SensorPackets.h
+osp_i2c_map.h
+
+Connect the OSP I2C device with the osp-sh driver. The process will 
+depend on the version of the kernel. Currently, there is no specific
+hooks for device tree. For pre-device tree kernels, the board file
+will need to be modified or userland will need to manually instantiate
+the device.
+
+For the IIO option: (only 1 can be used at a time)
+Place osp-iio.c in the appropriate place for IIO drivers in your tree. This
+is often under drivers/iio or drivers/staging/iio. Modify the Makefile to 
+pickup the driver.
+
+For the input event ouption:
+Place osp-input.c in the appropriate place. For example, drivers/input/misc.
+Modify the Makefile to pickup the driver.
+
+Notes:
+
+Input driver needs to be manually enabled using the enable_new attribute
+associated with the device.
+
+IIO driver will automatically enable/disable with the triggers. However,
+an additional control is available with the enable attribute. This allows
+the HAL to enable/disable the driver without changing the poll descriptor.
+[Is there a better way using triggers?]
+
+The IIO driver provides data in 2 ways. One is a general IIO channel. This
+is used for sensors that report actual numeric data. For example, an
+accelerometer or a step counter. The second way is using IIO events.
+This is used for one shot sensors. The step detector and significant 
+motion are examples of events. A single IIO device can generate channel
+data AND events if they are logically connected. For example, the step
+counter driver outputs channel data for the count. It also reports step
+detector data using events. Most IIO sensors can also report data 
+using sysfs attributes. This is for debugging and non buffered output.
+
+Each sensor is presented as a seperate device. They are identified by 
+name.

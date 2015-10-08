@@ -1,4 +1,4 @@
-/****************************************************************************************************
+/*****************************************************************
  * @file  MQ_sensors.h
  *
  * Sensors related enumerations
@@ -11,60 +11,63 @@
  * $Author: rverma $
  * $DateTime: 2014/10/16 15:32:24 $
  * $Revision: #4 $
- * $Id: //AudEngr/Hardware/DeltaPlus/Software/BoskoApp_D300_SensorHub/include/MQ_sensors.h#4 $
  *
  * Copyright 2012 Audience, Incorporated. All rights reserved.
  *
  * This software is the confidential and proprietary information of
- * Audience Inc. ("Confidential Information"). You shall not disclose 
- * such Confidential Information and shall use it only in accordance 
- * with the Terms of Sale of Audience products and the terms of any 
+ * Audience Inc. ("Confidential Information"). You shall not disclose
+ * such Confidential Information and shall use it only in accordance
+ * with the Terms of Sale of Audience products and the terms of any
  * license agreement you entered into with Audience for such products.
- * 
- * AUDIENCE SOURCE CODE STRICTLY "AS IS" WITHOUT ANY WARRANTY  
- * WHATSOEVER, AND AUDIENCE EXPRESSLY DISCLAIMS ALL WARRANTIES, 
- * EXPRESS, IMPLIED OR STATUTORY WITH REGARD THERETO, INCLUDING THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
- * PURPOSE, TITLE OR NON-NFRINGEMENT OF THIRD PARTY RIGHTS. AUDIENCE 
- * SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY YOU AS A RESULT OF 
- * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES. 
  *
- ***************************************************************************************************/
+ * AUDIENCE SOURCE CODE STRICTLY "AS IS" WITHOUT ANY WARRANTY
+ * WHATSOEVER, AND AUDIENCE EXPRESSLY DISCLAIMS ALL WARRANTIES,
+ * EXPRESS, IMPLIED OR STATUTORY WITH REGARD THERETO, INCLUDING THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE, TITLE OR NON-NFRINGEMENT OF THIRD PARTY RIGHTS. AUDIENCE
+ * SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY YOU AS A RESULT OF
+ * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
+ *
+ ****************************************************************************/
 #if !defined (MQ_SENSORS_H)
 #define   MQ_SENSORS_H
 
-/*-------------------------------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  |    I N C L U D E   F I L E S
-\*-------------------------------------------------------------------------------------------------*/
-/* This file is meant to provide a common definition of sensor related enumerations/defines and
- * generally should not depend on any other includes
+\*--------------------------------------------------------------------------*/
+/* This file is meant to provide a common definition of sensor related
+ * enumerations/defines and generally should not depend on any other
+ * includes
  */
 
-/*-------------------------------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  |    C O N S T A N T S   &   M A C R O S
-\*-------------------------------------------------------------------------------------------------*/
-#define SENSOR_SUBTYPE_UNUSED               0   //!< Subtype is not used for the sensor type
-#define SENSOR_SUBTYPE_START                1   //!< Subtype enumeration starts with 1
-#define SENSOR_DEVICE_PRIVATE_BASE          0x10000 //!< Android defined private sensor type base
+\*--------------------------------------------------------------------------*/
+#define SENSOR_SUBTYPE_UNUSED	0   //!< Subtype is not used for the sensor type
+#define SENSOR_SUBTYPE_START	1   //!< Subtype enumeration starts with 1
+#define SENSOR_DEVICE_PRIVATE_BASE	0x10000 //!< Android defined private sensor type base
+#define M_PSensorToAndroidBase(type)	((type) | SENSOR_DEVICE_PRIVATE_BASE)
 
-#define M_PSensorToAndroidBase(type)        ((type) | SENSOR_DEVICE_PRIVATE_BASE)
 
-
-/*-------------------------------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  |    T Y P E   D E F I N I T I O N S
-\*-------------------------------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 //! use to specify the kind of sensor input or output
 /*!
  * \sa OSP_RegisterInputSensor
  * \sa OSP_SubscribeOutputSensor
  *
- *  Final units of input/outputs are defined by the sensor data convention field of the sensor descriptor.
- *  Flags in the descriptor specify if sensor is calibrated/uncalibrated and/or used as input
- *  If a sensor type not is supported by the library implementation, an error will be returned on its usage
+ *  Final units of input/outputs are defined by the sensor data convention
+ *  field of the sensor descriptor. Flags in the descriptor specify if
+ *  sensor is calibrated/uncalibrated and/or used as input. If a sensor
+ *  type not is supported by the library implementation, an error will be
+ *   returned on its usage
  */
-/* Android sensor types - this should match the defines/enumeration in Android's sensors.h */
-/* Note that these are defined as SENSOR_ instead of SENSOR_TYPE_ to avoid clash with Android defines in
- * situations where this header in included for packet processing in Sensor HAL
+/* Android sensor types - this should match the defines/enumeration in
+ * Android's sensors.h */
+/* Note that these are defined as SENSOR_ instead of SENSOR_TYPE_ to
+ * avoid clash with Android defines in situations where this header in
+ * included for packet processing in Sensor HAL
  */
 typedef enum _ASensorType {
     SENSOR_META_DATA                        = 0,
@@ -213,20 +216,20 @@ typedef struct TriAxisRawData_t
     int32_t      Axis[3];
 } TriAxisRawData_t;
 
-/*-------------------------------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  |    E X T E R N A L   V A R I A B L E S   &   F U N C T I O N S
-\*-------------------------------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  |    P U B L I C   V A R I A B L E S   D E F I N I T I O N S
-\*-------------------------------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------------*\
+/*---------------------------------------------------------------------------*\
  |    P U B L I C   F U N C T I O N   D E C L A R A T I O N S
-\*-------------------------------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
 
 
 #endif /* MQ_SENSORS_H */
-/*-------------------------------------------------------------------------------------------------*\
+/*---------------------------------------------------------------------------*\
  |    E N D   O F   F I L E
-\*-------------------------------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
