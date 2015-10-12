@@ -15,22 +15,22 @@
 
 LOCAL_PATH := $(call my-dir)
 
-#ifneq ($(TARGET_SIMULATOR),true)
+ifneq ($(TARGET_SIMULATOR),true)
 
 # HAL module implemenation, not prelinked, and stored in
 # hw/<SENSORS_HARDWARE_MODULE_ID>.<ro.product.board>.so
-#include $(NVIDIA_DEFAULTS)
 include $(CLEAR_VARS)
 LOCAL_PRELINK_MODULE := false
 # Figure out the current Android version
 PLATFORM_VERSION_MAJOR := $(word 1, $(subst ., ,$(PLATFORM_VERSION)))
+LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_SHARED_LIBRARIES := liblog libcutils libdl
 LOCAL_MODULE_OWNER := audience 
-LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+
 LOCAL_SRC_FILES := \
                 sensors.cpp 			\
                 SensorBase.cpp			\
-                SensorHubInputSensor.cpp	\
+		OSPInputSensor.cpp		\
                 InputEventReader.cpp
 
 LOCAL_MODULE := sensors.grouper
@@ -39,6 +39,5 @@ LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\" \
                 -DPLATFORM_VERSION_MAJOR=$(PLATFORM_VERSION_MAJOR)
 
 include $(BUILD_SHARED_LIBRARY)
-#include $(NVIDIA_SHARED_LIBRARY)
 
-#endif # !TARGET_SIMULATOR
+endif # !TARGET_SIMULATOR

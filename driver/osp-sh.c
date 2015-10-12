@@ -1,3 +1,4 @@
+#define DEBUG
 /*
  * Copyright (C) 2041 Audience, Inc.
  * Written by Hunyue Yau <hy-git@hy-research.com>
@@ -626,6 +627,7 @@ static void osp_work_q(struct work_struct *work)
 						 "OSP packet parsing error = %i, pack_count = %i plen = %i\n", ret, pack_count, plen[i]);
 					break;
 				}
+				pr_debug("OSP Read data len %d, packet_count %d\n", plen[i], pack_count);
 				plen[i] -= ret;
 				pack_ptr += ret;
 				pack_count++;
@@ -643,6 +645,7 @@ static void osp_poll_timer(unsigned long _osp)
 static irqreturn_t osp_irq_thread(int irq, void *dev)
 {
 	struct osp_data *osp = dev;
+	pr_debug("%s:%d", __func__, __LINE__);
 
 	queue_work(osp_workq, &osp->osp_work);
 	return IRQ_HANDLED;
@@ -653,6 +656,7 @@ static int osp_verify(struct osp_data *osp)
 {
 	int retval;
 
+	pr_debug("%s:%d", __func__, __LINE__);
 	retval = i2c_smbus_read_byte_data(osp->client, OSP_WHOAMI);
 	if (retval < 0) {
 		dev_err(&osp->client->dev,
@@ -689,6 +693,7 @@ static int osp_probe(struct i2c_client *client,
 	int err;
 	int i;
 
+	pr_debug("%s:%d", __func__, __LINE__);
 	if (!i2c_check_functionality(client->adapter,
 				I2C_FUNC_I2C | I2C_FUNC_SMBUS_BYTE_DATA)) {
 		dev_err(&client->dev, "client is not i2c capable\n");
@@ -722,6 +727,7 @@ static int osp_probe(struct i2c_client *client,
 		dev_err(&client->dev, "device not recognized\n");
 		goto err_free_mem;
 	}
+	pr_debug("%s:%d", __func__, __LINE__);
 
 	i2c_set_clientdata(client, osp);
 
@@ -746,10 +752,12 @@ static int osp_probe(struct i2c_client *client,
 		setup_timer(&osp->osp_timer, osp_poll_timer, (unsigned long)osp);
 		mod_timer(&osp->osp_timer, jiffies + msecs_to_jiffies(10));
 	}
+	pr_debug("%s:%d", __func__, __LINE__);
 
 	OSP_CB_init();
 	/* Create child device */
 	OSP_add_child(osp);
+	pr_debug("%s:%d", __func__, __LINE__);
 
 	return 0;
 err_free_mem:
@@ -812,6 +820,7 @@ module_i2c_driver(osp_driver);
 #else
 static int __init osp_init(void)
 {
+	pr_debug("%s:%d", __func__, __LINE__);
 	return i2c_add_driver(&osp_driver);
 }
 module_init(osp_init);

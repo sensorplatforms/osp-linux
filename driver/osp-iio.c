@@ -1,3 +1,4 @@
+#define DEBUG
 /**
  * Copyright (c) 2015 Hunyue Yau for Audience
  *
@@ -835,6 +836,7 @@ static int osp_iio_trigger(struct iio_trigger *trig, bool state)
 	struct osp_iio_sensor *osp_sensor;
 	osp_sensor = iio_priv(indio_dev);
 
+	pr_debug("%s",__func__);
 	OSP_Sensor_State(osp_sensor->sensor, osp_sensor->private, state);
 	osp_sensor->state = state;
 
@@ -846,6 +848,7 @@ static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
 	struct iio_poll_func *pf = p;
 	struct iio_dev *indio_dev = pf->indio_dev;
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
+	pr_debug("%s",__func__);
 
 	iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
 				osp_sensor->ts);
@@ -892,8 +895,10 @@ static void dataready(int sensor, int prv,
 		}
 	}
 	if ((osp_sensor->private == 0 && and_sensor[sensor].usebuffer) ||
-		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer))
+		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer)) {
 		iio_trigger_poll(osp_sensor->trigger, osp_sensor->ts);
+		pr_debug("iio trigger poll 0x%08x", ts);
+	}
 }
 
 static int osp_iio_destroy(int sensor, int space)
