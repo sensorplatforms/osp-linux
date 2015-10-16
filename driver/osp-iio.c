@@ -28,13 +28,13 @@
 #include <linux/interrupt.h>
 #include <linux/platform_device.h>
 
-#include "iio.h"
-#include "sysfs.h"
-#include "events.h"
-#include "buffer.h"
-#include "kfifo_buf.h"
-#include "trigger.h"
-#include "trigger_consumer.h"
+#include <linux/iio/iio.h>
+#include <linux/iio/sysfs.h>
+#include <linux/iio/events.h>
+#include <linux/iio/buffer.h>
+#include <linux/iio/kfifo_buf.h>
+#include <linux/iio/trigger.h>
+#include <linux/iio/trigger_consumer.h>
 #include <linux/osp-sh.h>
 
 #include "MQ_sensors.h"
@@ -832,7 +832,8 @@ static int osp_iio_sensor_init(struct iio_dev *indio_dev, int sensor, int type)
 
 static int osp_iio_trigger(struct iio_trigger *trig, bool state)
 {
-	struct iio_dev *indio_dev = trig->private_data;
+	//struct iio_dev *indio_dev = trig->private_data;
+	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
 	struct osp_iio_sensor *osp_sensor;
 	osp_sensor = iio_priv(indio_dev);
 
@@ -848,10 +849,10 @@ static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
 	struct iio_poll_func *pf = p;
 	struct iio_dev *indio_dev = pf->indio_dev;
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-	pr_debug("%s",__func__);
 
-	iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
-				osp_sensor->ts);
+	//iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
+	//				osp_sensor->ts);
+	iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
 	iio_trigger_notify_done(indio_dev->trig);
 
 	return IRQ_HANDLED;
@@ -929,7 +930,7 @@ static int osp_iio_destroy(int sensor, int space)
 	iio_simple_dummy_unconfigure_buffer(indio_dev);
 #endif
 	/* Free all structures */
-	iio_free_device(indio_dev);
+	iio_device_free(indio_dev);
 
 error_ret:
 	return ret;
@@ -970,7 +971,7 @@ static int osp_iio_create(int index, int space, void *dev)
 	 * It also has a region (accessed by iio_priv()
 	 * for chip specific state information.
 	 */
-	indio_dev = iio_allocate_device(sizeof(*st));
+	indio_dev = iio_device_alloc(sizeof(*st));
 	if (indio_dev == NULL) {
 		ret = -ENOMEM;
 		goto error_ret;
@@ -1013,12 +1014,14 @@ static int osp_iio_create(int index, int space, void *dev)
 	/* Specify that device provides sysfs type interfaces */
 	indio_dev->modes = INDIO_DIRECT_MODE |
 				INDIO_BUFFER_TRIGGERED;
-	st->trigger = iio_allocate_trigger(desc[index].trigname);
+	st->trigger = iio_trigger_alloc(desc[index].trigname);
 
 	if (st->trigger) {
 		st->trigger->ops = &osp_iio_trigger_ops;
 		iio_trigger_register(st->trigger);
-		st->trigger->private_data = indio_dev;
+	//	st->trigger->private_data = indio_dev;
+		iio_trigger_set_drvdata(st->trigger, indio_dev);
+
 	}
 
 	if (desc[index].usebuffer) {
@@ -1048,9 +1051,9 @@ static int osp_iio_create(int index, int space, void *dev)
 	}
 	OSP_Sensor_Register(index, space, dataready, indio_dev);
 	ret = iio_device_register(indio_dev);
-	if (ret < 0)
+	if (ret < 0){
 		goto error_unregister_buffer;
-
+	}
 	return 0;
 error_unregister_buffer:
 	iio_buffer_unregister(indio_dev);
@@ -1063,7 +1066,7 @@ error_unregister_events:
 error_free_device:
 	/* Note free device should only be called, before registration
 	 * has succeeded. */
-	iio_free_device(indio_dev);
+	iio_device_free(indio_dev);
 error_ret:
 	return ret;
 }
