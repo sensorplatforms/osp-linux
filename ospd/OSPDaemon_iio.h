@@ -4,7 +4,8 @@
 
 #define MAX_AXIS 	5
 #define MAX_IIO		99
-#define MAX_SENSOR	10
+/* TODO: Figure this out from config file */
+#define MAX_IIO_SENSOR 20
 
 #define IIO_DEVICE_DIR	"/sys/bus/iio/devices"
 

@@ -141,10 +141,10 @@ int OSPInputSensor::enable(int32_t handle, int enabled)
 		LOGE("@@@@ HY-DBG: enable-path %s uinputName %s", enablePath, getDevName());
 		write_enable(enablePath, 1);
 		strcpy(ctrlPath, enablePath);
-		snprintf(enablePath, 511, "/dev/OSPControl/%s", uinputName);
+		//snprintf(enablePath, 511, "/dev/OSPControl/%s", uinputName);
+		snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
 		{
 			int fd;
-	
 			fd = creat(enablePath, 0777);
 			LOGE("@@@@ HY-DBG: enable-path %s fd = %i", enablePath, fd);
 			close(fd);
@@ -160,7 +160,8 @@ int OSPInputSensor::enable(int32_t handle, int enabled)
 		write_enable(enablePath, 0);
 		LOGE("@@@@ HY-DBG: enable-path %s uinputName %s", enablePath, getDevName());
 		openNull();
-		snprintf(enablePath, 511, "/dev/OSPControl/%s", uinputName);
+		//snprintf(enablePath, 511, "/dev/OSPControl/%s", uinputName);
+		snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
 		unlink(enablePath);
 #if 1
 		if (mpReadAvail) {
