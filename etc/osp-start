@@ -4,5 +4,5 @@ mkdir -p /data/OSPControl
 chmod 777 /data
 chmod 777 /data/OSPControl
 
-/system/bin/OSPDaemon -c /data/tmp/N7.config -d 255
+/system/bin/OSPDaemon -c /etc/N7.config -d 255
 

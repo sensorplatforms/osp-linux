@@ -14,13 +14,9 @@
 
 
 LOCAL_PATH := $(call my-dir)
-
-ifneq ($(TARGET_SIMULATOR),true)
 include $(CLEAR_VARS)
-
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_STATIC_LIBRARIES)
-
 LOCAL_SRC_FILES := SecondOrderLPF.c \
 		   ecompass.c \
 		   fp_atan2.c \
@@ -33,14 +29,10 @@ LOCAL_SRC_FILES := SecondOrderLPF.c \
 		   step.c \
 		   tilt.c \
 		   sigmot.c
-
 LOCAL_MODULE := libOSP
-
 LOCAL_CFLAGS := -Wall -g -DFEAT_STEP
-
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../include \
 		    $(LOCAL_PATH)/include
-
+LOCAL_MODULE_OWNER := audience
 include $(BUILD_STATIC_LIBRARY)
-endif # !TARGET_SIMULATOR
 

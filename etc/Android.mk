@@ -14,27 +14,21 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(TARGET_SIMULATOR),true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := osp-start
+LOCAL_SRC_FILES := osp-start
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_OUT_EXECUTABLES)
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_OWNER := audience
+include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := OSPDaemon
-LOCAL_SRC_FILES := OSPDaemon_queue.c \
-		   OSPDaemon.c \
-		   OSPDaemon_iio.c \
-		   OSPDaemon_config.c \
-		   OSPDaemon_input.c \
-		   OSPDaemon_inputreader.c \
-		   OSPDaemon_filecsv.c \
-		   OSPDaemon_pm.c \
-		   OSPDaemon_driver.c
-LOCAL_CFLAGS := -Wall -g -DANDROID_DEBUG
-LOCAL_LDLIBS := -Wall -g
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
-LOCAL_STATIC_LIBRARIES := libOSP
-LOCAL_SHARED_LIBRARIES := liblog
+LOCAL_MODULE := N7.config
+LOCAL_SRC_FILES := N7.config
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_OUT)/etc
+LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_OWNER := audience
-include $(BUILD_EXECUTABLE)
-
-endif # !TARGET_SIMULATOR
+include $(BUILD_PREBUILT)
 

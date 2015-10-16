@@ -12,4 +12,4 @@ You will need to be root to do this.
   (e) Rename/replace the existing /system/lib/hw/sensors.grouper.so
   (f) Install sensors.osp-25sep2015.so as /system/lib/hw/sensors.grouper.so
 
-Reboot. 
+Reboot.
