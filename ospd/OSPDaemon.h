@@ -3,6 +3,10 @@
 #include "osp-api.h"
 #include "OSPDaemon_queue.h"
 #include "osp-api.h"
+#if defined(ANDROID_DEBUG)
+#include <cutils/log.h>
+#include "local_log_def.h"
+#endif
 
 /* Per sensor cal data size. Data larger then this is ignored */
 #define MAX_CALSIZE	2048
@@ -224,7 +228,11 @@ struct OSPDaemon_CalRecord {
 	unsigned char data[1];	/* Array length is determined by len */
 };
 
+#if !defined(ANDROID_DEBUG)
 #define DBG(x, ...) if (debug_level & x) {printf(__VA_ARGS__);}
+#else
+#define DBG(x, ...) if (debug_level & x) {ALOGE(__VA_ARGS__);}
+#endif
 
 #define DEBUG_INIT	(1<<0)
 #define DEBUG_CONF	(1<<1)

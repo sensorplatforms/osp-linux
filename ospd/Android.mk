@@ -31,11 +31,12 @@ LOCAL_SRC_FILES := OSPDaemon_queue.c \
 		   OSPDaemon_pm.c \
 		   OSPDaemon_driver.c
 
-LOCAL_CFLAGS := -Wall -g
+LOCAL_CFLAGS := -Wall -g -DANDROID_DEBUG
 LOCAL_LDLIBS := -Wall -g
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
 
 LOCAL_STATIC_LIBRARIES := libOSP
+LOCAL_SHARED_LIBRARIES := liblog
 
 include $(BUILD_EXECUTABLE)

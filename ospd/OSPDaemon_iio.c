@@ -32,7 +32,7 @@
 
 #define DBGOUT(x...) DBG(DEBUG_INDRIVER, "IIO: "x)
 
-static struct IIO_Sensor IIOSen[MAX_SENSOR];
+static struct IIO_Sensor IIOSen[MAX_IIO_SENSOR];
 
 /* sysfs support */
 static void sysfs_write_val(const char *path, const int val)
@@ -396,11 +396,13 @@ static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
 			s->IIOAxis[i].offset = rec_sz;
 			rec_sz += s->IIOAxis[i].dd.store/8;
 			DBGOUT("2: rec_sz = %i\n", rec_sz);
-		}		
+		}
 	}
 	s->rec_sz = rec_sz;
 
 	snprintf(dname, PATH_MAX, "/dev/iio:device%i", s->iionum);
+
+	DBGOUT("%s:%d: Name of the iio device is %s", __func__, __LINE__, dname);
 
 	fd = open(dname, O_RDONLY);
 	if (!disablepm) {
