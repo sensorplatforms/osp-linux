@@ -36,11 +36,13 @@
 #include <linux/iio/trigger.h>
 #include <linux/iio/trigger_consumer.h>
 #include <linux/osp-sh.h>
+#include <linux/iio/triggered_buffer.h>
 
 #include "MQ_sensors.h"
-
+#undef KERNEL_VERSION_3_1
+#define KERNEL_VERSION_3_10
 /* Simulate periodic data */
-static struct timer_list osp_timer;
+//static struct timer_list osp_timer;
 
 enum {
 	axis_x,
@@ -84,7 +86,7 @@ static struct iio_chan_spec accel_channels[] = {
 		.address = 0,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask = 0,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -95,7 +97,7 @@ static struct iio_chan_spec accel_channels[] = {
 		.address = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
-		.info_mask = 0,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -106,7 +108,7 @@ static struct iio_chan_spec accel_channels[] = {
 		.address = 2,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask = 0,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -127,14 +129,14 @@ static struct iio_chan_spec gyro_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -143,14 +145,14 @@ static struct iio_chan_spec gyro_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -159,14 +161,14 @@ static struct iio_chan_spec gyro_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -187,14 +189,14 @@ static struct iio_chan_spec mag_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 12),
 	},
@@ -204,14 +206,14 @@ static struct iio_chan_spec mag_channels[] = {
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
 		.scan_type = IIO_ST('s', 32, 32, 12),
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 	},
 	{
@@ -219,14 +221,14 @@ static struct iio_chan_spec mag_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 12),
 	},
@@ -246,14 +248,14 @@ static struct iio_chan_spec linacc_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -262,14 +264,14 @@ static struct iio_chan_spec linacc_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -278,14 +280,14 @@ static struct iio_chan_spec linacc_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -305,14 +307,14 @@ static struct iio_chan_spec orient_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 12),
 	},
@@ -321,14 +323,14 @@ static struct iio_chan_spec orient_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 		.scan_type = IIO_ST('s', 32, 32, 12),
 	},
@@ -337,14 +339,14 @@ static struct iio_chan_spec orient_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 12),
 	},
@@ -364,14 +366,14 @@ static struct iio_chan_spec rotvec_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -380,14 +382,14 @@ static struct iio_chan_spec rotvec_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Y,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_y,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -396,14 +398,14 @@ static struct iio_chan_spec rotvec_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_Z,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_z,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -412,14 +414,14 @@ static struct iio_chan_spec rotvec_channels[] = {
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_R,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
 		 * seeing the readings. Typically part of hardware
 		 * calibration.
 		 */
-		0,
+		BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_r,
 		.scan_type = IIO_ST('s', 32, 32, 24),
 	},
@@ -429,14 +431,14 @@ static struct iio_chan_spec rotvec_channels[] = {
 	 */
 	IIO_CHAN_SOFT_TIMESTAMP(4),
 };
-
+#if 0
 static struct iio_chan_spec press_channels[] = {
 	{
 		.type = IIO_PRESSURE,
 		.modified = 1,
 		/* Channel 2 is use for modifiers */
 		.channel2 = IIO_MOD_X,
-		.info_mask =
+		.info_mask_separate =
 		/*
 		 * Internal bias correction value. Applied
 		 * by the hardware or driver prior to userspace
@@ -449,6 +451,7 @@ static struct iio_chan_spec press_channels[] = {
 	},
 	IIO_CHAN_SOFT_TIMESTAMP(1),
 };
+#endif
 struct osp_iio_sensor {
 	struct iio_dev *indio_dev;
 	struct iio_trigger *trigger;
@@ -717,7 +720,6 @@ static int osp_sensor_read_raw(struct iio_dev *indio_dev,
 			}
 			ret = IIO_VAL_INT;
 			break;
-		
 		default:
 			break;
 		}
@@ -849,10 +851,16 @@ static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
 	struct iio_poll_func *pf = p;
 	struct iio_dev *indio_dev = pf->indio_dev;
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-
-	//iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
-	//				osp_sensor->ts);
-	iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
+	if (indio_dev->buffer->scan_timestamp){
+#if defined(KERNEL_VERSION_3_1)
+		iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
+		osp_sensor->ts);
+#elif defined(KERNEL_VERSION_3_10)
+		*(s64 *)((u8 *)&osp_sensor->data +
+			ALIGN(sizeof(osp_sensor->data), sizeof(s64))) = osp_sensor->ts;
+		iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
+#endif
+	}
 	iio_trigger_notify_done(indio_dev->trig);
 
 	return IRQ_HANDLED;
@@ -905,9 +913,7 @@ static void dataready(int sensor, int prv,
 static int osp_iio_destroy(int sensor, int space)
 {
 	struct iio_dev *indio_dev;
-	int ret = 0;
 	struct osp_iio_sensor **osp_sensors;
-	
 	if (space == 0)
 		osp_sensors = osp_sensors_and;
 	else
@@ -918,7 +924,6 @@ static int osp_iio_destroy(int sensor, int space)
 	/* Disable the sensor */
 	OSP_Sensor_State(sensor, space, 0);
 	osp_sensors[sensor]->state = 0;
-	
 	/* Unregister the device */
 	iio_device_unregister(indio_dev);
 
@@ -931,9 +936,7 @@ static int osp_iio_destroy(int sensor, int space)
 #endif
 	/* Free all structures */
 	iio_device_free(indio_dev);
-
-error_ret:
-	return ret;
+	return 1;
 }
 
 /**
@@ -947,7 +950,7 @@ static int osp_iio_create(int index, int space, void *dev)
 	int ret;
 	struct iio_dev *indio_dev;
 	struct osp_iio_sensor *st;
-	struct OSP_SensorDesc *desc;
+	const struct OSP_SensorDesc *desc;
 	struct osp_iio_sensor **osp_sensor;
 
 	if (space == 1) {	/* Private sensors */
@@ -1025,7 +1028,7 @@ static int osp_iio_create(int index, int space, void *dev)
 	}
 
 	if (desc[index].usebuffer) {
-#if 1
+#if defined(KERNEL_VERSION_3_1)
 		indio_dev->pollfunc = iio_alloc_pollfunc(
 					&iio_pollfunc_store_time,
 					&osp_iio_trigger_handler,
@@ -1040,11 +1043,11 @@ static int osp_iio_create(int index, int space, void *dev)
 					desc[index].num_channels);
 
 		indio_dev->buffer->scan_timestamp = 1;
-
-#else
+#elif defined(KERNEL_VERSION_3_10)
 		ret = iio_triggered_buffer_setup(indio_dev,
 				&iio_pollfunc_store_time,
 				&osp_iio_trigger_handler, NULL);
+		indio_dev->buffer->scan_timestamp = 1;
 		if (ret < 0)
 			goto error_free_device;
 #endif
@@ -1070,11 +1073,10 @@ error_free_device:
 error_ret:
 	return ret;
 }
-
+#if 0
 /* Dummy signal generator */
 static void osp_poll_timer(unsigned long unused)
 {
-#if 0
 	int i;
 	struct osp_iio_sensor *osp_sensor;;
 
@@ -1098,9 +1100,8 @@ static void osp_poll_timer(unsigned long unused)
 		}
 	}
 	mod_timer(&osp_timer, jiffies+msecs_to_jiffies(500));
-#endif
 }
-
+#endif
 static int osp_iio_probe(struct platform_device *pdev)
 {
 	int ret, i;
