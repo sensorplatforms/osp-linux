@@ -25,12 +25,15 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/platform_device.h>
-#include "MQ_sensors.h"
+#include "osp-sensors.h"
 #include "SensorPackets.h"
 #include "osp_i2c_map.h"
 #include <linux/osp-sh.h>
 
 #define NAME			"ospsh"
+
+/* Private sensors */
+#define FEAT_PRIVATE	(1<<0)
 
 static struct OSP_Sensor {
 	void (*dataready)(int sensor, int prv,
@@ -43,6 +46,7 @@ struct osp_data {
 	struct timer_list osp_timer;
 	struct work_struct osp_work;
 	struct mutex lock;
+	unsigned int features;
 };
 
 static struct osp_data *gOSP;
@@ -85,47 +89,54 @@ static int OSP_ParseSensorDataPkt_Private(
 	case PSENSOR_MAGNETIC_FIELD_RAW:
 	case PSENSOR_GYROSCOPE_RAW:
 		if ((sensSubType == SENSOR_SUBTYPE_UNUSED) &&
-			(dSize == DATA_SIZE_16_BIT) &&
-			(dFormat == DATA_FORMAT_RAW) &&
-			(timeFormat == TIME_FORMAT_RAW)) {
+		    (dSize == DATA_SIZE_16_BIT) &&
+		    (dFormat == DATA_FORMAT_RAW) &&
+		    (timeFormat == TIME_FORMAT_RAW)) {
 			/* Extract Raw sensor data from packet */
-			pOut->SType = (ASensorType_t)M_PSensorToAndroidBase(sensType);
+			pOut->SType = (ASensorType_t)M_PSensorToAndroidBase(
+				sensType);
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
 			pOut->P.RawSensor.Axis[0] = BYTES_TO_SHORT(
-					pHif->SensPktRaw.DataRaw[0],
-					pHif->SensPktRaw.DataRaw[1]);
+				pHif->SensPktRaw.DataRaw[0],
+				pHif->SensPktRaw.DataRaw[1]);
 			pOut->P.RawSensor.Axis[1] = BYTES_TO_SHORT(
-					pHif->SensPktRaw.DataRaw[2],
-					pHif->SensPktRaw.DataRaw[3]);
+				pHif->SensPktRaw.DataRaw[2],
+				pHif->SensPktRaw.DataRaw[3]);
 			pOut->P.RawSensor.Axis[2] = BYTES_TO_SHORT(
-					pHif->SensPktRaw.DataRaw[4],
-					pHif->SensPktRaw.DataRaw[5]);
-				
+				pHif->SensPktRaw.DataRaw[4],
+				pHif->SensPktRaw.DataRaw[5]);
+
 			/* Extract time stamp */
-			pOut->P.RawSensor.TStamp.TS64 = 0; //helps clear higher 32-bit
-			pOut->P.RawSensor.TStamp.TS8[3] = pHif->SensPktRaw.TimeStamp[0]; //MSB
-			pOut->P.RawSensor.TStamp.TS8[2] = pHif->SensPktRaw.TimeStamp[1];
-			pOut->P.RawSensor.TStamp.TS8[1] = pHif->SensPktRaw.TimeStamp[2];
-			pOut->P.RawSensor.TStamp.TS8[0] = pHif->SensPktRaw.TimeStamp[3]; //LSB
+			pOut->P.RawSensor.TStamp.TS64 = 0; //helps clear higher
+			pOut->P.RawSensor.TStamp.TS8[3] =
+				pHif->SensPktRaw.TimeStamp[0];          //MSB
+			pOut->P.RawSensor.TStamp.TS8[2] =
+				pHif->SensPktRaw.TimeStamp[1];
+			pOut->P.RawSensor.TStamp.TS8[1] =
+				pHif->SensPktRaw.TimeStamp[2];
+			pOut->P.RawSensor.TStamp.TS8[0] =
+				pHif->SensPktRaw.TimeStamp[3];          //LSB
 			//TODO: 64-bit time stamp extension??
 			errCode = 0;
 			lengthParsed = SENSOR_RAW_DATA_PKT_SZ;
 		}
 		break;
+
 	case PSENSOR_ACCELEROMETER_UNCALIBRATED:
 		if ((dSize == DATA_SIZE_32_BIT) &&
-			(dFormat == DATA_FORMAT_FIXPOINT) &&
-			(timeFormat == TIME_FORMAT_FIXPOINT) &&
-			(tSize == TIME_STAMP_64_BIT)) {
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
 			/* Extract uncalibrated sensor data from packet */
-			pOut->SType = (ASensorType_t)M_PSensorToAndroidBase(sensType);
+			pOut->SType = (ASensorType_t)M_PSensorToAndroidBase(
+				sensType);
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
 			pOut->P.UncalFixP.Axis[0] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data,0);
+				pHif->UncalPktFixP.Data,0);
 			pOut->P.UncalFixP.Axis[1] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data, 4);
+				pHif->UncalPktFixP.Data, 4);
 			pOut->P.UncalFixP.Axis[2] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data, 8);
+				pHif->UncalPktFixP.Data, 8);
 
 			/* Check if META_DATA is set to 0x01 then read offset */
 			if (hasMetaData) {
@@ -143,7 +154,9 @@ static int OSP_ParseSensorDataPkt_Private(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember
 				 * that HIF packets are Big-Endian formatted */
-				pOut->P.UncalFixP.TimeStamp.TS8[i] = pHif->UncalPktFixP.TimeStamp[sizeof(uint64_t)-i-1];
+				pOut->P.UncalFixP.TimeStamp.TS8[i] =
+					pHif->UncalPktFixP.TimeStamp[
+						sizeof(uint64_t) - i-1];
 			}
 			errCode = 0;
 		}
@@ -167,9 +180,9 @@ static int OSP_ParseSensorDataPkt_Android(
 	uint8_t dSize,
 	uint8_t dFormat,
 	uint8_t timeFormat,
-	uint8_t	tSize,
+	uint8_t tSize,
 	uint8_t hasMetaData
-)
+	)
 {
 	int errCode = -EPROTONOSUPPORT;
 	int lengthParsed;
@@ -179,13 +192,10 @@ static int OSP_ParseSensorDataPkt_Android(
 	case SENSOR_ACCELEROMETER:
 	case SENSOR_MAGNETIC_FIELD:
 	case SENSOR_GYROSCOPE:
-	case SENSOR_ORIENTATION:
-	case SENSOR_LINEAR_ACCELERATION:
-	case SENSOR_GRAVITY:
 		if ((dSize == DATA_SIZE_32_BIT) &&
-			(dFormat == DATA_FORMAT_FIXPOINT) &&
-			(timeFormat == TIME_FORMAT_FIXPOINT) &&
-			(tSize == TIME_STAMP_64_BIT)) {
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
 			/* Extract sensor data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -203,61 +213,62 @@ static int OSP_ParseSensorDataPkt_Android(
 				 * Big-Endian formatted
 				 */
 				pOut->P.CalFixP.TimeStamp.TS8[i] =
-					pHif->CalPktFixP.TimeStamp[sizeof(uint64_t)-i-1];
+					pHif->CalPktFixP.TimeStamp[
+						sizeof(uint64_t) - i-1];
 			}
 			errCode = 0;
 			lengthParsed = CALIBRATED_FIXP_DATA_PKT_SZ;
 		}
 		break;
 
-	case SENSOR_GAME_ROTATION_VECTOR:
-	case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
 	case SENSOR_ROTATION_VECTOR:
+	case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
+	case SENSOR_GAME_ROTATION_VECTOR:
 		if ((dSize == DATA_SIZE_32_BIT) &&
-			(dFormat == DATA_FORMAT_FIXPOINT) &&
-			(timeFormat == TIME_FORMAT_FIXPOINT) &&
-			(tSize == TIME_STAMP_64_BIT)) {
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
 			/* Extract Quaternion data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
 			pOut->P.QuatFixP.Quat[0] = BYTES_TO_LONG_ARR(
-					pHif->QuatPktFixP.Data, 0);
+				pHif->QuatPktFixP.Data, 0);
 			pOut->P.QuatFixP.Quat[1] = BYTES_TO_LONG_ARR(
-					pHif->QuatPktFixP.Data, 4);
+				pHif->QuatPktFixP.Data, 4);
 			pOut->P.QuatFixP.Quat[2] = BYTES_TO_LONG_ARR(
-					pHif->QuatPktFixP.Data, 8);
+				pHif->QuatPktFixP.Data, 8);
 			pOut->P.QuatFixP.Quat[3] = BYTES_TO_LONG_ARR(
-					pHif->QuatPktFixP.Data, 12);
+				pHif->QuatPktFixP.Data, 12);
 
 			/* Extract fixed point time stamp */
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember
 				 * that HIF packets are Big-Endian formatted */
-				pOut->P.QuatFixP.TimeStamp.TS8[i] = pHif->QuatPktFixP.TimeStamp[sizeof(uint64_t)-i-1];
+				pOut->P.QuatFixP.TimeStamp.TS8[i] =
+					pHif->QuatPktFixP.TimeStamp[
+						sizeof(uint64_t) - i-1];
 			}
 			errCode = 0;
 			lengthParsed = QUATERNION_FIXP_DATA_PKT_SZ;
 		}
 		break;
-	case SENSOR_SIGNIFICANT_MOTION:
+
 	case SENSOR_MAGNETIC_FIELD_UNCALIBRATED:
 	case SENSOR_GYROSCOPE_UNCALIBRATED:
 	case SENSOR_PRESSURE:
-	case SENSOR_STEP_DETECTOR:
-	case SENSOR_STEP_COUNTER:
 		if ((dSize == DATA_SIZE_32_BIT) &&
-			(dFormat == DATA_FORMAT_FIXPOINT) &&
-			(timeFormat == TIME_FORMAT_FIXPOINT) &&
-			(tSize == TIME_STAMP_64_BIT)) {
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
 			/* Extract Quaternion data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
 			pOut->P.UncalFixP.Axis[0] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data, 0);
+				pHif->UncalPktFixP.Data, 0);
 			pOut->P.UncalFixP.Axis[1] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data, 4);
+				pHif->UncalPktFixP.Data, 4);
 			pOut->P.UncalFixP.Axis[2] = BYTES_TO_LONG_ARR(
-					pHif->UncalPktFixP.Data, 8);
+				pHif->UncalPktFixP.Data, 8);
 
 			/* Check if META_DATA is set to 0x01 then read offset */
 			if (hasMetaData) {
@@ -276,32 +287,168 @@ static int OSP_ParseSensorDataPkt_Android(
 				/* Copy LSB to MSB data - remember that
 				 * HIF packets are Big-Endian formatted */
 				pOut->P.UncalFixP.TimeStamp.TS8[i] =
-					pHif->UncalPktFixP.TimeStamp[sizeof(uint64_t)-i-1];
+					pHif->UncalPktFixP.TimeStamp[
+						sizeof(uint64_t) - i-1];
 			}
 			errCode = 0;
 		}
 		break;
 
-	default:
-		{
-			int i;
-			unsigned char *p;
-			p = (unsigned char *)pHif;
-			for (i = 0; i < 8; i++) {
-				printk("%02x ", p[i]);
+	case SENSOR_SIGNIFICANT_MOTION:
+		if ((dSize == DATA_SIZE_8_BIT) &&
+		    (dFormat == DATA_FORMAT_RAW) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
+			/* Extract SignificantMotion data from packet */
+			pOut->SType = (ASensorType_t)sensType;
+			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
+			pOut->P.SigMotion.MotionDetected =
+				pHif->SignificantMotion.significantMotionDetected;
+			/* Extract fixed point time stamp */
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				/* Copy LSB to MSB data - remember that HIF
+				  packets are Big-Endian formatted */
+				pOut->P.SigMotion.TimeStamp.TS8[i] =
+					pHif->SignificantMotion.TimeStamp[
+						sizeof(uint64_t) - i-1];
 			}
-		printk("\n");
-		
+			errCode = 0;
+			lengthParsed = SIGNIFICANTMOTION_FIXP_DATA_PKT_SZ;
 		}
 		break;
+
+	case SENSOR_STEP_DETECTOR:
+		if ((dSize == DATA_SIZE_8_BIT) &&
+		    (dFormat == DATA_FORMAT_RAW) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
+			/* Extract StepDetector data from packet */
+			pOut->SType = (ASensorType_t)sensType;
+			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
+			pOut->P.StepDetector.StepDetected =
+				pHif->StepDetector.stepDetected;
+
+			/* Extract fixed point time stamp */
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				/* Copy LSB to MSB data - remember that HIF
+				  packets are Big-Endian formatted */
+				pOut->P.StepDetector.TimeStamp.TS8[i] =
+					pHif->StepDetector.TimeStamp[
+						sizeof(uint64_t) - i-1];
+			}
+			errCode = 0;
+			lengthParsed = STEPDETECTOR_DATA_PKT_SZ;
+		}
+		break;
+
+	case SENSOR_STEP_COUNTER:
+		if ((dSize == DATA_SIZE_64_BIT) &&
+		    (dFormat == DATA_FORMAT_RAW) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
+			/* Extract StepCounter data from packet */
+			pOut->SType = (ASensorType_t)sensType;
+			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
+			pOut->P.StepCount.NumStepsTotal = BYTES_TO_LONGLONG(
+				pHif->StepCounter.NumStepsTotal[0],
+				pHif->StepCounter.NumStepsTotal[1],
+				pHif->StepCounter.NumStepsTotal[2],
+				pHif->StepCounter.NumStepsTotal[3],
+				pHif->StepCounter.NumStepsTotal[4],
+				pHif->StepCounter.NumStepsTotal[5],
+				pHif->StepCounter.NumStepsTotal[6],
+				pHif->StepCounter.NumStepsTotal[7]);
+			/* Extract fixed point time stamp */
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				/* Copy LSB to MSB data - remember that HIF
+				  packets are Big-Endian formatted */
+				pOut->P.StepCount.TimeStamp.TS8[i] =
+					pHif->StepCounter.TimeStamp[
+						sizeof(uint64_t) - i-1];
+			}
+			errCode = 0;
+			lengthParsed = STEPCOUNTER_DATA_PKT_SZ;
+		}
+		break;
+
+	case SENSOR_ORIENTATION:
+		if ((dSize == DATA_SIZE_32_BIT) &&
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
+			/* Extract OrientationFixP data from packet */
+			pOut->SType = (ASensorType_t)sensType;
+			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
+			pOut->P.OrientFixP.Pitch = BYTES_TO_LONG_ARR(
+				pHif->OrientationFixP.Pitch, 0);
+			pOut->P.OrientFixP.Roll = BYTES_TO_LONG_ARR(
+				pHif->OrientationFixP.Roll, 0);
+			pOut->P.OrientFixP.Yaw = BYTES_TO_LONG_ARR(
+				pHif->OrientationFixP.Yaw, 0);
+			/* Extract fixed point time stamp */
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				/* Copy LSB to MSB data - remember that HIF
+				  packets are Big-Endian formatted */
+				pOut->P.OrientFixP.TimeStamp.TS8[i] =
+					pHif->OrientationFixP.TimeStamp[
+						sizeof(uint64_t) - i-1];
+			}
+			errCode = 0;
+			lengthParsed = ORIENTATION_FIXP_DATA_PKT_SZ;
+		}
+		break;
+
+	case SENSOR_LINEAR_ACCELERATION:
+	case SENSOR_GRAVITY:
+		if ((dSize == DATA_SIZE_32_BIT) &&
+		    (dFormat == DATA_FORMAT_FIXPOINT) &&
+		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
+		    (tSize == TIME_STAMP_64_BIT)) {
+			/* Extract ThreeAxisFixp data from packet */
+			pOut->SType = (ASensorType_t)sensType;
+			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
+			pOut->P.ThreeAxisFixP.Axis[0] = BYTES_TO_LONG_ARR(
+				pHif->ThreeAxisFixp.Data, 0);
+
+			pOut->P.ThreeAxisFixP.Axis[1] = BYTES_TO_LONG_ARR(
+				pHif->ThreeAxisFixp.Data, 4);
+
+			pOut->P.ThreeAxisFixP.Axis[2] = BYTES_TO_LONG_ARR(
+				pHif->ThreeAxisFixp.Data, 8);
+			//TODO: How to handle the Accuracy here ? Leave it in
+			// the Metadeta ?
+			/* Extract fixed point time stamp */
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				/* Copy LSB to MSB data - remember that HIF
+				  packets are Big-Endian formatted */
+				pOut->P.ThreeAxisFixP.TimeStamp.TS8[i] =
+					pHif->ThreeAxisFixp.TimeStamp[sizeof(uint64_t) - i-1];
+			}
+			errCode = 0;
+			lengthParsed = THREEAXIS_FIXP_DATA_PKT_SZ;
+		}
+		break;
+
+	default:
+	{
+		int i;
+		unsigned char *p;
+		p = (unsigned char *)pHif;
+		for (i = 0; i < 8; i++) {
+			printk("%02x ", p[i]);
+		}
+		printk("\n");
+	}
+	break;
 	}
 	if (errCode == 0)
 		return lengthParsed;
 	else
 		return errCode;
 }
+
 static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
-		uint8_t *pPacket, uint16_t pktSize)
+	uint8_t *pPacket, uint16_t pktSize)
 {
 	HostIFPackets_t *pHif = (HostIFPackets_t*)pPacket;
 	int errCode = -EPROTONOSUPPORT;
@@ -317,7 +464,7 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 	sensType = M_SensorType(pHif->SensPktRaw.Q.SensorIdByte);
 	sensSubType = M_ParseSensorSubType(pHif->SensPktRaw.Q.AttributeByte);
 	isPrivateType = pHif->SensPktRaw.Q.ControlByte &
-					SENSOR_ANDROID_TYPE_MASK;
+			SENSOR_ANDROID_TYPE_MASK;
 	hasMetaData = M_ParseSensorMetaData (pHif->SensPktRaw.Q.SensorIdByte);
 	dSize = pHif->SensPktRaw.Q.AttributeByte & DATA_SIZE_MASK;
 	dFormat = pHif->SensPktRaw.Q.ControlByte & DATA_FORMAT_MASK;
@@ -328,30 +475,28 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 	if (!isPrivateType) {
 		/*Sensor Enumeration type is Android*/
 		errCode = OSP_ParseSensorDataPkt_Android(pOut, pHif,
-					(ASensorType_t)sensType,
-					sensSubType, dSize,
-					dFormat, timeFormat, tSize,
-					hasMetaData);
+			(ASensorType_t)sensType,
+			sensSubType, dSize,
+			dFormat, timeFormat, tSize,
+			hasMetaData);
 	} else {
 		/*Sensor Enumeration type is Private*/
 		errCode = OSP_ParseSensorDataPkt_Private(pOut, pHif,
-					(ASensorType_t)sensType,
-					sensSubType, dSize,
-					dFormat, timeFormat, tSize,
-					hasMetaData);
-
-
+			(ASensorType_t)sensType,
+			sensSubType, dSize,
+			dFormat, timeFormat, tSize,
+			hasMetaData);
 	}
 	return errCode;
 }
+
 /* ------------ END OSP Packet parsing code -------------------- */
 
 static int OSP_Sensor_enable(struct osp_data *osp, int sensor, int private)
 {
 	int retval = -EINVAL;
 
-	/* Private not supported yet */
-	if (private != 0) return -EINVAL;
+	if (private != 0 && !(osp->features & FEAT_PRIVATE)) return -EINVAL;
 
 	if (sensor < 0x30)
 		retval = i2c_smbus_read_byte_data(osp->client, 0x20+sensor);
@@ -363,8 +508,7 @@ static int OSP_Sensor_disable(struct osp_data *osp, int sensor, int private)
 {
 	int retval = -EINVAL;
 
-	/* Private not supported yet */
-	if (private != 0) return -EINVAL;
+	if (private != 0 && !(osp->features & FEAT_PRIVATE)) return -EINVAL;
 
 	if (sensor < 0x30)
 		retval = i2c_smbus_read_byte_data(osp->client, 0x50+sensor);
@@ -480,53 +624,68 @@ int OSP_Sensor_UnRegister(int sensor, int private)
 
 	return 0;
 }
+
 EXPORT_SYMBOL_GPL(OSP_Sensor_UnRegister);
 /* API Call: Activates/suspends a sensor */
 int OSP_Sensor_State(int sensor, int private, int state)
 {
-	struct OSP_Sensor *sen;
-
-	if (private == 1) {
-		sen = prv_sensor;
-		return -EINVAL;	/* Private not supported yet */
-	} else if (private == 0)
-		sen = and_sensor;
-	else
+	if (private != 1 && private != 0)
 		return -EINVAL;
 
 	if (state == 1) {
-		OSP_Sensor_enable(gOSP, sensor, private);	
+		OSP_Sensor_enable(gOSP, sensor, private);
 	} else {
-		OSP_Sensor_disable(gOSP, sensor, private);	
+		OSP_Sensor_disable(gOSP, sensor, private);
 	}
 
 	return 0;
 }
+
 EXPORT_SYMBOL_GPL(OSP_Sensor_State);
 
 static void OSP_ReportSensor(struct osp_data *osp,
-			SensorPacketTypes_t *spack)
+	SensorPacketTypes_t *spack)
 {
 	int PSensor;
-	static int counter = 0;
+	static int sig_counter = 0, step_counter = 0;
 	union OSP_SensorData data;
 
 	switch(spack->SType) {
 	case SENSOR_STEP_DETECTOR:
+		if (!and_sensor[spack->SType].dataready) break;
+		data.xyz.x = spack->P.StepDetector.StepDetected;
+		data.xyz.y = step_counter;
+		step_counter++;
+		and_sensor[spack->SType].dataready(spack->SType, 0,
+			and_sensor[spack->SType].private,
+			spack->P.StepDetector.TimeStamp.TS64, &data);
+		break;
+
 	case SENSOR_SIGNIFICANT_MOTION:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = 1;
-		data.xyz.y = counter;
-		counter++;
+		data.xyz.x = spack->P.SigMotion.MotionDetected;
+		data.xyz.y = sig_counter;
+		sig_counter++;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
-			and_sensor[spack->SType].private, jiffies, &data);
+			and_sensor[spack->SType].private,
+			spack->P.SigMotion.TimeStamp.TS64, &data);
 		break;
-	case SENSOR_STEP_COUNTER:
+
 	case SENSOR_PRESSURE:
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = spack->P.CalFixP.Axis[0];
 		and_sensor[spack->SType].dataready(spack->SType, 0,
-			and_sensor[spack->SType].private, jiffies, &data);
+			and_sensor[spack->SType].private,
+			spack->P.CalFixP.TimeStamp.TS64, &data);
+		break;
+
+	case SENSOR_STEP_COUNTER:
+		if (!and_sensor[spack->SType].dataready) break;
+		data.xyz.x = (uint32_t)spack->P.StepCount.NumStepsTotal;
+		data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
+		and_sensor[spack->SType].dataready(spack->SType, 0,
+			and_sensor[spack->SType].private,
+			spack->P.StepCount.TimeStamp.TS64, &data);
 		break;
 
 	case SENSOR_MAGNETIC_FIELD_UNCALIBRATED:
@@ -536,19 +695,42 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.y = spack->P.UncalFixP.Axis[1];
 		data.xyz.z = spack->P.UncalFixP.Axis[2];
 		and_sensor[spack->SType].dataready(spack->SType, 0,
-			and_sensor[spack->SType].private, jiffies, &data);
+			and_sensor[spack->SType].private,
+			spack->P.UncalFixP.TimeStamp.TS64, &data);
 		break;
+
 	case SENSOR_ACCELEROMETER:
 	case SENSOR_MAGNETIC_FIELD:
 	case SENSOR_GYROSCOPE:
-	case SENSOR_ORIENTATION:
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = spack->P.CalFixP.Axis[0];
 		data.xyz.y = spack->P.CalFixP.Axis[1];
 		data.xyz.z = spack->P.CalFixP.Axis[2];
 		and_sensor[spack->SType].dataready(spack->SType, 0,
-			and_sensor[spack->SType].private, jiffies, &data);
+			and_sensor[spack->SType].private,
+			spack->P.CalFixP.TimeStamp.TS64, &data);
 		break;
+	case SENSOR_LINEAR_ACCELERATION:
+	case SENSOR_GRAVITY:
+		if (!and_sensor[spack->SType].dataready) break;
+		data.xyz.x = spack->P.ThreeAxisFixP.Axis[0];
+		data.xyz.y = spack->P.ThreeAxisFixP.Axis[1];
+		data.xyz.z = spack->P.ThreeAxisFixP.Axis[2];
+		and_sensor[spack->SType].dataready(spack->SType, 0,
+			and_sensor[spack->SType].private,
+			spack->P.ThreeAxisFixP.TimeStamp.TS64, &data);
+		break;
+
+	case SENSOR_ORIENTATION:
+		if (!and_sensor[spack->SType].dataready) break;
+		data.xyz.y = spack->P.OrientFixP.Pitch;
+		data.xyz.z = spack->P.OrientFixP.Roll;
+		data.xyz.x = spack->P.OrientFixP.Yaw;
+		and_sensor[spack->SType].dataready(spack->SType, 0,
+			and_sensor[spack->SType].private,
+			spack->P.OrientFixP.TimeStamp.TS64, &data);
+		break;
+
 	case SENSOR_ROTATION_VECTOR:
 	case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
 	case SENSOR_GAME_ROTATION_VECTOR:
@@ -558,8 +740,10 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.quat.y = spack->P.QuatFixP.Quat[2];
 		data.quat.z = spack->P.QuatFixP.Quat[3];
 		and_sensor[spack->SType].dataready(spack->SType, 0,
-			and_sensor[spack->SType].private, jiffies, &data);
+			and_sensor[spack->SType].private,
+			spack->P.QuatFixP.TimeStamp.TS64, &data);
 		break;
+
 	case PSENSOR_ACCELEROMETER_UNCALIBRATED|SENSOR_DEVICE_PRIVATE_BASE:
 		PSensor = spack->SType & ~(SENSOR_DEVICE_PRIVATE_BASE);
 		if (!prv_sensor[PSensor].dataready) break;
@@ -568,8 +752,10 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.y = spack->P.UncalFixP.Axis[1];
 		data.xyz.z = spack->P.UncalFixP.Axis[2];
 		prv_sensor[PSensor].dataready(PSensor, 1,
-			prv_sensor[PSensor].private, jiffies, &data);
+			prv_sensor[PSensor].private,
+			spack->P.UncalFixP.TimeStamp.TS64, &data);
 		break;
+
 	case PSENSOR_ACCELEROMETER_RAW|SENSOR_DEVICE_PRIVATE_BASE:
 		PSensor = spack->SType & ~(SENSOR_DEVICE_PRIVATE_BASE);
 		if (!prv_sensor[PSensor].dataready) break;
@@ -577,8 +763,10 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.y = spack->P.RawSensor.Axis[1];
 		data.xyz.z = spack->P.RawSensor.Axis[2];
 		prv_sensor[PSensor].dataready(PSensor, 1,
-			prv_sensor[PSensor].private, jiffies, &data);
+			prv_sensor[PSensor].private,
+			spack->P.RawSensor.TStamp.TS64, &data);
 		break;
+
 	default:
 		break;
 	}
@@ -603,12 +791,12 @@ static void osp_work_q(struct work_struct *work)
 	/* Grab buffers as quickly as possible */
 	for (i = 0; i < NUM_PACK; i++) {
 		ret = osp_i2c_read(osp, OSP_INT_LEN,
-				(unsigned char *)&intlen, 4);
+			(unsigned char *)&intlen, 4);
 		if ((ret >= 0) && (intlen&OSP_INT_DRDY)) {
 			plen[i] = (intlen >> 4);
 			if (plen[i] > 0 && plen[i] < 8192) {
 				ret = osp_i2c_read(osp, OSP_DATA_OUT,
-						osp_pack[i], plen[i]);
+					osp_pack[i], plen[i]);
 				if (ret < 0) return;
 				gotpack[i] = 1;
 			}
@@ -619,15 +807,19 @@ static void osp_work_q(struct work_struct *work)
 			pack_count = 0;
 			pack_ptr = osp_pack[i];
 			do {
-				ret = OSP_ParseSensorDataPkt(&spack, pack_ptr, plen[i]);
+				ret = OSP_ParseSensorDataPkt(&spack, pack_ptr,
+					plen[i]);
 				if (ret>0) {
 					OSP_ReportSensor(osp, &spack);
 				} else {
-					dev_err(&osp->client->dev,
-						 "OSP packet parsing error = %i, pack_count = %i plen = %i\n", ret, pack_count, plen[i]);
+					dev_err(
+						&osp->client->dev,
+						"OSP packet parsing error = %i, pack_count = %i plen = %i\n",
+						ret, pack_count, plen[i]);
 					break;
 				}
-				pr_debug("OSP Read data len %d, packet_count %d\n", plen[i], pack_count);
+				pr_debug("OSP Read data len %d, packet_count %d\n",
+				plen[i], pack_count);
 				plen[i] -= ret;
 				pack_ptr += ret;
 				pack_count++;
@@ -635,6 +827,7 @@ static void osp_work_q(struct work_struct *work)
 		}
 	}
 }
+
 static void osp_poll_timer(unsigned long _osp)
 {
 	struct osp_data *osp = (void *)_osp;

@@ -38,7 +38,7 @@
 #include <linux/osp-sh.h>
 #include <linux/iio/triggered_buffer.h>
 
-#include "MQ_sensors.h"
+#include "osp-sensors.h"
 #undef KERNEL_VERSION_3_1
 #define KERNEL_VERSION_3_10
 /* Simulate periodic data */
@@ -74,6 +74,20 @@ static const struct attribute_group osp_iio_group = {
  * This array of structures tells the IIO core about what the device
  * actually provides for a given channel.
  */
+static struct iio_chan_spec step_channels[] = {
+	{
+		.type = IIO_ACCEL,	/* Nothing better defined */
+		.modified = 1,
+		.channel = 0,
+		.address = 0,
+		/* Channel 2 is use for modifiers */
+		.channel2 = IIO_MOD_X,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+		.scan_index = axis_x,
+		.scan_type = IIO_ST('s', 32, 32, 24),
+	},
+	IIO_CHAN_SOFT_TIMESTAMP(3),
+};
 static struct iio_chan_spec accel_channels[] = {
 	/*
 	 * 'modified' (i.e. axis specified) acceleration channel
@@ -602,8 +616,8 @@ static const struct OSP_SensorDesc {
 	[SENSOR_STEP_COUNTER] = {
 		.name = "osp_step",
 		.trigname = "osp_step",
-		.channels = NULL,
-		.num_channels = 0,
+		.channels = step_channels,
+		.num_channels = ARRAY_SIZE(step_channels),
 		.info = &osp_sensor_info,
 		.usebuffer = 0,
 		.useevent = 1,
@@ -695,10 +709,10 @@ static int osp_sensor_read_raw(struct iio_dev *indio_dev,
 			      long mask)
 {
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-	struct osp_iio_sensor *st = osp_sensor;
 	int ret = -EINVAL;
+	pr_debug("%s:%i called\n", __func__, __LINE__);
 
-	mutex_lock(&st->lock);
+	mutex_lock(&osp_sensor->lock);
 	switch (mask) {
 	case 0: /* magic value - channel value read */
 		switch (chan->type) {
@@ -727,7 +741,7 @@ static int osp_sensor_read_raw(struct iio_dev *indio_dev,
 	default:
 		break;
 	}
-	mutex_unlock(&st->lock);
+	mutex_unlock(&osp_sensor->lock);
 	return ret;
 }
 
@@ -754,6 +768,7 @@ static int osp_sensor_write_raw(struct iio_dev *indio_dev,
 	int i;
 	int ret = 0;
 	struct iio_dummy_state *st = iio_priv(indio_dev);
+	pr_debug("%s:%i called\n", __func__, __LINE__);
 
 	switch (mask) {
 	case 0:
@@ -1133,7 +1148,7 @@ static int osp_iio_probe(struct platform_device *pdev)
 		if (and_sensor[i].name) {
 			ret = osp_iio_create(i, 0, NULL);
 			if (ret < 0) {
-				printk("Cannot create %s\n", and_sensor[i].name);
+				pr_debug("Cannot create %s\n", and_sensor[i].name);
 			}
 		}
 	}
@@ -1142,7 +1157,7 @@ static int osp_iio_probe(struct platform_device *pdev)
 		if (prv_sensor[i].name) {
 			ret = osp_iio_create(i, 1, NULL);
 			if (ret < 0) {
-				printk("Cannot create %s\n", and_sensor[i].name);
+				pr_debug("Cannot create %s\n", and_sensor[i].name);
 			}
 		}
 	}
