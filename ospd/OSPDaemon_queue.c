@@ -23,18 +23,25 @@ int OSPDaemon_queue_init(struct queue *q)
 	return 0;
 }
 
-/* Data valid til next enqueue op */
-OSP_InputSensorData_t *OSPDaemon_queue_get(struct queue *q)
+int OSPDaemon_queue_get(struct queue *q, OSP_InputSensorData_t *out_data)
 {
-	OSP_InputSensorData_t *d;
+	if (q == NULL) {
+		LOGE("The q is NULL!!");
+		//return NULL;
+		return -1;
+	}
 
-	if (q == NULL) return NULL;
+	if (q->write == q->read) {
+		//LOGE("The queue is empty!!");
+		//return NULL;
+		return -1;
+	}
 
-	if (q->write == q->read) return NULL;
-	d = &(q->data[q->read]);
+	memcpy(out_data, &(q->data[q->read]), sizeof(OSP_InputSensorData_t));
+
 	q->read++;
 	q->read %= QUEUE_LEN;
-	return d;
+	return 0;
 }
 /* d can be destory after this call */
 int OSPDaemon_queue_put(struct queue *q, OSP_InputSensorData_t *d)

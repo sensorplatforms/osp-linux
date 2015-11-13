@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits.h>
+#include <semaphore.h>
 
 #include "OSPDaemon.h"
 #include "OSPDaemon_queue.h"
@@ -21,6 +22,7 @@
 
 #include "osp-api.h"
 
+extern sem_t osp_sync;
 
 unsigned int debug_level = 255;//= 1;
 unsigned int mainstatus = 0;
@@ -39,7 +41,6 @@ static const SystemDescriptor_t SystemDesc = {
 	.ExitCritical = NULL,
 	.SensorsControl = OSPDaemon_SensorControl_cb,
 };
-
 
 static OSP_STATUS_t OSPDaemon_SensorControl_cb(SensorControl_t *cmd)
 {
@@ -289,36 +290,39 @@ static int modifyOutput(struct OSPDaemon_output *out,
  */
 static int OSPDaemon_senddata(struct OSPDaemon_SensorDetail *s)
 {
-	OSP_InputSensorData_t *od;
+	OSP_InputSensorData_t od;
 	OSP_InputSensorData_t mod;
 	OSP_STATUS_t stat;
 	int ret = 0;
 
 	if (!s->noprocess && s->pending) {
-		od = &s->pdata;
-		stat = OSP_SetInputData(s->handle, od);
+		memcpy(&od, &s->pdata, sizeof(s->pdata));
+		stat = OSP_SetInputData(s->handle, &od);
 		if (stat != OSP_STATUS_OK) return 1;
 		s->pending = 0;
 	}
 
 	do {
-		od = OSPDaemon_queue_get(&s->q);
-		if (od == NULL) break;
+		ret = OSPDaemon_queue_get(&s->q, &od);
+		if (0 != ret) {
+			ret = 1; // This part uses 1 as error. Keep for now
+			break;
+		}
 
 		if (s->output) {
 			if (disablepm || s->output->enable) {
-				if (modifyOutput(s->output, od, &mod) == 1) {
+				if (modifyOutput(s->output, &od, &mod) == 1) {
 					OSPDaemon_queue_put(&s->output->q, &mod);
 				} else {
-					OSPDaemon_queue_put(&s->output->q, od);
+					OSPDaemon_queue_put(&s->output->q, &od);
 				}
 			}
 		}
 		if (!s->noprocess) {
-			stat = OSP_SetInputData(s->handle, od);
+			stat = OSP_SetInputData(s->handle, &od);
 			if (stat != OSP_STATUS_OK) {
 				s->pending = 1;
-				memcpy(&s->pdata, od, sizeof(s->pdata));
+				memcpy(&s->pdata, &od, sizeof(s->pdata));
 				ret = 1;
 				break;
 			}
@@ -392,10 +396,12 @@ static int OSPDaemon_init_outbound(struct pollfd *pfd, int nfd, int start)
 
 	nstart = start;
 	for (i = 0; i < sd->output_count; i++) {
+		OSPDaemon_queue_init(&sd->output[i].q);
+		if (sd->output[i].fd < 0)
+			continue;
 		nstart++;
 		pfd[i+start].fd = sd->output[i].fd;
 		pfd[i+start].events = 0;
-		OSPDaemon_queue_init(&sd->output[i].q);
 
 		if (sd->output[i].noprocess) continue;
 
@@ -449,10 +455,40 @@ static int OSPDaemon_init_inbound(struct pollfd *pfd, int nfd, int start)
 	return nstart;
 }
 
+int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data) 
+{
+	FUNC_LOG;
+	int i, j = 0, vallen, ret;
+	OSP_InputSensorData_t sdata;
+	for (i = 0; i < sd->sensor_count; i++) {
+		if (sd->sensor[i].sensor.SensorType == in_sen_type)
+			break;
+	}
+
+	if (i == sd->sensor_count) {
+		DBG(DEBUG_INIT, "Failed to find the sensor of type %d", in_sen_type);
+		return -1;
+	}
+
+	ret = OSPDaemon_queue_get(&sd->sensor[i].output->q, &sdata);
+	if (0 != ret) {
+		//DBG(DEBUG_INIT, "There is no data for sensor type %d", in_sen_type);
+		return ret;
+	}
+
+	vallen = extractOSP(sd->sensor[i].output->type,
+			&sdata,
+			&out_data->ts,
+			out_data->val);
+
+	return vallen;
+}
+
 static void OSPDaemon(char *confname)
 {
 	int i, r = 0;
 	int dirty;
+	int err;
 
 	if ((sd = OSPDaemon_config(confname)) == NULL) {
 		fprintf(stderr, "Bad/invalid config.\n");
@@ -481,10 +517,19 @@ static void OSPDaemon(char *confname)
 		DBG(DEBUG_INIT, "%i: fd %i events = %i\n", i, pfd[i].fd, pfd[i].events);
 	}
 
+	DBG(DEBUG_INIT, "Signalling on the extern osp init sem 0x%X", &osp_sync);
+	err = sem_post(&osp_sync);
+	if (-1 == err) {
+		DBG(DEBUG_INIT, "Sem post failed error - %s", strerror(errno));
+		return;
+	}
+
 	dirty = 0;
 	while (!mainstatus) {
-		if (poll(pfd, nfd, -1) <= 0)
+		if (poll(pfd, nfd, -1) <= 0) {
+			DBG(DEBUG_LOOP, "poll failed with error %s", strerror(errno));
 			continue;
+		}
 
 		for (i = 0; i < nfd; i++) {
 			if (pfd[i].revents & POLLIN) {
@@ -496,6 +541,12 @@ static void OSPDaemon(char *confname)
 					dirty = OSPDaemon_process_inbound(
 								&pfd[i], pfd,
 								nfd, dirty);
+                                        
+					err = sem_post(&osp_sync);
+					if (-1 == err) {
+						DBG(DEBUG_LOOP, "Sem post failed error - %s", strerror(errno));
+						return;
+					}
 				}
 			}
 			if (pfd[i].revents & POLLOUT) {
@@ -536,10 +587,10 @@ static void OSPDaemon_help(const char *name)
 	fprintf(stderr, "-h:            Prints this message and exits.\n");
 }
 
-int main(int argc, char **argv)
+int OSPDaemon_looper(int argc, char **argv)
 {
 	char *confname = NULL;
-	int ar = 1;	
+	int ar = 1, i;
 	int quiet = 0;
 
 	if (argc > 1) {

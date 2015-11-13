@@ -25,18 +25,33 @@ LOCAL_PRELINK_MODULE := false
 PLATFORM_VERSION_MAJOR := $(word 1, $(subst ., ,$(PLATFORM_VERSION)))
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_SHARED_LIBRARIES := liblog libcutils libdl
+LOCAL_STATIC_LIBRARIES := libOSP
 LOCAL_MODULE_OWNER := audience 
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../ospd/ \
+		    $(LOCAL_PATH)/../include
+
+OSPD_SRC_FILES := ../ospd/OSPDaemon_queue.c \
+		  ../ospd/OSPDaemon.c \
+		  ../ospd/OSPDaemon_iio.c \
+		  ../ospd/OSPDaemon_config.c \
+		  ../ospd/OSPDaemon_input.c \
+		  ../ospd/OSPDaemon_inputreader.c \
+		  ../ospd/OSPDaemon_filecsv.c \
+		  ../ospd/OSPDaemon_pm.c \
+		  ../ospd/OSPDaemon_driver.c
 
 LOCAL_SRC_FILES := \
                 sensors.cpp 			\
                 SensorBase.cpp			\
-		OSPInputSensor.cpp		\
-                InputEventReader.cpp
+		OSPQSensor.cpp			\
+		$(OSPD_SRC_FILES)
 
 LOCAL_MODULE := sensors.grouper
 LOCAL_MODULE_TAGS := debug
 LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\" \
-                -DPLATFORM_VERSION_MAJOR=$(PLATFORM_VERSION_MAJOR)
+                -DPLATFORM_VERSION_MAJOR=$(PLATFORM_VERSION_MAJOR) \
+		-Wall -g -DANDROID_DEBUG
 
 include $(BUILD_SHARED_LIBRARY)
 
