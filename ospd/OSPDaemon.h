@@ -8,6 +8,10 @@
 #include "local_log_def.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /* Per sensor cal data size. Data larger then this is ignored */
 #define MAX_CALSIZE	2048
 
@@ -49,6 +53,7 @@ enum {
 	DRIVER_IIO,
 	DRIVER_IIOEVENT,
 	DRIVER_FILECSV,
+	DRIVER_QUEUE,
 	DRIVER_UNKNOWN
 };
 
@@ -199,7 +204,7 @@ struct OSPDaemon_SensorDetail {
 	char const *name;
 	int fd;
 	int driver;
-	void *private;
+	void *lprivate;
 	struct OSPDaemon_output *output;
 	struct queue q;
 	int pending;
@@ -253,5 +258,16 @@ void OSPDaemon_iio_init(void);
 void OSPDaemon_input_init(void);
 void OSPDaemon_inputreader_init(void);
 void OSPDaemon_filecsv_init(void);
+
+struct psen_data {
+	int val[5];
+	unsigned long long ts;
+};
+int OSPDaemon_looper(int argc, char **argv);
+int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif
