@@ -62,7 +62,7 @@ static int OSPDaemon_filecsv_setup(struct OSPDaemon_SensorDetail *s, int count)
 			s->fd = OSPDaemon_filecsv_create(s->name, &FileCSV[filecsv_count]);
 			if (s->fd > 0) {
 				f_success++;
-				s->private = &FileCSV[filecsv_count];
+				s->lprivate = &FileCSV[filecsv_count];
 				switch (s->sensor.SensorType) {
 				case SENSOR_ROTATION_VECTOR:
 				case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
@@ -93,7 +93,7 @@ static int OSPDaemon_filecsv_read(struct OSPDaemon_SensorDetail *s)
 {
 	char line[LINE_LEN];
 	char *next;
-	struct FileCSV_Sensor *fs = s->private;
+	struct FileCSV_Sensor *fs = s->lprivate;
 	OSP_InputSensorData_t od;
 	int val[5];
 	int i, ret;
@@ -204,10 +204,11 @@ static int OSPDaemon_writecsv_send(struct OSPDaemon_output *out)
 	unsigned long long ts;
 	int c;
 	int count = 0;
+        int ret;
 
-	while ((od = OSPDaemon_queue_get(&out->q)) != NULL) {
+	while ((ret == OSPDaemon_queue_get(&out->q, &od)) == 0) {
 		count++;
-		vallen = extractOSP(out->type, od, &ts, val);
+		vallen = extractOSP(out->type, &od, &ts, val);
 		DBG(DEBUG_OUTDRIVER,"Sending (FILE): %i %i %i fd = %i\n",
 			val[0], val[1], val[2], out->fd);
 		switch(out->ResultDesc.SensorType) {
@@ -227,7 +228,7 @@ static int OSPDaemon_writecsv_send(struct OSPDaemon_output *out)
 		if (count > 5) break;	/* Limit writes */
 	}
 
-	if (od == NULL) return 0; else return 1;
+        if (ret == 0) return 0; else return 1;
 }
 
 static struct OSPDaemon_driver ReadCSV = {
