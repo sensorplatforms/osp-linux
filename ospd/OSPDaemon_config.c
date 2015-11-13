@@ -113,6 +113,7 @@ static const char *DriverTypeMap[] = {
 	[DRIVER_IIO] = "iio",
 	[DRIVER_IIOEVENT] = "iioevent",
 	[DRIVER_FILECSV] = "file_csv",
+        [DRIVER_QUEUE] = "queue"
 };
 
 static const struct _keymap {

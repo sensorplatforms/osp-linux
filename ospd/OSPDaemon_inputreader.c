@@ -68,7 +68,7 @@ static int OSPDaemon_inputreader_setup(struct OSPDaemon_SensorDetail *s, int cou
 			ircount++;
 			if (s->fd > 0) {
 				irsuccess++;
-				s->private = &databuf[i];
+				s->lprivate = &databuf[i];
 			}
 		}
 		s++;
@@ -96,7 +96,7 @@ static int OSPDaemon_inputreader_read(struct OSPDaemon_SensorDetail *s)
 		if (sizeof(struct input_event)*i > ret)
 			break;
 		if (iev[i].type == EV_REL || iev[i].type == EV_ABS) {
-			d = s->private;
+			d = s->lprivate;
 			switch (iev[i].code) {
 			case ABS_X:
 				d->val[0] = iev[i].value;
@@ -110,7 +110,7 @@ static int OSPDaemon_inputreader_read(struct OSPDaemon_SensorDetail *s)
 			/* Missing Quat R case */
 			}
 		} else if (iev[i].type == EV_SYN) {
-			d = s->private;
+			d = s->lprivate;
 			d->ts = iev[i].time.tv_usec;
 			conv2OSP(s->sensor.SensorType, &od, d->ts, d->val);
 			OSPDaemon_queue_put(&s->q, &od);

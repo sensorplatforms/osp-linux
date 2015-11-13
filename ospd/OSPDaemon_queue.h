@@ -11,8 +11,15 @@ struct queue {
 
 int OSPDaemon_queue_init(struct queue *q);
 
-/* Pointer to data is valid til the next queue op */
-OSP_InputSensorData_t *OSPDaemon_queue_get(struct queue *q);
+/*
+ * Get the data from the queue
+ * On Success -
+ * 0 is returned and the data is copied to the structure passed  
+ * On Failure -
+ * If the queue is empty or on error, -1 is returned and the structure sent 
+ * is not modified.
+ */
+int OSPDaemon_queue_get(struct queue *q, OSP_InputSensorData_t *out_data);
 /* Pointer to data only needs to be valid during this call. */
 int OSPDaemon_queue_put(struct queue *q, OSP_InputSensorData_t *d);
 int OSPDaemon_queue_isempty(struct queue *q);
