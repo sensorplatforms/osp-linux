@@ -34,6 +34,7 @@ static int OSPDaemon_input_create(struct OSPDaemon_output *out)
 	fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (fd < 0) {
 		ret = fd;
+		DBGOUT("Failed to open with error %s", strerror(errno));
 		goto error;
 	}
 	memset(&uindev, 0, sizeof(uindev));
@@ -116,7 +117,7 @@ static int OSPDaemon_input_create(struct OSPDaemon_output *out)
 
 error:
 	if (fd < 0) {
-		fprintf(stderr, "INPUT: Failed on %s\n", out->name);
+		fprintf(stderr, "Failed on %s\n", out->name);
 	}
 	return ret;
 }
@@ -135,15 +136,15 @@ static int OSPDaemon_input_setup(struct OSPDaemon_output *out, int count)
 
 static int OSPDaemon_input_send(struct OSPDaemon_output *out)
 {
-	OSP_InputSensorData_t *od;
+	OSP_InputSensorData_t od;
 	struct input_event ev;
 	int ret;
 	static int noise=0;
 	int val[5], vallen;
 	unsigned long long ts;
 
-	while ((od = OSPDaemon_queue_get(&out->q)) != NULL) {
-		vallen = extractOSP(out->type, od, &ts, val);
+	while ((ret = OSPDaemon_queue_get(&out->q, &od)) == 0) {
+		vallen = extractOSP(out->type, &od, &ts, val);
 		DBGOUT("Sending (INPUT) %i %i %i\n", val[0], val[1], val[2]);
 		if (out->option & INPUT_OPTION_DITHER) {
 			noise++;
@@ -194,7 +195,7 @@ static int OSPDaemon_input_send(struct OSPDaemon_output *out)
 		ret = write(out->fd, &ev, sizeof(ev));
 		if ( ret <= 0) return 1;	
 	}	
-	if (od == NULL) return 0; else return 1;
+	if (ret == -1) return 0; else return 1;
 	return 0;
 }
 

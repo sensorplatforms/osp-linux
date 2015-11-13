@@ -43,7 +43,9 @@ static void sysfs_write_val(const char *path, const int val)
 	if (f) {
 		fprintf(f, "%i", val);
 		fclose(f);
-	}
+	} else {
+            DBGOUT("^^^ sysfs_write_val failed(%s) %s %d", strerror(errno), path, val);
+        }
 }
 static void sysfs_write_str(const char *path, const char *str)
 {
@@ -354,7 +356,7 @@ static int OSPDaemon_iio_enable(struct OSPDaemon_SensorDetail *s)
 {
 	struct IIO_Sensor *is;
 
-	is = s->private;
+	is = s->lprivate;
 	OSPDaemon_iio_SetState(is, 1);
 
 	return 0;
@@ -364,7 +366,7 @@ static int OSPDaemon_iio_disable(struct OSPDaemon_SensorDetail *s)
 {
 	struct IIO_Sensor *is;
 
-	is = s->private;
+	is = s->lprivate;
 	OSPDaemon_iio_SetState(is, 0);
 
 	return 0;
@@ -405,6 +407,10 @@ static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
 	DBGOUT("%s:%d: Name of the iio device is %s", __func__, __LINE__, dname);
 
 	fd = open(dname, O_RDONLY);
+        if (-1 == fd) {
+            DBGOUT("Failed to open %s with error %s", dname, strerror(errno));
+        }
+
 	if (!disablepm) {
 		OSPDaemon_iio_SetState(s, 0);
 	}
@@ -413,7 +419,7 @@ static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
 
 static int OSPDaemon_iioevent_create(const char *name, struct IIO_Sensor *s)
 {
-	int fd, evfd;
+	int fd, evfd = -1;
 	char dname[PATH_MAX];
 	int ret;
 
@@ -425,6 +431,10 @@ static int OSPDaemon_iioevent_create(const char *name, struct IIO_Sensor *s)
 	snprintf(dname, PATH_MAX, "/dev/iio:device%i", s->iionum);
 
 	fd = open(dname, O_RDONLY);
+        if (-1 == fd) {
+            DBGOUT("IIOEvent failed to open %s", name);
+            return -1;
+        }
 	/* Can the main fd be closed? */	
 	ret = ioctl(fd, IIO_GET_EVENT_FD_IOCTL, &evfd);
 	return evfd;
@@ -444,7 +454,7 @@ static int OSPDaemon_iio_setup(struct OSPDaemon_SensorDetail *s, int count)
 			}		
 			DBGOUT("%s:%i Setting up: %s\n", __func__, __LINE__,  s->name);
 			s->fd = OSPDaemon_iio_create(s->name, &IIOSen[i]);
-			s->private = &IIOSen[i];
+			s->lprivate = &IIOSen[i];
 			IIOSen[i].type = s->sensor.SensorType;
 			if (s->fd < 0) {
 				fprintf(stderr, "IIO: Failed on %s\n", s->name);
@@ -453,7 +463,7 @@ static int OSPDaemon_iio_setup(struct OSPDaemon_SensorDetail *s, int count)
 		} else if (s->driver == DRIVER_IIOEVENT) {
 			DBGOUT("IIO Event Driver: %i\n", s->driver);
 			s->fd = OSPDaemon_iioevent_create(s->name, &IIOSen[i]);
-			s->private = &IIOSen[i];
+			s->lprivate = &IIOSen[i];
 			iiocount++;
 		}
 		s++;
@@ -470,7 +480,7 @@ static int OSPDaemon_iio_read(struct OSPDaemon_SensorDetail *s)
 	int ret, used;
 	OSP_InputSensorData_t *od;
 
-	is = s->private;
+	is = s->lprivate;
 
 	ret = read(s->fd, readbuf, 2048);
 
@@ -500,7 +510,7 @@ static int OSPDaemon_iioevent_read(struct OSPDaemon_SensorDetail *s)
 	struct iio_event_data event;
 	struct IIO_Sensor *is;
 
-	is = s->private;
+	is = s->lprivate;
 
 	ret = read(s->fd, &event, sizeof(event));
 	if (ret < 0) {
