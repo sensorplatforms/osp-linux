@@ -17,11 +17,13 @@ static struct OSPDaemon_driver *inmap[] = {
 	[DRIVER_IIO] = NULL,
 	[DRIVER_IIOEVENT] = NULL,
 	[DRIVER_FILECSV] = NULL,
+        [DRIVER_QUEUE] = NULL
 }, *outmap[] = {
 	[DRIVER_INPUT] = NULL,
 	[DRIVER_IIO] = NULL,
 	[DRIVER_IIOEVENT] = NULL,
 	[DRIVER_FILECSV] = NULL,
+        [DRIVER_QUEUE] = NULL
 };
 
 int OSPDaemon_driver_register(struct OSPDaemon_driver *ops)
@@ -44,6 +46,9 @@ int OSPDaemon_driver_register(struct OSPDaemon_driver *ops)
 		case DRIVER_INPUT:
 		case DRIVER_FILECSV:
 			break;
+                case DRIVER_QUEUE:
+                        // Nothing to be done for this type of output
+                        return 0;
 		default:
 			return -EINVAL;
 		}
@@ -66,7 +71,7 @@ int OSPDaemon_driver_send(struct OSPDaemon_output *s)
 {
 	if (s == NULL || outmap[s->driver] == NULL)
 		return -EINVAL;
-	DBG(DEBUG_DRIVER, "Sending to driver %i\n", s->driver);
+	//DBG(DEBUG_DRIVER, "Sending to driver %i\n", s->driver);
 
 	return outmap[s->driver]->send(s);
 }
