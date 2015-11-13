@@ -31,7 +31,9 @@
 
 #include "sensors.h"
 
-#include "OSPInputSensor.h"
+#include "OSPQSensor.h"
+#include "OSPDaemon.h"
+#include <semaphore.h>
 
 /*****************************************************************************/
 
@@ -88,6 +90,8 @@
 # define UNIX_PATH_MAX 108
 #endif
 
+sem_t osp_sync;
+
 /*****************************************************************************/
 struct uinput_user_dev;
 
@@ -102,7 +106,7 @@ static struct sensor_t sSensorList[] = {
       "Sensor Platforms",
       1, SENSORS_GYROSCOPE_HANDLE,
       SENSOR_TYPE_GYROSCOPE, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, 0, 0, 0, 0, { } },
-   { "OSP Magnetometer",
+  { "OSP Magnetometer",
       "Sensor Platforms",
       1, SENSORS_MAGNETIC_FIELD_HANDLE,
       SENSOR_TYPE_MAGNETIC_FIELD, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, 0, 0, 0, 0, { } },
@@ -149,7 +153,7 @@ static struct sensor_t sSensorList[] = {
     { "OSP Geomagnetic Rot Vec",
       "Sensor Platforms",
       1, SENSORS_GEOMAGNETIC_ROT_VEC_HANDLE,
-      SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },	
+      SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
 };
 #else
 static struct sensor_t sSensorList[] = {
@@ -290,7 +294,6 @@ private:
         switch (handle) {
         case ID_A:
             return accel;
-
         case ID_M:
             return mag;
         case ID_O:
@@ -328,11 +331,40 @@ private:
 
         case ID_GEOMAGNETIC_ROT_VEC:
             return geo_rot_vec;
-
         }
         return -EINVAL;
     }
 };
+
+void* threadFunc(void*)
+{
+    int count = 5;
+    char *args[] = {"", "-c", "/etc/N7.config", "-d", "255"};
+    OSPDaemon_looper(count, args);
+
+    return 0;
+}
+
+int launchOSPDaemon()
+{
+    pthread_t   mThrd;
+
+    int err = pthread_create(&mThrd, NULL, &threadFunc, NULL);
+    if (0 != err) {
+        LOGE("Failed to create the thread with error %s", strerror(errno));
+        return 1;
+    }
+
+    err = sem_wait(&osp_sync);
+    if (0 != err) {
+        LOGE("Sem wait failed error - %s", strerror(errno));
+        return 1;
+    }
+
+    LOGE("OSP init'ed");
+
+    return 0;
+}
 
 sensors_poll_context_t::sensors_poll_context_t()
 {
@@ -340,143 +372,69 @@ sensors_poll_context_t::sensors_poll_context_t()
     int v;
     int result;
 
-    mSensors[accel] = new OSPInputSensor(ACCEL_UINPUT_NAME, ID_A,  SENSOR_TYPE_ACCELEROMETER, true);
-    mPollFds[accel].fd = mSensors[accel]->getFd();
-    mPollFds[accel].events = POLLIN;
-    mPollFds[accel].revents = 0;
-
-   if ((v = ioctl(mPollFds[accel].fd,EVIOCGPHYS(sizeof(name)),name)) >= 0) {
-        sSensorList[accel].name = strdup(name);
-   }
-
-
-    mSensors[gyro] = new OSPInputSensor(GYRO_UINPUT_NAME, ID_GY,  SENSOR_TYPE_GYROSCOPE, true);
-    mPollFds[gyro].fd = mSensors[gyro]->getFd();
-    mPollFds[gyro].events = POLLIN;
-    mPollFds[gyro].revents = 0;
-
-    if (ioctl(mPollFds[gyro].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[gyro].name = strdup(name);
+    int err = sem_init(&osp_sync, 0, 0);
+    if (0 != err) {
+        LOGE("Sem init failed error -d %s", strerror(errno));
     }
 
-    mSensors[mag] = new OSPInputSensor(MAG_UINPUT_NAME, ID_M,  SENSOR_TYPE_MAGNETIC_FIELD, true);
-    mPollFds[mag].fd = mSensors[mag]->getFd();
-    mPollFds[mag].events = POLLIN;
-    mPollFds[mag].revents = 0;
-    if (ioctl(mPollFds[mag].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[mag].name = strdup(name);
-    }
+    launchOSPDaemon();
 
-    mSensors[rot_vec] = new OSPInputSensor("fm-rotation-vector", ID_RV,  SENSOR_TYPE_ROTATION_VECTOR, true);
-    mPollFds[rot_vec].fd = mSensors[rot_vec]->getFd();
-    mPollFds[rot_vec].events = POLLIN;
-    mPollFds[rot_vec].revents = 0;
-    if (ioctl(mPollFds[rot_vec].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[rot_vec].name = strdup(name);
-    }
-
-    mSensors[orientation] = new OSPInputSensor("fm-compass-orientation", ID_O,  SENSOR_TYPE_ORIENTATION, true);
-    mPollFds[orientation].fd = mSensors[orientation]->getFd();
-    mPollFds[orientation].events = POLLIN;
-    mPollFds[orientation].revents = 0;
-    if (ioctl(mPollFds[orientation].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[orientation].name = strdup(name);
-    }
-
-    mSensors[linear_accel] = new OSPInputSensor("fm-linear-acceleration", ID_LINACC,
-                                                        SENSOR_TYPE_LINEAR_ACCELERATION, true);
-    mPollFds[linear_accel].fd = mSensors[linear_accel]->getFd();
-    mPollFds[linear_accel].events = POLLIN;
-    mPollFds[linear_accel].revents = 0;
-    if (ioctl(mPollFds[linear_accel].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[linear_accel].name = strdup(name);
-    }
-
-    mSensors[gravity] = new OSPInputSensor("fm-gravity", ID_GRAV, SENSOR_TYPE_GRAVITY, true);
-    mPollFds[gravity].fd = mSensors[gravity]->getFd();
-    mPollFds[gravity].events = POLLIN;
-    mPollFds[gravity].revents = 0;
-    if (ioctl(mPollFds[gravity].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[gravity].name = strdup(name);
-    }
-
-    mSensors[uncal_mag] = new OSPInputSensor("fm-uncalibrated-magnetometer",
+    mSensors[accel]         = new OSPQSensor(ACCEL_UINPUT_NAME,
+                                             ID_A, 
+                                             SENSOR_TYPE_ACCELEROMETER,
+                                             true);
+    mSensors[gyro]          = new OSPQSensor(GYRO_UINPUT_NAME,
+                                             ID_GY,
+                                             SENSOR_TYPE_GYROSCOPE,
+                                             true);
+    mSensors[mag]           = new OSPQSensor(MAG_UINPUT_NAME,
+                                             ID_M,
+                                             SENSOR_TYPE_MAGNETIC_FIELD,
+                                             true);
+    mSensors[rot_vec]       = new OSPQSensor("fm-rotation-vector",
+                                             ID_RV,
+                                             SENSOR_TYPE_ROTATION_VECTOR,
+                                             true);
+    mSensors[orientation]   = new OSPQSensor("fm-compass-orientation",
+                                             ID_O,
+                                             SENSOR_TYPE_ORIENTATION,
+                                             true);
+    mSensors[linear_accel]  = new OSPQSensor("fm-linear-acceleration",
+                                             ID_LINACC,
+                                             SENSOR_TYPE_LINEAR_ACCELERATION,
+                                             true);
+    mSensors[gravity]       = new OSPQSensor("fm-gravity",
+                                             ID_GRAV, 
+                                             SENSOR_TYPE_GRAVITY,
+                                             true);
+    mSensors[uncal_mag] = new OSPQSensor("fm-uncalibrated-magnetometer",
                             ID_UNCALIBRATED_MAG,
                             SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
                             true);
-    mPollFds[uncal_mag].fd = mSensors[uncal_mag]->getFd();
-    mPollFds[uncal_mag].events = POLLIN;
-    mPollFds[uncal_mag].revents = 0;
-    if (ioctl(mPollFds[uncal_mag].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[uncal_mag].name = strdup(name);
-    }
-
-     mSensors[game_rot_vec] = new OSPInputSensor("fm-game-rotation-vector", 
+     mSensors[game_rot_vec] = new OSPQSensor("fm-game-rotation-vector", 
 				 			ID_GAME_ROT_VEC, 
 				 			SENSOR_TYPE_GAME_ROTATION_VECTOR, 
 				 			true);
-     mPollFds[game_rot_vec].fd = mSensors[game_rot_vec]->getFd();
-     mPollFds[game_rot_vec].events = POLLIN;
-     mPollFds[game_rot_vec].revents = 0;
-     if (ioctl(mPollFds[game_rot_vec].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-         sSensorList[game_rot_vec].name = strdup(name);
-     }
-
-    mSensors[uncal_gyro] = new OSPInputSensor("fm-uncalibrated-gyroscope", 
+    mSensors[uncal_gyro] = new OSPQSensor("fm-uncalibrated-gyroscope", 
 							ID_UNCALIBRATED_GYRO, 
 							SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, 
 							true);
-    mPollFds[uncal_gyro].fd = mSensors[uncal_gyro]->getFd();
-    mPollFds[uncal_gyro].events = POLLIN;
-    mPollFds[uncal_gyro].revents = 0;
-    if (ioctl(mPollFds[uncal_gyro].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[uncal_gyro].name = strdup(name);
-    }
-
-    mSensors[sig_motion] = new OSPInputSensor("fm-significant-motion",
+    mSensors[sig_motion] = new OSPQSensor("fm-significant-motion",
                                                ID_SIG_MOTION,
                                                SENSOR_TYPE_SIGNIFICANT_MOTION,
 					       FM_DECODE_VALUE_AS_INTEGER);
-    mPollFds[sig_motion].fd = mSensors[sig_motion]->getFd();
-    mPollFds[sig_motion].events = POLLIN;
-    mPollFds[sig_motion].revents = 0;
-    if (ioctl(mPollFds[sig_motion].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[sig_motion].name = strdup(name);
-    }
-
-    mSensors[step_detector] = new OSPInputSensor("fm-step-detector", 
+    mSensors[step_detector] = new OSPQSensor("fm-step-detector", 
 							 ID_STEP_DETECTOR, 
 							 SENSOR_TYPE_STEP_DETECTOR, 
 							 FM_DECODE_VALUE_AS_INTEGER);
-
-     mPollFds[step_detector].fd = mSensors[step_detector]->getFd();
-     mPollFds[step_detector].events = POLLIN;
-     mPollFds[step_detector].revents = 0;
-     if (ioctl(mPollFds[step_detector].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-         sSensorList[step_detector].name = strdup(name);
-     }
-
-    mSensors[step_counter] = new OSPStepCounter("fm-step-counter", 
+    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter", 
 						       ID_STEP_COUNTER, 
 						       SENSOR_TYPE_STEP_COUNTER, 
 						       FM_DECODE_VALUE_AS_INTEGER);
-    mPollFds[step_counter].fd = mSensors[step_counter]->getFd();
-    mPollFds[step_counter].events = POLLIN;
-    mPollFds[step_counter].revents = 0;
-    if (ioctl(mPollFds[step_counter].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[step_counter].name = strdup(name);
-    }
-
-    mSensors[geo_rot_vec] = new OSPInputSensor("fm-geomagnetic-rotation-vector", 
+    mSensors[geo_rot_vec] = new OSPQSensor("fm-geomagnetic-rotation-vector", 
 							ID_GEOMAGNETIC_ROT_VEC, 
 							SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR, 
 							true);
-    mPollFds[geo_rot_vec].fd = mSensors[geo_rot_vec]->getFd();
-    mPollFds[geo_rot_vec].events = POLLIN;
-    mPollFds[geo_rot_vec].revents = 0;
-    if (ioctl(mPollFds[geo_rot_vec].fd,EVIOCGPHYS(sizeof(name)),name) >= 0) {
-        sSensorList[geo_rot_vec].name = strdup(name);
-    }
 
     int wakeFds[2];
     result = pipe(wakeFds);
@@ -496,6 +454,14 @@ sensors_poll_context_t::~sensors_poll_context_t() {
     }
     close(mPollFds[wake].fd);
     close(mWritePipeFd);
+
+    int err = sem_destroy(&osp_sync);
+    if (0 != err) {
+        LOGE("Sem destroy failed error - %s", strerror(errno));
+        //return 1;
+    }
+
+    // TODO Delete the thread instance
 }
 
 int sensors_poll_context_t::activate(int handle, int enabled) {
@@ -503,6 +469,7 @@ int sensors_poll_context_t::activate(int handle, int enabled) {
     int index = handleToDriver(handle);
     if (index < 0) return index;
 
+    LOGE("Sensor-activate - enum sensor %d enabled %d ", index, enabled);
     int err =  mSensors[index]->enable(handle, enabled);
     LOGE_IF(err != 0, "Sensor-activate failed (%d)", err);
     if (enabled && !err) {
@@ -526,48 +493,31 @@ int sensors_poll_context_t::setDelay(int handle, int64_t delay_ns) {
 
 int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
-    int nbEvents = 0;
-    int n = 0;
+    int total = 0, nb;
 
-    do {
-        // see if we have some leftover from the last poll()
-        for (int i=0 ; count && i<numSensorDrivers ; i++) {
-            SensorBase* const sensor(mSensors[i]);
-            if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
-                int nb = sensor->readEvents(data, count);
-                if (nb < count) {
-                    // no more data for this sensor
-                    mPollFds[i].revents = 0;
-                }
-		if (nb >=0) {
-                    count -= nb;
-                    nbEvents += nb;
-                    data += nb;
-                }
-            }
+    //while (count) {
+        int err = sem_wait(&osp_sync);
+        if (0 != err) {
+            LOGE("Sem wait failed error - %s", strerror(errno));
+            return 0;
         }
 
-        if (count) {
-            // we still have some room, so try to see if we can get
-            // some events immediately or just wait if we don't have
-            // anything to return
-            n = poll(mPollFds, numFds, nbEvents ? 0 : -1);
-            if (n<0) {
-                LOGE("poll() failed (%s)", strerror(errno));
-                return -errno;
+        for (int i = 0; count && i < numSensorDrivers; i++) {
+            SensorBase *const sensor(mSensors[i]);
+            nb = sensor->readEvents(data, count);
+            //LOGE("For sensor Driver %d, events received %d", i, nb);
+            if (nb > 0) {
+                count -= nb;
+                total += nb;
+                data  += nb;
             }
-            if (mPollFds[wake].revents & POLLIN) {
-                char msg;
-                int result = read(mPollFds[wake].fd, &msg, 1);
-                LOGE_IF(result<0, "error reading from wake pipe (%s)", strerror(errno));
-                LOGE_IF(msg != WAKE_MESSAGE, "unknown message on wake queue (0x%02x)", int(msg));
-                mPollFds[wake].revents = 0;
-            }
-        }
-        // if we have events and space, go read them
-    } while (n && count);
 
-    return nbEvents;
+            if (count <= 0)
+                break;
+        }
+    //}
+
+    return total;
 }
 
 int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
@@ -664,6 +614,3 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
 
     return status;
 }
-
-
-
