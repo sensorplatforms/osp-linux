@@ -99,166 +99,166 @@ struct uinput_user_dev;
 #if (PLATFORM_VERSION_MAJOR == 5)
 static struct sensor_t sSensorList[] = {
     { "OSP Accelerometer",
-      "Sensor Platforms",
-      1, SENSORS_ACCELERATION_HANDLE,
-      SENSOR_TYPE_ACCELEROMETER, RANGE_A, RESOLUTION_A, 0.25f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_ACCELERATION_HANDLE,
+        SENSOR_TYPE_ACCELEROMETER, RANGE_A, RESOLUTION_A, 0.25f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Gyroscope",
-      "Sensor Platforms",
-      1, SENSORS_GYROSCOPE_HANDLE,
-      SENSOR_TYPE_GYROSCOPE, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, 0, 0, 0, 0, { } },
-  { "OSP Magnetometer",
-      "Sensor Platforms",
-      1, SENSORS_MAGNETIC_FIELD_HANDLE,
-      SENSOR_TYPE_MAGNETIC_FIELD, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GYROSCOPE_HANDLE,
+        SENSOR_TYPE_GYROSCOPE, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, 0, 0, 0, 0, { } },
+    { "OSP Magnetometer",
+        "Sensor Platforms",
+        1, SENSORS_MAGNETIC_FIELD_HANDLE,
+        SENSOR_TYPE_MAGNETIC_FIELD, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Orientation",
-      "Sensor Platform",
-      1, SENSORS_ORIENTATION_HANDLE,
-      SENSOR_TYPE_ORIENTATION, 360.0f, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platform",
+        1, SENSORS_ORIENTATION_HANDLE,
+        SENSOR_TYPE_ORIENTATION, 360.0f, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Rotation sensor",
-      "Sensor Platforms",
-      1, SENSORS_ROTATION_VECTOR_HANDLE,
-      SENSOR_TYPE_ROTATION_VECTOR, 1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_ROTATION_VECTOR_HANDLE,
+        SENSOR_TYPE_ROTATION_VECTOR, 1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Linear Acceleration sensor",
-      "Sensor Platforms",
-      1, SENSORS_LIN_ACCELERATION_HANDLE,
-      SENSOR_TYPE_LINEAR_ACCELERATION, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_LIN_ACCELERATION_HANDLE,
+        SENSOR_TYPE_LINEAR_ACCELERATION, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Gravity sensor",
-      "Sensor Platforms",
-      1, SENSORS_GRAVITY_HANDLE,
-      SENSOR_TYPE_GRAVITY, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GRAVITY_HANDLE,
+        SENSOR_TYPE_GRAVITY, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Uncalibrated Magnetometer",
-      "Sensor Platforms",
-      1, SENSORS_UNCALIBRATED_MAG_HANDLE,
-      SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_UNCALIBRATED_MAG_HANDLE,
+        SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, 0, 0, 0, 0, { } },
     { "OSP Game Rot Vec",
-      "Sensor Platforms",
-      1, SENSORS_GAME_ROT_VEC_HANDLE,
-      SENSOR_TYPE_GAME_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
-   { "OSP Uncalibrated Gyroscope",
-      "Sensor Platforms",
-      1, SENSORS_UNCALIBRATED_GYRO_HANDLE,
-      SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, 0, 0, 0, 0, { } },
-   { "OSP Significant Motion",
-      "Sensor Platforms",
-       1, SENSORS_SIG_MOTION_HANDLE,
-       SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, { } },
-   { "OSP Step Detector",
-      "Sensor Platforms",
-      1, SENSORS_STEP_DETECTOR_HANDLE,
-      SENSOR_TYPE_STEP_DETECTOR, 1.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, {}},
-   { "OSP Step Counter",
-      "Sensor Platforms",
-      1, SENSORS_STEP_COUNTER_HANDLE,
-      SENSOR_TYPE_STEP_COUNTER, 1000.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, {}},
+        "Sensor Platforms",
+        1, SENSORS_GAME_ROT_VEC_HANDLE,
+        SENSOR_TYPE_GAME_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+    { "OSP Uncalibrated Gyroscope",
+        "Sensor Platforms",
+        1, SENSORS_UNCALIBRATED_GYRO_HANDLE,
+        SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, 0, 0, 0, 0, { } },
+    { "OSP Significant Motion",
+        "Sensor Platforms",
+        1, SENSORS_SIG_MOTION_HANDLE,
+        SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, { } },
+    { "OSP Step Detector",
+        "Sensor Platforms",
+        1, SENSORS_STEP_DETECTOR_HANDLE,
+        SENSOR_TYPE_STEP_DETECTOR, 1.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, {}},
+    { "OSP Step Counter",
+        "Sensor Platforms",
+        1, SENSORS_STEP_COUNTER_HANDLE,
+        SENSOR_TYPE_STEP_COUNTER, 1000.0f, 1.0f, 1.1f, 0, 0, 0, 0, 0, 0, 0, {}},
     { "OSP Geomagnetic Rot Vec",
-      "Sensor Platforms",
-      1, SENSORS_GEOMAGNETIC_ROT_VEC_HANDLE,
-      SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GEOMAGNETIC_ROT_VEC_HANDLE,
+        SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, 0, 0, 0, 0, { } },
 };
 #else
 static struct sensor_t sSensorList[] = {
     { "OSP Accelerometer",
-      "Sensor Platforms",
-      1, SENSORS_ACCELERATION_HANDLE,
-      SENSOR_TYPE_ACCELEROMETER, RANGE_A, RESOLUTION_A, 0.25f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_ACCELERATION_HANDLE,
+        SENSOR_TYPE_ACCELEROMETER, RANGE_A, RESOLUTION_A, 0.25f, 20000, 0, 0, { } },
     { "OSP Gyroscope",
-      "Sensor Platforms",
-      1, SENSORS_GYROSCOPE_HANDLE,
-      SENSOR_TYPE_GYROSCOPE, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GYROSCOPE_HANDLE,
+        SENSOR_TYPE_GYROSCOPE, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, { } },
     { "OSP magnetometer",
-      "Sensor Platforms",
-      1, SENSORS_MAGNETIC_FIELD_HANDLE,
-      SENSOR_TYPE_MAGNETIC_FIELD, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_MAGNETIC_FIELD_HANDLE,
+        SENSOR_TYPE_MAGNETIC_FIELD, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, { } },
     { "OSP Orientation",
-      "Sensor Platform",
-      1, SENSORS_ORIENTATION_HANDLE,
-      SENSOR_TYPE_ORIENTATION, 360.0f, 0.00001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platform",
+        1, SENSORS_ORIENTATION_HANDLE,
+        SENSOR_TYPE_ORIENTATION, 360.0f, 0.00001f, 7.35f, 20000, 0, 0, { } },
     { "OSP Rotation sensor",
-      "Sensor Platforms",
-      1, SENSORS_ROTATION_VECTOR_HANDLE,
-      SENSOR_TYPE_ROTATION_VECTOR, 1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_ROTATION_VECTOR_HANDLE,
+        SENSOR_TYPE_ROTATION_VECTOR, 1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
     { "OSP Linear Acceleration sensor",
-      "Sensor Platforms",
-      1, SENSORS_LIN_ACCELERATION_HANDLE,
-      SENSOR_TYPE_LINEAR_ACCELERATION, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_LIN_ACCELERATION_HANDLE,
+        SENSOR_TYPE_LINEAR_ACCELERATION, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, { } },
     { "OSP Gravity sensor",
-      "Sensor Platforms",
-      1, SENSORS_GRAVITY_HANDLE,
-      SENSOR_TYPE_GRAVITY, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GRAVITY_HANDLE,
+        SENSOR_TYPE_GRAVITY, RANGE_A, 0.00001f, 7.35f, 20000, 0, 0, { } },
     { "OSP Uncalibrated Magnetometer",
-      "Sensor Platforms",
-      1, SENSORS_UNCALIBRATED_MAG_HANDLE,
-      SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_UNCALIBRATED_MAG_HANDLE,
+        SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, RANGE_M, RESOLUTION_M, .6f, 20000, 0, 0, { } },
     { "OSP Game Rot Vec",
-      "Sensor Platforms",
-      1, SENSORS_GAME_ROT_VEC_HANDLE,
-      SENSOR_TYPE_GAME_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GAME_ROT_VEC_HANDLE,
+        SENSOR_TYPE_GAME_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
     { "OSP Uncalibrated Gyroscope",
-      "Sensor Platforms",
-      1, SENSORS_UNCALIBRATED_GYRO_HANDLE,
-      SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_UNCALIBRATED_GYRO_HANDLE,
+        SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, RANGE_GYRO, RESOLUTION_GYRO, 6.5f, 20000, 0, 0, { } },
     { "OSP Significant Motion",
-      "Sensor Platforms",
-       1, SENSORS_SIG_MOTION_HANDLE,
-       SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 1.1f, 0, 0, 0, {}},
+        "Sensor Platforms",
+        1, SENSORS_SIG_MOTION_HANDLE,
+        SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 1.1f, 0, 0, 0, {}},
     { "OSP Step Detector",
-      "Sensor Platforms",
-      1, SENSORS_STEP_DETECTOR_HANDLE,
-      SENSOR_TYPE_STEP_DETECTOR, 1.0f, 1.0f, 1.1f, 0, 0, 0, {}},
+        "Sensor Platforms",
+        1, SENSORS_STEP_DETECTOR_HANDLE,
+        SENSOR_TYPE_STEP_DETECTOR, 1.0f, 1.0f, 1.1f, 0, 0, 0, {}},
     { "OSP Step Counter",
-      "Sensor Platforms",
-      1, SENSORS_STEP_COUNTER_HANDLE,
-      SENSOR_TYPE_STEP_COUNTER, 1000.0f, 1.0f, 1.1f, 0, 0, 0, {}},
+        "Sensor Platforms",
+        1, SENSORS_STEP_COUNTER_HANDLE,
+        SENSOR_TYPE_STEP_COUNTER, 1000.0f, 1.0f, 1.1f, 0, 0, 0, {}},
     { "OSP Geomagnetic Rot Vec",
-      "Sensor Platforms",
-      1, SENSORS_GEOMAGNETIC_ROT_VEC_HANDLE,
-      SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
+        "Sensor Platforms",
+        1, SENSORS_GEOMAGNETIC_ROT_VEC_HANDLE,
+        SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,  1.0f, 0.000000001f, 7.35f, 20000, 0, 0, { } },
 };
 #endif
 
 
 static int open_sensors(const struct hw_module_t* module, const char* id,
-                        struct hw_device_t** device);
+        struct hw_device_t** device);
 
 
 static int sensors__get_sensors_list(struct sensors_module_t* module,
-                                     struct sensor_t const** list)
+        struct sensor_t const** list)
 {
     *list = sSensorList;
     return ARRAY_SIZE(sSensorList);
 }
 
 static struct hw_module_methods_t sensors_module_methods = {
-        open: open_sensors
+open: open_sensors
 };
 
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
-    common: {
-        tag: HARDWARE_MODULE_TAG,
-        version_major: 1,
-        version_minor: 0,
-        id: SENSORS_HARDWARE_MODULE_ID,
-        name: "Sensor module",
-        author: "Sensor Platforms Inc.",
-        methods: &sensors_module_methods,
-        dso: 0,
-        reserved: {0}
-    },
-    get_sensors_list: sensors__get_sensors_list,
+common: {
+tag: HARDWARE_MODULE_TAG,
+     version_major: 1,
+     version_minor: 0,
+     id: SENSORS_HARDWARE_MODULE_ID,
+     name: "Sensor module",
+     author: "Sensor Platforms Inc.",
+     methods: &sensors_module_methods,
+     dso: 0,
+     reserved: {0}
+        },
+get_sensors_list: sensors__get_sensors_list,
 };
 
 struct sensors_poll_context_t {
     struct sensors_poll_device_1 device; // must be first
 
-        sensors_poll_context_t();
-        ~sensors_poll_context_t();
+    sensors_poll_context_t();
+    ~sensors_poll_context_t();
     int activate(int handle, int enabled);
     int setDelay(int handle, int64_t delay_ns);
     int pollEvents(sensors_event_t* data, int count);
     int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
     int flush(int handle);
 
-private:
+    private:
     enum {
         accel,
         gyro,
@@ -292,45 +292,45 @@ private:
 
     int handleToDriver(int handle) const {
         switch (handle) {
-        case ID_A:
-            return accel;
-        case ID_M:
-            return mag;
-        case ID_O:
-            return orientation;
+            case ID_A:
+                return accel;
+            case ID_M:
+                return mag;
+            case ID_O:
+                return orientation;
 
-        case ID_GY:
-            return gyro;
+            case ID_GY:
+                return gyro;
 
-        case ID_RV:
-            return rot_vec;
+            case ID_RV:
+                return rot_vec;
 
-        case ID_LINACC:
-            return linear_accel;
+            case ID_LINACC:
+                return linear_accel;
 
-        case ID_GRAV:
-            return gravity;
+            case ID_GRAV:
+                return gravity;
 
-        case ID_UNCALIBRATED_MAG:
-            return uncal_mag;
+            case ID_UNCALIBRATED_MAG:
+                return uncal_mag;
 
-        case ID_GAME_ROT_VEC:
-            return game_rot_vec;
+            case ID_GAME_ROT_VEC:
+                return game_rot_vec;
 
-        case ID_SIG_MOTION:
-            return sig_motion;
+            case ID_SIG_MOTION:
+                return sig_motion;
 
-        case ID_UNCALIBRATED_GYRO:
-            return uncal_gyro;
+            case ID_UNCALIBRATED_GYRO:
+                return uncal_gyro;
 
-        case ID_STEP_DETECTOR:
-            return step_detector;
+            case ID_STEP_DETECTOR:
+                return step_detector;
 
-        case ID_STEP_COUNTER:
-            return step_counter;
+            case ID_STEP_COUNTER:
+                return step_counter;
 
-        case ID_GEOMAGNETIC_ROT_VEC:
-            return geo_rot_vec;
+            case ID_GEOMAGNETIC_ROT_VEC:
+                return geo_rot_vec;
         }
         return -EINVAL;
     }
@@ -380,61 +380,61 @@ sensors_poll_context_t::sensors_poll_context_t()
     launchOSPDaemon();
 
     mSensors[accel]         = new OSPQSensor(ACCEL_UINPUT_NAME,
-                                             ID_A, 
-                                             SENSOR_TYPE_ACCELEROMETER,
-                                             true);
+            ID_A,
+            SENSOR_TYPE_ACCELEROMETER,
+            true);
     mSensors[gyro]          = new OSPQSensor(GYRO_UINPUT_NAME,
-                                             ID_GY,
-                                             SENSOR_TYPE_GYROSCOPE,
-                                             true);
+            ID_GY,
+            SENSOR_TYPE_GYROSCOPE,
+            true);
     mSensors[mag]           = new OSPQSensor(MAG_UINPUT_NAME,
-                                             ID_M,
-                                             SENSOR_TYPE_MAGNETIC_FIELD,
-                                             true);
+            ID_M,
+            SENSOR_TYPE_MAGNETIC_FIELD,
+            true);
     mSensors[rot_vec]       = new OSPQSensor("fm-rotation-vector",
-                                             ID_RV,
-                                             SENSOR_TYPE_ROTATION_VECTOR,
-                                             true);
+            ID_RV,
+            SENSOR_TYPE_ROTATION_VECTOR,
+            true);
     mSensors[orientation]   = new OSPQSensor("fm-compass-orientation",
-                                             ID_O,
-                                             SENSOR_TYPE_ORIENTATION,
-                                             true);
+            ID_O,
+            SENSOR_TYPE_ORIENTATION,
+            true);
     mSensors[linear_accel]  = new OSPQSensor("fm-linear-acceleration",
-                                             ID_LINACC,
-                                             SENSOR_TYPE_LINEAR_ACCELERATION,
-                                             true);
+            ID_LINACC,
+            SENSOR_TYPE_LINEAR_ACCELERATION,
+            true);
     mSensors[gravity]       = new OSPQSensor("fm-gravity",
-                                             ID_GRAV, 
-                                             SENSOR_TYPE_GRAVITY,
-                                             true);
+            ID_GRAV,
+            SENSOR_TYPE_GRAVITY,
+            true);
     mSensors[uncal_mag] = new OSPQSensor("fm-uncalibrated-magnetometer",
-                            ID_UNCALIBRATED_MAG,
-                            SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
-                            true);
-     mSensors[game_rot_vec] = new OSPQSensor("fm-game-rotation-vector", 
-				 			ID_GAME_ROT_VEC, 
-				 			SENSOR_TYPE_GAME_ROTATION_VECTOR, 
-				 			true);
-    mSensors[uncal_gyro] = new OSPQSensor("fm-uncalibrated-gyroscope", 
-							ID_UNCALIBRATED_GYRO, 
-							SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, 
-							true);
+            ID_UNCALIBRATED_MAG,
+            SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
+            true);
+    mSensors[game_rot_vec] = new OSPQSensor("fm-game-rotation-vector",
+            ID_GAME_ROT_VEC,
+            SENSOR_TYPE_GAME_ROTATION_VECTOR,
+            true);
+    mSensors[uncal_gyro] = new OSPQSensor("fm-uncalibrated-gyroscope",
+            ID_UNCALIBRATED_GYRO,
+            SENSOR_TYPE_GYROSCOPE_UNCALIBRATED,
+            true);
     mSensors[sig_motion] = new OSPQSensor("fm-significant-motion",
-                                               ID_SIG_MOTION,
-                                               SENSOR_TYPE_SIGNIFICANT_MOTION,
-					       FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[step_detector] = new OSPQSensor("fm-step-detector", 
-							 ID_STEP_DETECTOR, 
-							 SENSOR_TYPE_STEP_DETECTOR, 
-							 FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter", 
-						       ID_STEP_COUNTER, 
-						       SENSOR_TYPE_STEP_COUNTER, 
-						       FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[geo_rot_vec] = new OSPQSensor("fm-geomagnetic-rotation-vector", 
-							ID_GEOMAGNETIC_ROT_VEC, 
-							SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR, 
-							true);
+            ID_SIG_MOTION,
+            SENSOR_TYPE_SIGNIFICANT_MOTION,
+            FM_DECODE_VALUE_AS_INTEGER);
+    mSensors[step_detector] = new OSPQSensor("fm-step-detector",
+            ID_STEP_DETECTOR,
+            SENSOR_TYPE_STEP_DETECTOR,
+            FM_DECODE_VALUE_AS_INTEGER);
+    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter",
+            ID_STEP_COUNTER,
+            SENSOR_TYPE_STEP_COUNTER,
+            FM_DECODE_VALUE_AS_INTEGER);
+    mSensors[geo_rot_vec] = new OSPQSensor("fm-geomagnetic-rotation-vector",
+            ID_GEOMAGNETIC_ROT_VEC,
+            SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
+            true);
 
     int wakeFds[2];
     result = pipe(wakeFds);
@@ -496,25 +496,25 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     int total = 0, nb;
 
     //while (count) {
-        int err = sem_wait(&osp_sync);
-        if (0 != err) {
-            LOGE("Sem wait failed error - %s", strerror(errno));
-            return 0;
+    int err = sem_wait(&osp_sync);
+    if (0 != err) {
+        LOGE("Sem wait failed error - %s", strerror(errno));
+        return 0;
+    }
+
+    for (int i = 0; count && i < numSensorDrivers; i++) {
+        SensorBase *const sensor(mSensors[i]);
+        nb = sensor->readEvents(data, count);
+        //LOGE("For sensor Driver %d, events received %d", i, nb);
+        if (nb > 0) {
+            count -= nb;
+            total += nb;
+            data  += nb;
         }
 
-        for (int i = 0; count && i < numSensorDrivers; i++) {
-            SensorBase *const sensor(mSensors[i]);
-            nb = sensor->readEvents(data, count);
-            //LOGE("For sensor Driver %d, events received %d", i, nb);
-            if (nb > 0) {
-                count -= nb;
-                total += nb;
-                data  += nb;
-            }
-
-            if (count <= 0)
-                break;
-        }
+        if (count <= 0)
+            break;
+    }
     //}
 
     return total;
@@ -576,7 +576,7 @@ static int poll__poll(struct sensors_poll_device_t *dev,
 }
 
 static int poll__batch(struct sensors_poll_device_1 *dev,
-                      int handle, int flags, int64_t period_ns, int64_t timeout)
+        int handle, int flags, int64_t period_ns, int64_t timeout)
 {
     sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
     return ctx->batch(handle, flags, period_ns, timeout);
@@ -592,7 +592,7 @@ static int poll__flush(struct sensors_poll_device_1* dev, int handle)
 
 /** Open a new instance of a sensor device using name */
 static int open_sensors(const struct hw_module_t* module, const char* id,
-                        struct hw_device_t** device)
+        struct hw_device_t** device)
 {
     int status = -EINVAL;
     sensors_poll_context_t *dev = new sensors_poll_context_t();

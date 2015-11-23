@@ -63,7 +63,7 @@ class OSPQSensor : public SensorBase {
 
 class OSPQStepCounter : public OSPQSensor {
     public:
-        OSPQStepCounter(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat) 
+        OSPQStepCounter(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat)
             : OSPQSensor(uinputName, sensorId, sensorType, evtFloat) {
                 LOGE("creating custom handler for SIG_MOTION"); };
 
@@ -74,7 +74,7 @@ class OSPQStepCounter : public OSPQSensor {
 
 class OSPQSignificantMotion : public OSPQSensor {
     public:
-        OSPQSignificantMotion(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat) 
+        OSPQSignificantMotion(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat)
             : OSPQSensor(uinputName, sensorId, sensorType, evtFloat) {
                 LOGE("creating custom handler for SIG_MOTION"); };
 

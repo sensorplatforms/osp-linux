@@ -33,7 +33,7 @@ OSPQSensor::OSPQSensor(const char* uinputName,
         int32_t sensorId,
         int32_t sensorType,
         bool evtFloat) :
-    SensorBase(NULL, uinputName, 1),    
+    SensorBase(NULL, uinputName, 1),
     mEnabled(false),
     mEventsAreFloat(evtFloat),
     mHasPendingEvent(false),
@@ -43,7 +43,7 @@ OSPQSensor::OSPQSensor(const char* uinputName,
 {
     LOGE("Inside OSPQSensor");
 
-    if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD || 
+    if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD ||
             sensorType == SENSOR_TYPE_ORIENTATION ||
             sensorType == SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
         Qscale = (1<<12);
@@ -120,14 +120,14 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
     }
 
     ret = OSPDaemon_get_sensor_data(mSensorType, &ld);
-    if (0 == ret || -1 == ret) {            
+    if (0 == ret || -1 == ret) {
         //LOGE("Failed to get the sensor data ret is %d", ret);
         return fc;
     }
 
     //LOGE("Returning %d data values for sensor type %d", ret, mSensorType);
     data[fc].version   = sizeof(sensors_event_t);
-    data[fc].sensor    = mSensorId; 
+    data[fc].sensor    = mSensorId;
     data[fc].type      = mSensorType;
     data[fc].timestamp = ld.ts;
     for (i = 0; i < ret; i++)
@@ -140,7 +140,7 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 
 //! use the handling to generate the necessary sideeffect of making SIG_MOTION a oneshot
 bool OSPQSignificantMotion::handleEvent(input_event const * event,
-        sensors_event_t* androidData) 
+        sensors_event_t* androidData)
 {
     LOGE("@@@@ custom handling of SIG_MOTION");
 
