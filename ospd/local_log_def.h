@@ -40,10 +40,10 @@
 #endif
 
 #define FUNC_LOG \
-            LOGV("%s", __PRETTY_FUNCTION__)
+    LOGV("%s", __PRETTY_FUNCTION__)
 #define VFUNC_LOG \
-            LOGV_IF(FUNC_ENTRY, "Entering function '%s'", __PRETTY_FUNCTION__)
+    LOGV_IF(FUNC_ENTRY, "Entering function '%s'", __PRETTY_FUNCTION__)
 #define VHANDLER_LOG \
-            LOGV_IF(HANDLER_ENTRY, "Entering handler '%s'", __PRETTY_FUNCTION__)
+    LOGV_IF(HANDLER_ENTRY, "Entering handler '%s'", __PRETTY_FUNCTION__)
 
 #endif

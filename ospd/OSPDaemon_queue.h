@@ -4,9 +4,9 @@
 #define QUEUE_LEN	25
 #include "osp-api.h"
 struct queue {
-	int write;
-	int read;
-	OSP_InputSensorData_t data[QUEUE_LEN];
+    int write;
+    int read;
+    OSP_InputSensorData_t data[QUEUE_LEN];
 };
 
 int OSPDaemon_queue_init(struct queue *q);
@@ -14,9 +14,9 @@ int OSPDaemon_queue_init(struct queue *q);
 /*
  * Get the data from the queue
  * On Success -
- * 0 is returned and the data is copied to the structure passed  
+ * 0 is returned and the data is copied to the structure passed
  * On Failure -
- * If the queue is empty or on error, -1 is returned and the structure sent 
+ * If the queue is empty or on error, -1 is returned and the structure sent
  * is not modified.
  */
 int OSPDaemon_queue_get(struct queue *q, OSP_InputSensorData_t *out_data);
