@@ -1,0 +1,8 @@
+#!/system/bin/sh
+
+mkdir -p /data/OSPControl
+chmod 777 /data
+chmod 777 /data/OSPControl
+
+/system/bin/OSPDaemon -c /etc/N7.config -d 255
+

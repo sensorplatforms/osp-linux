@@ -1,0 +1,4 @@
+1. If i2c device is already available, iio can readily use it instead
+registering itself as a osp-output device, this can help to sync PM
+functionality for the device.
+2. 
