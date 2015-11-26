@@ -28,6 +28,11 @@
 #define OSP_DATA_IN         0x0c
 #define OSP_DATA_IN_END     0xff
 
+/* Get cause and config command registers*/
+#define OSP_GET_CAUSE 0x00 /*RO to read GET Cause*/
+#define OSP_SET_CONFIG 0x03 /*RW to send Setconfig command*/
+#define OSP_GET_DATA 0x48 /*RO to Read sensor data*/
+#define OSP_RESET_REG 0x7A /*reset register*/
 /*
  * General protocol notes:
  *	1. Reads of OSP_INT_REASON has side effects. Host should

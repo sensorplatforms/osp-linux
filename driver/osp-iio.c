@@ -1,4 +1,4 @@
-#define DEBUG
+#undef DEBUG
 /**
  * Copyright (c) 2015 Hunyue Yau for Audience
  *
@@ -493,7 +493,10 @@ static const struct iio_info osp_sensor_info = {
 	.driver_module = THIS_MODULE,
 	.read_raw = &osp_sensor_read_raw,
 	.write_raw = &osp_sensor_write_raw,
+	#if 0
 	.attrs = &osp_iio_group,
+	#endif
+	.attrs = NULL,
 };
 
 static const struct OSP_SensorDesc {
@@ -854,8 +857,10 @@ static int osp_iio_trigger(struct iio_trigger *trig, bool state)
 	struct osp_iio_sensor *osp_sensor;
 	osp_sensor = iio_priv(indio_dev);
 
-	pr_debug("%s",__func__);
+	pr_debug("%s :: state : %d\n",__func__, state);
+	#if 0
 	OSP_Sensor_State(osp_sensor->sensor, osp_sensor->private, state);
+	#endif
 	osp_sensor->state = state;
 
 	return 0;
@@ -871,13 +876,13 @@ static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
 		iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
 		osp_sensor->ts);
 #elif defined(KERNEL_VERSION_3_10)
-		*(s64 *)((u8 *)&osp_sensor->data +
-			ALIGN(sizeof(osp_sensor->data), sizeof(s64))) = osp_sensor->ts;
-		iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
+	//*(s64 *)((u8 *)&osp_sensor->data.xyz.ts) = osp_sensor->ts;
+	pr_debug(" %s osp_sensor->ts : 0x%016llx actual ts : 0x%016llx\n", __func__,
+	osp_sensor->ts, osp_sensor->data.xyz.ts);
+	iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
 #endif
 	}
 	iio_trigger_notify_done(indio_dev->trig);
-
 	return IRQ_HANDLED;
 }
 
@@ -902,7 +907,7 @@ static void dataready(int sensor, int prv,
 {
 	struct iio_dev *indio_dev = private;
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-
+	pr_debug("%s ::: sensor : %d osp_sensor ->private : %d \n", __func__, sensor,osp_sensor->private);
 	osp_sensor->ts = ts;
 	osp_sensor->data = *sensordata;
 	if (osp_sensor->private == 0 && and_sensor[sensor].useevent) {
@@ -920,8 +925,8 @@ static void dataready(int sensor, int prv,
 	}
 	if ((osp_sensor->private == 0 && and_sensor[sensor].usebuffer) ||
 		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer)) {
-		iio_trigger_poll(osp_sensor->trigger, osp_sensor->ts);
-		pr_debug("iio trigger poll 0x%08x", ts);
+		iio_trigger_poll_chained(osp_sensor->trigger, osp_sensor->ts);
+		//pr_debug("iio trigger poll 0x%08x", ts);
 	}
 }
 
