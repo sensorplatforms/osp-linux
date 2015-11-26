@@ -58,18 +58,21 @@
 #define PKID_TEST_DATA                  0x40
 #define PKID_MASK_VER0                  0xF0
 
-/** =============== CONTROL ID BYTE =============== */
-#define M_GetSensorType(i)      ((uint8_t)((i >> 16 ) & 0x01))
-#define SENSOR_TYPE_ANDROID     0x0
-#define SENSOR_TYPE_PRIVATE     0x1
-/** =============== SENSOR ID BYTE =============== */
-#define M_SensorMetaData(i)     ((uint8_t)((i << 6) & 0xC0))
-#define M_ParseSensorMetaData(i)        ((uint8_t)((i >> 6) & 0x03))
-#define M_SensorType(s)         ((uint8_t)(s & 0x3F))
+/* CONTROL ID BYTE */
+#define M_GetSensorType(i)	((u8)((i >> 16) & 0x01))
+#define SENSOR_TYPE_ANDROID	0x0
+#define SENSOR_TYPE_PRIVATE	0x1
+/* SENSOR ID BYTE */
+#define M_SensorMetaData(i)		((u8)((i << 6) & 0xC0))
+#define M_ParseSensorMetaData(i)        ((u8)((i >> 6) & 0x03))
+#define M_SensorType(s)                 ((u8)(s & 0x3F))
 
-/** =============== ATTRIBUTE BYTE =============== */
-#define M_SensorSubType(st)     ((uint8_t)((st << 4) & 0xF0))
-#define M_ParseSensorSubType(st)        ((uint8_t)((st >> 4) & 0x0F))
+/* ATTRIBUTE BYTE */
+#define M_SensorSubType(st)             ((u8)((st << 4) & 0xF0))
+#define M_ParseSensorSubType(st)        ((u8)((st >> 4) & 0x0F))
+
+/* ATTRIBUTE BYTE2*/
+#define M_ParseConfigParam(st)			((u8)(st & 0xFF))
 
 /* Checksum option (check sum is always 16-bit CRC if enabled) */
 #define CHECK_SUM_PRESENT       0x01
@@ -134,6 +137,7 @@
 #define M_SetParamId(id)                (id)
 
 /* Parameter Identifier*/
+#define PARAM_ID_ERROR_CODE_DATA		0x00
 #define PARAM_ID_ENABLE                 0x01
 #define PARAM_ID_BATCH                  0x02
 #define PARAM_ID_FLUSH                  0x03
@@ -168,30 +172,41 @@
 #define PARAM_ID_CONFIG_DONE            0x20
 
 
+/* Parameter Size */
+#define M_GetParamSize(AttrByte2)       ((AttrByte2) & 0x07)
+
+/* Param data size */
+#define PARAM_DATA_SZ_8_BIT             0x00
+#define PARAM_DATA_SZ_16_BIT            0x01
+#define PARAM_DATA_SZ_32_BIT            0x02
+#define PARAM_DATA_SZ_64_BIT            0x03
+#define PARAM_DATA_SZ_BOOL_FALSE        0x04
+#define PARAM_DATA_SZ_BOOL_TRUE         0x05
+#define PARAM_DATA_SZ_UNKNOWN           0x07
+
 /* Byte extraction macros */
-#define BYTE7(x)	((uint8_t)((x >> 56) & 0xFF))
-#define BYTE6(x)	((uint8_t)((x >> 48) & 0xFF))
-#define BYTE5(x)	((uint8_t)((x >> 40) & 0xFF))
-#define BYTE4(x)	((uint8_t)((x >> 32) & 0xFF))
-#define BYTE3(x)	((uint8_t)((x >> 24) & 0xFF))
-#define BYTE2(x)	((uint8_t)((x >> 16) & 0xFF))
-#define BYTE1(x)	((uint8_t)((x >> 8) & 0xFF))
-#define BYTE0(x)	((uint8_t)(x & 0xFF))
+#define BYTE7(x)                        ((u8)((x >> 56) & 0xFF))
+#define BYTE6(x)                        ((u8)((x >> 48) & 0xFF))
+#define BYTE5(x)                        ((u8)((x >> 40) & 0xFF))
+#define BYTE4(x)                        ((u8)((x >> 32) & 0xFF))
+#define BYTE3(x)                        ((u8)((x >> 24) & 0xFF))
+#define BYTE2(x)                        ((u8)((x >> 16) & 0xFF))
+#define BYTE1(x)                        ((u8)((x >> 8) & 0xFF))
+#define BYTE0(x)                        ((u8)(x & 0xFF))
 
-/* 16-bit, 32-bit & 64-bit data macros */
-#define BYTES_TO_SHORT(b1,b0)           ((int16_t)(((int16_t)b1 << 8) | b0))
+/* 16-bit & 32-bit data combine macros */
+#define BYTES_TO_SHORT(b1, b0)	((int16_t)(((int16_t)b1 << 8) | b0))
 
-#define BYTES_TO_LONG_ARR(arr,ind)	BYTES_TO_LONG(arr[ind],arr[ind+1],arr[ind+2],arr[ind+3])
+#define BYTES_TO_LONG_ARR(arr, ind)	BYTES_TO_LONG(arr[ind],\
+	arr[ind+1], arr[ind+2], arr[ind+3])
 
-#define BYTES_TO_LONG(b3,b2,b1,b0)      \
-	((int32_t)(((int32_t)b3 << 24) | ((uint32_t)b2 << 16) | \
-	((uint32_t)b1 << 8) | b0))
+#define BYTES_TO_LONG(b3, b2, b1, b0)      \
+	((int32_t)(((int32_t)b3 << 24) | ((u32)b2 << 16) | ((u32)b1 << 8) | b0))
 
-#define BYTES_TO_LONGLONG(b7,b6,b5,b4,b3,b2,b1,b0)      \
-	((uint64_t)(((uint64_t)b7 << 56) | ((uint64_t)b6 << 48) | \
-	((uint64_t)b5 << 40) | ((uint64_t)b4 << 32) | ((uint64_t)b3 << 24) | \
-	((uint64_t)b2 << 16) | ((uint64_t)b1 << 8) | b0))
-
+#define BYTES_TO_LONGLONG(b7, b6, b5, b4, b3, b2, b1, b0)      \
+	((u64)(((u64)b7 << 56) | ((u64)b6 << 48) | ((u64)b5 << 40) | \
+	((u64)b4 << 32) | ((u64)b3 << 24) | ((u64)b2 << 16) | \
+	((u64)b1 << 8) | b0))
 /*--------------------------------------------------------------------------*\
  |    T Y P E   D E F I N I T I O N S
 \*--------------------------------------------------------------------------*/
@@ -289,7 +304,13 @@ typedef struct _HifSensorPktQualifier {
 	uint8_t SensorIdByte;
 	uint8_t AttributeByte;
 } HifSnsrPktQualifier_t;
+/* Sensor control packet for Boolean parameters */
+struct _HifSensorReadWriteReqPacket {
+	struct _HifSensorPktQualifier Q;
+	u8 AttrByte2;
+};
 
+#define SENSOR_READ_WRITE_REQ_PKT_SZ sizeof(struct _HifSensorReadWriteReqPacket)
 /* Basic packet: Raw 16-bit data, 32-bit integer time stamp; No checksum */
 typedef struct _HifSensorDataRaw {
 	HifSnsrPktQualifier_t Q;
@@ -314,8 +335,8 @@ typedef struct _HifUncalibratedFixPoint {
 	(offsetof(HifUncalibratedFixPoint_t, Offset))
 #define UNCALIB_FIXP_DATA_OFFSET_PKT_SZ sizeof(HifUncalibratedFixPoint_t)
 
-/* Calibrated data packet: 32-bit Fixedpoint Calibrated; 64-bit Fixedpoint
-   time stamp; No Checksum */
+/* Calibrated data packet: 32-bit Fixedpoint Calibrated;
+64-bit Fixedpoint time stamp; No Checksum */
 typedef struct _HifCalibratedFixPoint {
 	HifSnsrPktQualifier_t Q;
 	uint8_t TimeStamp[8];   //64-bit Time Stamp in fixed point format

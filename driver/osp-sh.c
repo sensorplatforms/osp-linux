@@ -1,4 +1,4 @@
-#define DEBUG
+#undef DEBUG
 /*
  * Copyright (C) 2041 Audience, Inc.
  * Written by Hunyue Yau <hy-git@hy-research.com>
@@ -29,12 +29,20 @@
 #include "SensorPackets.h"
 #include "osp_i2c_map.h"
 #include <linux/osp-sh.h>
-
+#include "osp-hif-apis.h"
+#include <linux/gpio.h>
 #define NAME			"ospsh"
-
 /* Private sensors */
 #define FEAT_PRIVATE	(1<<0)
-
+#define MAX_BUF_SZ 20
+static struct completion hif_response_complete;
+static u8 sdata[PAGE_SIZE];
+#ifdef DUMMY_CONFIG_CMD
+static u16 error_code;
+static u8 dummy_read_data[4];
+static u8 dummy_write_data[4];
+#endif
+static u8 rxbuf[MAX_BUF_SZ];
 static struct OSP_Sensor {
 	void (*dataready)(int sensor, int prv,
 		void *private, long long ts, union OSP_SensorData *sensordata);
@@ -187,7 +195,6 @@ static int OSP_ParseSensorDataPkt_Android(
 	int errCode = -EPROTONOSUPPORT;
 	int lengthParsed;
 	int i;
-
 	switch ((ASensorType_t)sensType) {
 	case SENSOR_ACCELEROMETER:
 	case SENSOR_MAGNETIC_FIELD:
@@ -196,6 +203,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_FIXPOINT) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.CalFixP.TimeStamp.TS64 = 0;
 			/* Extract sensor data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -205,17 +213,13 @@ static int OSP_ParseSensorDataPkt_Android(
 				BYTES_TO_LONG_ARR(pHif->CalPktFixP.Data, 4);
 			pOut->P.CalFixP.Axis[2] =
 				BYTES_TO_LONG_ARR(pHif->CalPktFixP.Data, 8);
-
 			/* Extract fixed point time stamp */
-			for (i = 0; i < sizeof(uint64_t); i++) {
-				/* Copy LSB to MSB data -
-				 * remember that HIF packets are
-				 * Big-Endian formatted
-				 */
-				pOut->P.CalFixP.TimeStamp.TS8[i] =
-					pHif->CalPktFixP.TimeStamp[
-						sizeof(uint64_t) - i-1];
+			for (i = 0; i < sizeof(u64); i++) {
+				/* Copy LSB to MSB data - remember
+				 * that HIF packets are Big-Endian formatted */
+				pOut->P.CalFixP.TimeStamp.TS64 = (pOut->P.CalFixP.TimeStamp.TS64 << 8) + pHif->CalPktFixP.TimeStamp[i];
 			}
+			pr_debug("pOut->P.CalFixP.TimeStamp.TS64 0x%016llx \n", pOut->P.CalFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = CALIBRATED_FIXP_DATA_PKT_SZ;
 		}
@@ -228,6 +232,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_FIXPOINT) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.QuatFixP.TimeStamp.TS64 = 0;
 			/* Extract Quaternion data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -241,12 +246,10 @@ static int OSP_ParseSensorDataPkt_Android(
 				pHif->QuatPktFixP.Data, 12);
 
 			/* Extract fixed point time stamp */
-			for (i = 0; i < sizeof(uint64_t); i++) {
+			for (i = 0; i < sizeof(u64); i++) {
 				/* Copy LSB to MSB data - remember
 				 * that HIF packets are Big-Endian formatted */
-				pOut->P.QuatFixP.TimeStamp.TS8[i] =
-					pHif->QuatPktFixP.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.QuatFixP.TimeStamp.TS64 = (pOut->P.QuatFixP.TimeStamp.TS64 << 8) + pHif->QuatPktFixP.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = QUATERNION_FIXP_DATA_PKT_SZ;
@@ -260,6 +263,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_FIXPOINT) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.UncalFixP.TimeStamp.TS64 = 0;
 			/* Extract Quaternion data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -283,12 +287,10 @@ static int OSP_ParseSensorDataPkt_Android(
 			} else
 				lengthParsed = UNCALIB_FIXP_DATA_PKT_SZ;
 			/* Extract fixed point time stamp */
-			for (i = 0; i < sizeof(uint64_t); i++) {
+			for (i = 0; i < sizeof(u64); i++) {
 				/* Copy LSB to MSB data - remember that
 				 * HIF packets are Big-Endian formatted */
-				pOut->P.UncalFixP.TimeStamp.TS8[i] =
-					pHif->UncalPktFixP.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.UncalFixP.TimeStamp.TS64= (pOut->P.UncalFixP.TimeStamp.TS64 << 8) + pHif->UncalPktFixP.TimeStamp[i];
 			}
 			errCode = 0;
 		}
@@ -299,6 +301,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_RAW) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.SigMotion.TimeStamp.TS64 = 0;
 			/* Extract SignificantMotion data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -308,9 +311,7 @@ static int OSP_ParseSensorDataPkt_Android(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember that HIF
 				  packets are Big-Endian formatted */
-				pOut->P.SigMotion.TimeStamp.TS8[i] =
-					pHif->SignificantMotion.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.SigMotion.TimeStamp.TS64 = (pOut->P.SigMotion.TimeStamp.TS64 << 8) + pHif->SignificantMotion.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = SIGNIFICANTMOTION_FIXP_DATA_PKT_SZ;
@@ -322,6 +323,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_RAW) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.StepDetector.TimeStamp.TS64 = 0;
 			/* Extract StepDetector data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -332,9 +334,7 @@ static int OSP_ParseSensorDataPkt_Android(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember that HIF
 				  packets are Big-Endian formatted */
-				pOut->P.StepDetector.TimeStamp.TS8[i] =
-					pHif->StepDetector.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.StepDetector.TimeStamp.TS64 = (pOut->P.StepDetector.TimeStamp.TS64 << 8) + pHif->StepDetector.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = STEPDETECTOR_DATA_PKT_SZ;
@@ -346,6 +346,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_RAW) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.StepCount.TimeStamp.TS64 = 0;
 			/* Extract StepCounter data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -362,9 +363,7 @@ static int OSP_ParseSensorDataPkt_Android(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember that HIF
 				  packets are Big-Endian formatted */
-				pOut->P.StepCount.TimeStamp.TS8[i] =
-					pHif->StepCounter.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.StepCount.TimeStamp.TS64 = (pOut->P.StepCount.TimeStamp.TS64 << 8) + pHif->StepCounter.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = STEPCOUNTER_DATA_PKT_SZ;
@@ -376,6 +375,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_FIXPOINT) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.OrientFixP.TimeStamp.TS64 = 0;
 			/* Extract OrientationFixP data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -389,9 +389,7 @@ static int OSP_ParseSensorDataPkt_Android(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember that HIF
 				  packets are Big-Endian formatted */
-				pOut->P.OrientFixP.TimeStamp.TS8[i] =
-					pHif->OrientationFixP.TimeStamp[
-						sizeof(uint64_t) - i-1];
+				pOut->P.OrientFixP.TimeStamp.TS64 = (pOut->P.OrientFixP.TimeStamp.TS64  << 8) + pHif->OrientationFixP.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = ORIENTATION_FIXP_DATA_PKT_SZ;
@@ -404,6 +402,7 @@ static int OSP_ParseSensorDataPkt_Android(
 		    (dFormat == DATA_FORMAT_FIXPOINT) &&
 		    (timeFormat == TIME_FORMAT_FIXPOINT) &&
 		    (tSize == TIME_STAMP_64_BIT)) {
+		    pOut->P.ThreeAxisFixP.TimeStamp.TS64 = 0;
 			/* Extract ThreeAxisFixp data from packet */
 			pOut->SType = (ASensorType_t)sensType;
 			pOut->SubType = SENSOR_SUBTYPE_UNUSED;
@@ -421,8 +420,7 @@ static int OSP_ParseSensorDataPkt_Android(
 			for (i = 0; i < sizeof(uint64_t); i++) {
 				/* Copy LSB to MSB data - remember that HIF
 				  packets are Big-Endian formatted */
-				pOut->P.ThreeAxisFixP.TimeStamp.TS8[i] =
-					pHif->ThreeAxisFixp.TimeStamp[sizeof(uint64_t) - i-1];
+				pOut->P.ThreeAxisFixP.TimeStamp.TS64 = (pOut->P.ThreeAxisFixP.TimeStamp.TS64 << 8) + pHif->ThreeAxisFixp.TimeStamp[i];
 			}
 			errCode = 0;
 			lengthParsed = THREEAXIS_FIXP_DATA_PKT_SZ;
@@ -516,25 +514,25 @@ static int OSP_Sensor_disable(struct osp_data *osp, int sensor, int private)
 	return retval;
 }
 
-static int osp_i2c_read(struct osp_data *osp, u8 addr, u8 *data, int len)
+static int osp_i2c_read(u8 addr, u8 *data, int len)
 {
 #if 1
 	struct i2c_msg msgs[] = {
 		{
-			.addr = osp->client->addr,
-			.flags = osp->client->flags,
+			.addr = gOSP->client->addr,
+			.flags = gOSP->client->flags,
 			.len = 1,
 			.buf = &addr,
 		},
 		{
-			.addr = osp->client->addr,
-			.flags = osp->client->flags | I2C_M_RD,
+			.addr = gOSP->client->addr,
+			.flags = gOSP->client->flags | I2C_M_RD,
 			.len = len,
 			.buf = data,
 		},
 	};
 
-	return i2c_transfer(osp->client->adapter, msgs, 2);
+	return i2c_transfer(gOSP->client->adapter, msgs, 2);
 #else
 	struct i2c_msg msgs[3];
 
@@ -565,6 +563,23 @@ static int osp_i2c_read(struct osp_data *osp, u8 addr, u8 *data, int len)
 
 #endif
 }
+
+static int osp_i2c_write(u8 addr, u8 *data, int len)
+{
+	u8 message[len+1];
+	struct i2c_msg msgs[] = {
+		{
+			.addr = gOSP->client->addr,
+			.flags = gOSP->client->flags,
+			.len = len + 1,
+			.buf = message,
+		},
+	};
+	message[0] = addr;
+	memcpy(message + 1, data, len);
+	return i2c_transfer(gOSP->client->adapter, msgs, 1);
+}
+
 
 static void osp_disable(struct osp_data *osp)
 {
@@ -631,7 +646,7 @@ int OSP_Sensor_State(int sensor, int private, int state)
 {
 	if (private != 1 && private != 0)
 		return -EINVAL;
-
+	pr_debug("%s\n",__func__);
 	if (state == 1) {
 		OSP_Sensor_enable(gOSP, sensor, private);
 	} else {
@@ -649,12 +664,13 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	int PSensor;
 	static int sig_counter = 0, step_counter = 0;
 	union OSP_SensorData data;
-
+	pr_debug("%s ::: sensor type : %d \n", __func__, spack->SType);
 	switch(spack->SType) {
 	case SENSOR_STEP_DETECTOR:
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = spack->P.StepDetector.StepDetected;
 		data.xyz.y = step_counter;
+		data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
 		step_counter++;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -665,6 +681,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = spack->P.SigMotion.MotionDetected;
 		data.xyz.y = sig_counter;
+		data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
 		sig_counter++;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -674,6 +691,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case SENSOR_PRESSURE:
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = spack->P.CalFixP.Axis[0];
+		data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.CalFixP.TimeStamp.TS64, &data);
@@ -683,6 +701,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!and_sensor[spack->SType].dataready) break;
 		data.xyz.x = (uint32_t)spack->P.StepCount.NumStepsTotal;
 		data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
+		data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.StepCount.TimeStamp.TS64, &data);
@@ -694,6 +713,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.x = spack->P.UncalFixP.Axis[0];
 		data.xyz.y = spack->P.UncalFixP.Axis[1];
 		data.xyz.z = spack->P.UncalFixP.Axis[2];
+		data.xyz.ts = spack->P.UncalFixP.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.UncalFixP.TimeStamp.TS64, &data);
@@ -706,6 +726,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.x = spack->P.CalFixP.Axis[0];
 		data.xyz.y = spack->P.CalFixP.Axis[1];
 		data.xyz.z = spack->P.CalFixP.Axis[2];
+		data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64 ;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.CalFixP.TimeStamp.TS64, &data);
@@ -716,6 +737,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.x = spack->P.ThreeAxisFixP.Axis[0];
 		data.xyz.y = spack->P.ThreeAxisFixP.Axis[1];
 		data.xyz.z = spack->P.ThreeAxisFixP.Axis[2];
+		data.xyz.ts = spack->P.ThreeAxisFixP.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.ThreeAxisFixP.TimeStamp.TS64, &data);
@@ -726,6 +748,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.xyz.y = spack->P.OrientFixP.Pitch;
 		data.xyz.z = spack->P.OrientFixP.Roll;
 		data.xyz.x = spack->P.OrientFixP.Yaw;
+		data.xyz.ts = spack->P.OrientFixP.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.OrientFixP.TimeStamp.TS64, &data);
@@ -739,6 +762,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		data.quat.x = spack->P.QuatFixP.Quat[1];
 		data.quat.y = spack->P.QuatFixP.Quat[2];
 		data.quat.z = spack->P.QuatFixP.Quat[3];
+		data.quat.ts = spack->P.QuatFixP.TimeStamp.TS64;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.QuatFixP.TimeStamp.TS64, &data);
@@ -772,111 +796,753 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	}
 }
 
+int process_sensor_data(u8 *buf, int len)
+{
+	int err;
+	u8 *pack_ptr;
+	struct _SensorPacketTypes spack;
+	int pack_count = 0;
+	int plen = len;
+	pack_ptr = buf;
+	pr_debug("%s %i\n", __func__, __LINE__);
+	do {
+		err = OSP_ParseSensorDataPkt(&spack, pack_ptr, plen);
+		if (err > 0) {
+			OSP_ReportSensor(gOSP, &spack);
+		} else {
+			pr_debug("OSP packet parsing error = %d,\
+				pack_count = %d, plen = %d \n", err,\
+				pack_count + 1, plen);
+			break;
+		}
+		plen -= err;
+		pack_ptr += err;
+		pack_count++;
+	} while (plen > 0);
+	pr_debug("OSP packet count : %d \n", pack_count);
+	return 0;
+}
+
 /* Attempt to grab 2 packets in a row to maximize through put.
  * I2C is a slow bus (can sleep during xfers) and may take longer then
  * the time it takes to create the data on the hub if we wait too long.
  */
 static void osp_work_q(struct work_struct *work)
 {
-	struct osp_data *osp = container_of(work, struct osp_data, osp_work);
-	SensorPacketTypes_t spack;
-	unsigned char *pack_ptr;
-	int pack_count;
-	int ret;
-	uint32_t intlen;
-	int i;
-	int gotpack[NUM_PACK] = {0,0};
-	uint16_t plen[NUM_PACK] = {0,0};
+	u16 cmd;
+	u8 cause = 0;
+	u16 size;
+	int ret = 0;
+	mutex_lock(&gOSP->lock);
+read_again:
+	cause = 0;
+	size = 0;
+	error_code = 0;
+	memset(rxbuf, 0, sizeof(rxbuf));
+	memset(sdata, 0, sizeof(sdata));
+	/*Read Get cause value */
+	ret = osp_i2c_read(OSP_GET_CAUSE, rxbuf, sizeof(u8)*3);
+	cause = *((u8 *)rxbuf);
+	pr_debug("%s ::: cause : 0x%02x\n", __func__, cause);
+	switch (cause) {
+	case RESERVED:
+	/* TBD: reserved for some purpose */
+		break;
+	case SENSOR_DATA_READY:
+	{
+		size = be16_to_cpu(*(u16 *)(rxbuf + sizeof(u8)));
+		pr_debug("%s: cause= 0x%02x  size : 0x%04x \n", __func__, cause, size);
+		/* Read Sensor data */
+		if(size > 0 && size < PAGE_SIZE) {
+			ret = osp_i2c_read(OSP_GET_DATA, sdata, size);
+			/* Process sensor data and send it to userspace */
+			process_sensor_data((u8 *)sdata, size);
+		}
+		break;
+	}
+	case MAG_CALIB_DT_UPDATE:
+	/* Send notification to userspace */
+		break;
+	case ACCEL_CALIB_DT_UPDATE:
+	/* Send notification to userspace */
+		break;
+	case GYRO_CALIB_DT_UPDATE:
+	/* Send notification to userspace */
+		break;
+	case TEMP_CHANGE_DETECT:
+	/* TBD: Need to check with firmware on what actions to take */
+		break;
+	case CONFIG_CMD_RESP:
+	/*Implement Config Command Response*/
+	{
+		error_code = *(u8 *)(rxbuf + sizeof(u8));
+		size = *(u8 *)(rxbuf + sizeof(u8)*2);
+		pr_debug("%s: cause= 0x%02x error code = 0x%02x size = : 0x%02x \n",\
+			__func__, cause, error_code, size);
 
-	/* Grab buffers as quickly as possible */
-	for (i = 0; i < NUM_PACK; i++) {
-		ret = osp_i2c_read(osp, OSP_INT_LEN,
-			(unsigned char *)&intlen, 4);
-		if ((ret >= 0) && (intlen&OSP_INT_DRDY)) {
-			plen[i] = (intlen >> 4);
-			if (plen[i] > 0 && plen[i] < 8192) {
-				ret = osp_i2c_read(osp, OSP_DATA_OUT,
-					osp_pack[i], plen[i]);
-				if (ret < 0) return;
-				gotpack[i] = 1;
+		switch(error_code){
+		case 0: /* success*/
+		{
+			if(size > 0){ /*response for sensor read control request packet*/
+				ret = osp_i2c_read(OSP_GET_DATA, sdata, size);
+				pr_debug("sdata packet :: 0x%08x \n", cpu_to_be32(*(u32 *)(sdata)));
+				//wait_for_completion(&hif_response_complete);
 			}
+			break;
 		}
-	}
-	for (i = 0; i < NUM_PACK; i++) {
-		if (gotpack[i]) {
-			pack_count = 0;
-			pack_ptr = osp_pack[i];
-			do {
-				ret = OSP_ParseSensorDataPkt(&spack, pack_ptr,
-					plen[i]);
-				if (ret>0) {
-					OSP_ReportSensor(osp, &spack);
-				} else {
-					dev_err(
-						&osp->client->dev,
-						"OSP packet parsing error = %i, pack_count = %i plen = %i\n",
-						ret, pack_count, plen[i]);
-					break;
-				}
-				pr_debug("OSP Read data len %d, packet_count %d\n",
-				plen[i], pack_count);
-				plen[i] -= ret;
-				pack_ptr += ret;
-				pack_count++;
-			} while (plen[i] > 0);
+		default : /*other failure code*/
+			break;
 		}
+		break;
 	}
-}
-
-static void osp_poll_timer(unsigned long _osp)
-{
-	struct osp_data *osp = (void *)_osp;
-	queue_work(osp_workq, &osp->osp_work);
-	mod_timer(&osp->osp_timer, jiffies+1);
+	case UNRECOVER_ERR_MOTIONQ:
+	/* TBD */
+		break;
+	default:
+		break;
+	}
+	if (gpio_get_value(MPU_GYRO_IRQ_GPIO))
+		goto read_again;
+	mutex_unlock(&gOSP->lock);
 }
 
 static irqreturn_t osp_irq_thread(int irq, void *dev)
 {
 	struct osp_data *osp = dev;
-	pr_debug("%s:%d", __func__, __LINE__);
-
+	pr_debug("%s\n", __func__);
 	queue_work(osp_workq, &osp->osp_work);
 	return IRQ_HANDLED;
 }
 
-/* HY-DBG: Verify return code with latest firmwrae. */
-static int osp_verify(struct osp_data *osp)
+static ssize_t sensorhub_config_read_request(struct device *dev,
+			struct device_attribute *attr,
+			const char *buf,
+			size_t count)
 {
-	int retval;
+	int param_id, sensor_id, seq_no;
+	struct hif_data buff;
+	memset(buff.buffer, 0, sizeof(buff.buffer));
+	sscanf(buf, "0x%02x %d 0x%02x", &sensor_id, &seq_no, &param_id);
+	pr_debug(" %s setconfig param = %d, sensor id = %d, seq no = %d\n",\
+		__func__, param_id, sensor_id, seq_no);
+	osp_read_packet(param_id, sensor_id, seq_no, &buff);
+	pr_debug("%s ::: hif data : 0x%04x size : %d \n", __func__,\
+		*(u32 *)(buff.buffer + SET_CONFIG_SZ), buff.size);
+	/*write Hif read request packet to firmware */
+	mutex_lock(&gOSP->lock);
+	osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	mutex_unlock(&gOSP->lock);
+	return count;
+}
 
-	pr_debug("%s:%d", __func__, __LINE__);
-	retval = i2c_smbus_read_byte_data(osp->client, OSP_WHOAMI);
-	if (retval < 0) {
-		dev_err(&osp->client->dev,
-			"read err int source, 0x%x\n", retval);
-		goto out;
+static ssize_t sensorhub_config_write_request(struct device *dev,
+			 struct device_attribute *attr,
+			 const char *buf,
+			 size_t count)
+{
+	int param_id, sensor_id, seq_no, ret;
+	struct hif_data buff;
+	bool IsParamIDCorrect = true;
+	sscanf(buf, "0x%02x %d 0x%02x", &sensor_id, &seq_no, &param_id);
+	memset(buff.buffer, 0 , sizeof(buff.buffer));
+	buff.size = 0;
+	/* parse remaining buffer depending upon setconfig parameters*/
+	switch (param_id) {
+		/*sensor enable 0x01*/
+	case PARAM_ID_ENABLE:
+	{
+		u8 enable;
+		sscanf(buf + HIF_PARAM_STR_LEN, "%c", &enable);
+		enable = enable - '0';
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+			enable = %d\n", __func__, param_id, sensor_id, seq_no,\
+			enable);
+		osp_sensor_enable(param_id, sensor_id, seq_no, enable, &buff);
+		break;
+	}
+	case PARAM_ID_BATCH:
+	{
+		u64 data[2];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%16llx 0x%16llx", &data[0], &data[1]);
+		pr_debug("%s param_id = %d sensor id : 0x%02x, seq_no : %d,\
+			data[0] = %llu, data[1] = %llu \n", __func__,\
+			param_id, sensor_id, seq_no, data[0], data[1]);
+		osp_set_batch(param_id, sensor_id, seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_FLUSH:
+	{
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+				\n", __func__, param_id, sensor_id, seq_no);
+		osp_set_flush(param_id, sensor_id, seq_no, &buff);
+		pr_debug("%s param_id = %d sensor id : 0x%02x, seq_no : %d\n",\
+			__func__, param_id, sensor_id, seq_no);
+		break;
+	}
+	case PARAM_ID_AXIS_MAPPING:
+	{
+		s8 data[3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hhx 0x%hhx 0x%hhx",
+			&data[0], &data[1], &data[2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+			data[0] = %hhd, data[1] = %hhd, data[2] = %hhd \n",\
+			__func__, param_id, sensor_id, seq_no, data[0], data[1], data[2]);
+		osp_set_axis_mapping(param_id, sensor_id, seq_no,
+			data, &buff);
+		break;
+	}
+	case PARAM_ID_CONVERSION_OFFSET:
+	{
+		s32 data[3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%08x 0x%08x 0x%08x", &data[0], &data[1], &data[2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+			data[0] = %d, data[1] = %d, data[2] = %d \n",\
+			 __func__, param_id, sensor_id, seq_no, data[0], data[1], data[2]);
+		osp_set_conversion_offset(param_id, sensor_id, seq_no,
+			data, &buff);
+		break;
+	}
+	case PARAM_ID_TIMESTAMP_OFFSET:
+	case PARAM_ID_EXPECTED_NORM:
+	{
+		s32 data;
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%08x", &data);
+		pr_debug("%s param id = %d sensor id : 0x%02x, seq_no : %d,\
+				data = %d \n", __func__, param_id, sensor_id, seq_no, data);
+		osp_set_time_offset_normal_mag(param_id, sensor_id,
+		seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_ONTIME_WAKETIME:
+	{
+		u32 data[2];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%08x 0x%08x", &data[0], &data[1]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d, \
+				data[0] = %d data[1] = %d \n", __func__,\
+				param_id, sensor_id, seq_no, data[0], data[1]);
+		osp_set_on_wake_time(param_id, sensor_id, seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_HPF_LPF_CUTOFF:
+	{
+		u16 data[2];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hx 0x%hx", &data[0], &data[1]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d, \
+				data[0] = %hu data[1] = %hu \n", __func__,\
+				param_id, sensor_id, seq_no, data[0], data[1]);
+		osp_set_hpf_lpf_cutoff(param_id, sensor_id, seq_no,
+					data, &buff);
+		break;
+	}
+	case PARAM_ID_F_SKOR_MATRIX:
+	{
+		u32 data[3][3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x", \
+			&data[0][0], &data[0][1], &data[0][2], &data[1][0], &data[1][1],\
+			&data[1][2], &data[2][0], &data[2][1], &data[2][2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+				\n", __func__, param_id, sensor_id, seq_no);
+		osp_set_skor_matrix(param_id, sensor_id, seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_F_NONLINEAR_EFFECTS:
+	{
+		u16 data[4][3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx",\
+			&data[0][0], &data[0][1], &data[0][2], &data[1][0],\
+			&data[1][1], &data[1][2], &data[2][0], &data[2][1],\
+			&data[2][2], &data[3][0], &data[3][1], &data[3][2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+				\n", __func__, param_id, sensor_id, seq_no);
+		osp_set_non_linear_effects(param_id, sensor_id, seq_no,
+		data, &buff);
+		break;
+	}
+	case PARAM_ID_TEMP_COEFF:
+	{
+		u16 data[3][2];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hx 0x%hx 0x%hx 0x%hx 0x%hx 0x%hx", &data[0][1],\
+			&data[0][1], &data[1][0], &data[1][2],\
+			&data[2][0], &data[2][1]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d,\
+				\n", __func__, param_id, sensor_id, seq_no);
+		osp_set_temp_coeff(param_id, sensor_id, seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_SHAKE_SUSCEPTIBILIY:
+	{
+		u16 data[3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hx 0x%hx 0x%hx", &data[0], &data[1], &data[2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d, \
+			data[0] = %hu data[1] = %hu data[2] = %hu\n", \
+			__func__, param_id, sensor_id, seq_no, data[0],\
+			data[1], data[2]);
+		osp_set_shake_suscept(param_id, sensor_id, seq_no,
+				data, &buff);
+		break;
+	}
+	case PARAM_ID_DYNAMIC_CAL_SCALE:
+	case PARAM_ID_DYNAMIC_CAL_SKEW:
+	case PARAM_ID_DYNAMIC_CAL_OFFSET:
+	case PARAM_ID_DYNAMIC_CAL_ROTATION:
+	case PARAM_ID_DYNAMIC_CAL_QUALITY:
+	case PARAM_ID_CONVERSION_SCALE:
+	case PARAM_ID_SENSOR_NOISE:
+	case PARAM_ID_XYZ_OFFSET:
+	case PARAM_ID_F_CAL_OFFSET:
+	case PARAM_ID_BIAS_STABILITY:
+	case PARAM_ID_REPEATABILITY:
+	{
+		u32 data[3];
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%08x 0x%08x 0x%08x", &data[0],\
+		&data[1], &data[2]);
+		pr_debug("%s param id : %d sensor id : 0x%02x, seq_no : %d, data[0] = 0x%08x,\
+		data[1] = 0x%08x data[2] = 0x%08x\n", __func__, param_id, sensor_id,\
+		seq_no, data[0], data[1], data[2]);
+		osp_set_calib_param_fix32(param_id, sensor_id,
+		seq_no, data, &buff);
+		break;
+	}
+	case PARAM_ID_DYNAMIC_CAL_SOURCE:
+	{
+		s8 data;
+		sscanf(buf + HIF_PARAM_STR_LEN, "0x%hhx", &data);
+		osp_set_dynamic_calib_source(param_id, sensor_id, seq_no, data, &buff);
+		pr_debug("%s param id = %d sensor id : 0x%02x,\
+			seq_no : %d data = %d\n", __func__, param_id, sensor_id, seq_no, data);
+		break;
+	}
+	case PARAM_ID_CONFIG_DONE:
+	{
+		u8 data = 0x00;
+		pr_debug("%s param id : 0x%02x seq_no : %d sensor_id : 0x%02x \n",
+			__func__, param_id, seq_no, sensor_id);
+		osp_set_config_done(param_id, sensor_id, seq_no, data, &buff);
+		break;
+	}
+	default:
+		pr_debug("%s wrong parameter entered for sending \
+				write request packet\n", __func__);
+		IsParamIDCorrect = false;
+		break;
+	}
+	if(!IsParamIDCorrect)
+		return count;
+	/*write Hif write request packet to firmware */
+	mutex_lock(&gOSP->lock);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	mutex_unlock(&gOSP->lock);
+	return count;
+}
+
+int format_read_response(char *buf, u8 paramid, u8 sensorid, u8 seqno,
+	 u8 dummy_data)
+{
+	int ret = 0;
+	pr_debug("%s : response :\n", __func__);
+	switch (paramid) {
+	case PARAM_ID_ERROR_CODE_DATA:
+	{
+		if (dummy_data)
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d",
+			sensorid, seqno, paramid, error_code);
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d", \
+			sensorid, seqno, paramid, error_code);
+		break;
+	}
+	case PARAM_ID_AXIS_MAPPING:
+	{
+		if (dummy_data){
+			s8 data[3] = {0x0A, 0x0B, 0x0c};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+						"0x%02x 0x%02x 0x%02x", sensorid,
+						seqno, paramid, error_code, data[0],
+						data[1], data[2]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+						"0x%02x 0x%02x 0x%02x", sensorid, seqno, paramid,
+						error_code, *(s8 *)(sdata + 4), *(s8 *)(sdata + 5),
+						*(s8 *)(sdata + 5));
+		break;
+	}
+	case PARAM_ID_CONVERSION_OFFSET:
+	{
+		if (dummy_data){
+			s32 data[3] = {0x01020304, 0x0A0B0C0D, 0xA2ABCDA0};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%08x 0x%08x 0x%08x", sensorid, seqno,
+					paramid, error_code, data[0], data[1], data[2]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d 0x%08x 0x%08x"
+						"0x%08x", sensorid, seqno, paramid, error_code, *(s32 *)(sdata + 4),
+						*(s32 *)(sdata + 8), *(s32 *)(sdata + 12));
+		break;
+	}
+	case PARAM_ID_DYNAMIC_CAL_SCALE:
+	case PARAM_ID_DYNAMIC_CAL_SKEW:
+	case PARAM_ID_DYNAMIC_CAL_OFFSET:
+	case PARAM_ID_DYNAMIC_CAL_ROTATION:
+	case PARAM_ID_DYNAMIC_CAL_QUALITY:
+	case PARAM_ID_CONVERSION_SCALE:
+	case PARAM_ID_SENSOR_NOISE:
+	case PARAM_ID_XYZ_OFFSET:
+	case PARAM_ID_F_CAL_OFFSET:
+	case PARAM_ID_BIAS_STABILITY:
+	case PARAM_ID_REPEATABILITY:
+	{
+		if (dummy_data){
+			u32 data[3] = {0x01020304, 0x0A0B0C0D, 0xA2ABCDA0};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+				"0x%08x 0x%08x 0x%08x", sensorid, seqno,
+				paramid, error_code, data[0], data[1], data[2]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+						"0x%08x 0x%08x 0x%08x", sensorid, seqno, paramid, error_code,
+						*(u32 *)(sdata + 4), *(u32 *)(sdata + 8), *(u32 *)(sdata + 12));
+		break;
+	}
+	case PARAM_ID_TIMESTAMP_OFFSET:
+	case PARAM_ID_EXPECTED_NORM:
+	case PARAM_ID_POWER:
+	{
+		if (dummy_data){
+			u32 data = 0x01020304;
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d 0x%08x",
+					sensorid, seqno, paramid, error_code, data);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d 0x%08x",
+					sensorid, seqno, paramid, error_code, *(u32 *)(sdata + 4));
+		break;
+	}
+	case PARAM_ID_MINMAX_DELAY:
+	{
+		if (dummy_data){
+			s32 data[2] = {0x0A0B0C0D, 0x2AF08000};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%08x 0x%08x", sensorid, seqno, paramid,
+					error_code, data[0], data[1]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+						"0x%08x 0x%08x", sensorid, seqno, paramid,
+						error_code, *(s32 *)(sdata + 4), *(s32 *)(sdata + 8));
+		break;
+	}
+	case PARAM_ID_ONTIME_WAKETIME:
+	case PARAM_ID_RANGE_RESOLUTION:
+	case PARAM_ID_FIFO_EVT_CNT:
+	{
+		if (dummy_data){
+			u32 data[2] = {0x0A0B0C0D, 0x2AF08000};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%08x 0x%08x", sensorid, seqno, paramid,
+					error_code, data[0], data[1]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%08x 0x%08x", sensorid, seqno, paramid,
+					error_code, *(u32 *)(sdata + 4), *(u32 *)(sdata + 8));
+		break;
+	}
+	case PARAM_ID_HPF_LPF_CUTOFF:
+	{
+		if (dummy_data){
+			u16 data[2] = {0x0A0B, 0x2AF0};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%04x 0x%04x", sensorid, seqno , paramid,
+					error_code, data[0], data[1]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%04x 0x%04x", sensorid, seqno , paramid, error_code,
+					*(u16 *)(sdata + 4), *(u16 *)(sdata + 6));
+		break;
+	}
+	case PARAM_ID_SENSOR_NAME:
+	case PARAM_ID_VERISON:
+	{
+		if (dummy_data){
+			char SENSOR_NAME[32] = "Accelerometer";
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d %s",
+				sensorid, seqno, paramid, error_code, SENSOR_NAME);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d %s",
+			sensorid, seqno, paramid, error_code, (sdata + 4));
+		break;
+	}
+	case PARAM_ID_F_SKOR_MATRIX:
+	{
+		if (dummy_data){
+			u32 data[3][3] = {{0x0A0B020D, 0x12430808, 0x20FA8000},
+					{0x20FA8000, 0x12430808, 0x0A0B020D},
+					{0x0A0B020D, 0x20FA8000, 0x20FA8000} };
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+				"0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x "
+				"0x%08x 0x%08x", sensorid, seqno, paramid, error_code,
+				data[0][0], data[0][1], data[0][2], data[1][0],
+				data[1][1], data[1][2], data[2][0], data[2][1], data[2][2]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x",
+					sensorid, seqno, paramid, error_code, *(u32 *)(sdata + 4),
+					*(u32 *)(sdata + 8), *(u32 *)(sdata + 12), *(u32 *)(sdata + 16),
+					*(u32 *)(sdata + 20), *(u32 *)(sdata + 24), *(u32 *)(sdata + 28),
+					*(u32 *)(sdata + 32), *(u32 *)(sdata + 36));
+		break;
+	}
+	case PARAM_ID_F_NONLINEAR_EFFECTS:
+	{
+		if (dummy_data){
+			u16 data[4][3] = {{0x0A0B, 0x0B0C, 0x0102},
+							{0x0203, 0x0123, 0x0121},
+							{0xA0B0, 0x1020, 0xF080},
+							{0x8000, 0xF010, 0x0B0C} };
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+				"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x "
+				"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x", sensorid, seqno,
+				paramid, error_code, data[0][0],
+				data[0][1], data[0][2], data[1][0], data[1][1],
+				data[1][2], data[2][0], data[2][1], data[2][2],
+				data[3][0], data[3][1], data[3][2]);
+			}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x "
+					"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x", sensorid, seqno, paramid,
+					error_code, *(u16 *)(sdata + 4), *(u16 *)(sdata + 6),
+					*(u16 *)(sdata + 8), *(u16 *)(sdata + 10), *(u16 *)(sdata + 12),
+					*(u16 *)(sdata + 14), *(u16 *)(sdata + 16), *(u16 *)(sdata + 18),
+					*(u16 *)(sdata + 20), *(u16 *)(sdata + 22), *(u16 *)(sdata + 24),
+					*(u16 *)(sdata + 26));
+		break;
+	}
+	case PARAM_ID_TEMP_COEFF:
+	{
+		if (dummy_data){
+			u16 data[3][2] = {{0x0A0B, 0x0C0D},
+							{0x0201, 0x0302},
+							{0x0201, 0x03} };
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+				"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x",
+				sensorid, seqno, paramid, error_code, data[0][0],
+				data[0][1], data[1][0], data[1][1], data[2][0],
+				data[2][1]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%04x 0x%04x 0x%04x 0x%04x 0x%04x 0x%04x",
+					sensorid, seqno, paramid, error_code, *(u16 *)(sdata + 4),
+					*(u16 *)(sdata + 6), *(u16 *)(sdata + 8), *(u16 *)(sdata + 10),
+					*(u16 *)(sdata + 12), *(u16 *)(sdata + 14));
+		break;
+	}
+	case PARAM_ID_SHAKE_SUSCEPTIBILIY:
+	{
+		if (dummy_data){
+			u16 data[3] = {0x0A0B, 0x0102, 0x0406};
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+				"0x%04x 0x%04x 0x%04x", sensorid, seqno, paramid,
+				error_code, data[0], data[1], data[2]);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d "
+					"0x%04x 0x%04x 0x%04x", sensorid, seqno, paramid, error_code,
+					*(u16 *)(sdata + 4), *(u16 *)(sdata + 6), *(u16 *)(sdata + 8));
+		break;
+	}
+	case PARAM_ID_DYNAMIC_CAL_SOURCE:
+	{
+		if (dummy_data){
+			s8 data = 0x1A;
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d 0x%02x",
+			sensorid, seqno, paramid, error_code, data);
+		}
+		else
+			ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d 0x%02x",
+			sensorid, seqno, paramid, error_code, *(s8 *)(sdata + 4));
+		break;
+	}
+	default:
+	{
+		pr_debug("Setconfig parameter is write only\n");
+		ret = snprintf(buf, HIF_RESP_DATA_SZ, "%d %d %d %d",
+		sensorid, seqno, paramid, error_code);
+		break;
+	}
+	}
+	return ret;
+}
+
+static ssize_t sensorhub_config_read_response(struct device *dev,
+					struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+	u8 param_id, sensor_id, seq_no;
+	//complete(&hif_response_complete);
+	pr_debug("%s ::\n", __func__);
+	param_id = M_ParseConfigParam(*(u8 *)(sdata + 3));
+	sensor_id = M_SensorType(*(u8 *)(sdata + 1));
+	seq_no = M_SequenceNum(*(u8 *)(sdata + 2));
+	if (seq_no == 0) {
+		pr_debug("%s , seq_no : %d, response suppressed\n", __func__, seq_no);
+		return ret;
+	}
+	ret = format_read_response(buf, param_id, sensor_id, seq_no,
+		SENSOR_ACTUAL_RESPONSE);
+	return ret;
+}
+
+static ssize_t sensorhub_config_write_response(struct device *dev,
+					struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+	u8 param_id, sensor_id, seq_no;
+	//complete(&hif_response_complete);
+	pr_debug("%s ::\n", __func__);
+	param_id = M_ParseConfigParam(*(u8 *)(sdata + 3));
+	sensor_id = M_SensorType(*(u8 *)(sdata + 1));
+	seq_no = M_SequenceNum(*(u8 *)(sdata + 2));
+	if (seq_no == 0) {
+		pr_debug("%s , seq_no : %d, response suppressed\n", __func__, seq_no);
+		return ret;
 	}
 
-	retval = i2c_smbus_read_byte_data(osp->client, OSP_CONFIG);
-
-	retval = (retval != 0x54) ? -EIO : 0;
-	retval = 0;
-out:
-	return retval;
+	ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d",
+		sensor_id, seq_no, param_id, error_code);
+	return ret;
 }
+
+#ifdef DUMMY_CONFIG_CMD
+static ssize_t sensorhub_dummy_config_read_request(struct device *dev,
+			struct device_attribute *attr,
+			const char *buf,
+			size_t count)
+{
+	int sensor_id, seq_no, param_id;
+	u8 buffer[4];
+	memset(buffer, 0, sizeof(buffer));
+	memset(dummy_read_data, 0, sizeof(dummy_read_data));
+	sscanf(buf, "0x%02x %d 0x%02x", &sensor_id, &seq_no, &param_id);
+	pr_debug("%s : dummy param id : %d sensor id : %d seq no : %d\n",
+		 __func__, param_id, sensor_id, seq_no);
+	FormatSensorReadWriteReq(buffer, param_id, sensor_id, 0, seq_no, \
+		 HIF_READ_CONTROL_REQ);
+	memcpy(dummy_read_data, buffer, 4);
+	pr_debug("formatted dummy data : 0x%08x dummy data : 0x%08x\n",
+		cpu_to_be32(*(u32 *)buffer), *(u32 *)dummy_read_data);
+	return count;
+}
+
+static ssize_t sensorhub_dummy_config_write_request(struct device *dev,
+			struct device_attribute *attr,
+			const char *buf,
+			size_t count)
+{
+	int sensor_id, seq_no, param_id;
+	u8 buffer[4];
+	memset(dummy_write_data, 0, sizeof(dummy_write_data));
+	memset(buffer, 0, sizeof(buffer));
+	sscanf(buf, "0x%02x %d 0x%02x", &sensor_id, &seq_no, &param_id);
+	pr_debug("%s : dummy param id : %d sensor id : %d seq no : %d\n",
+		 __func__, param_id, sensor_id, seq_no);
+	FormatSensorReadWriteReq(buffer, param_id, sensor_id, 0, seq_no, \
+		HIF_WRITE_CONTROL_REQ);
+	memcpy(dummy_write_data, buffer, 4);
+	pr_debug("formatted dummy data : 0x%08x dummy data : 0x%08x\n",
+		cpu_to_be32(*(u32 *)buffer), *(u32 *)dummy_write_data);
+	return count;
+}
+
+static ssize_t sensorhub_dummy_config_write_response(struct device *dev,
+					  struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+	u8 param_id = M_ParseConfigParam(*(u8 *)(dummy_write_data + 3));
+	u8 sensor_id = M_SensorType(*(u8 *)(dummy_write_data + 1));
+	u8 seq_no = M_SequenceNum(*(u8 *)(dummy_write_data + 2));
+	pr_debug("%s :", __func__);
+	if (seq_no == 0) {
+		pr_debug("%s , seq_no : %d, response suppressed\n", __func__,
+		seq_no);
+		return ret;
+	 }
+	ret = snprintf(buf, HIF_RESP_DATA_SZ, "0x%02x %d 0x%02x %d",
+		sensor_id, seq_no, param_id, error_code);
+	pr_debug("%s : %d\n", __func__, ret);
+	return ret;
+}
+
+static ssize_t sensorhub_dummy_config_read_response(struct device *dev,
+					struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+	u8 param_id = M_ParseConfigParam(*(u8 *)(dummy_read_data + 3));
+	u8 sensor_id = M_SensorType(*(u8 *)(dummy_read_data + 1));
+	u8 seq_no = M_SequenceNum(*(u8 *)(dummy_read_data + 2));
+	pr_debug("%s :", __func__);
+	if (seq_no == 0) {
+		pr_debug("%s , seq_no : %d, response suppressed\n", __func__,
+		seq_no);
+		return ret;
+	}
+	ret = format_read_response(buf, param_id, sensor_id, seq_no, SENSOR_DUMMY_RESPONSE);
+	pr_debug("%s : %d\n", __func__, ret);
+	return ret;
+}
+
+static DEVICE_ATTR(sensorhub_config_read, 0666, sensorhub_config_read_response,
+		sensorhub_config_read_request);
+static DEVICE_ATTR(sensorhub_config_write, 0666, sensorhub_config_write_response,
+		sensorhub_config_write_request);
+static DEVICE_ATTR(sensorhub_dummy_config_read, 0666,
+		sensorhub_dummy_config_read_response,
+		sensorhub_dummy_config_read_request);
+static DEVICE_ATTR(sensorhub_dummy_config_write, 0666,
+		sensorhub_dummy_config_write_response,
+		sensorhub_dummy_config_write_request);
+#endif
+
+static struct attribute *core_sysfs_attrs[] = {
+	&dev_attr_sensorhub_config_write.attr,
+	&dev_attr_sensorhub_config_read.attr,
+#ifdef DUMMY_CONFIG_CMD
+	&dev_attr_sensorhub_dummy_config_write.attr,
+	&dev_attr_sensorhub_dummy_config_read.attr,
+#endif
+	NULL
+};
+
+static struct attribute_group core_sysfs = {
+	.attrs = core_sysfs_attrs
+};
 
 static int OSP_add_child(struct osp_data *osp)
 {
 	struct platform_device *pdev;
-
+	int err;
 	pdev = platform_device_alloc("osp-output", 0);
 	if (!pdev) {
-		printk("Cannot allocate dev\n");
+		pr_debug("Cannot allocate dev\n");
 		return -ENOMEM;
 	}
 	pdev->dev.parent = &osp->client->dev;
-
-	return platform_device_add(pdev);
+	err =  platform_device_add(pdev);
+	if (!err) {
+		err = sysfs_create_group(&pdev->dev.kobj, &core_sysfs);
+		if (err) {
+			pr_debug("%s not able to create sysfs %d \n", __func__, err);
+		}
+	}
+	else
+		pr_debug("%s failed to register platform device\n", __func__ );
+	return err;
 }
 
 static int osp_probe(struct i2c_client *client,
@@ -885,7 +1551,6 @@ static int osp_probe(struct i2c_client *client,
 	struct osp_data *osp;
 	int err;
 	int i;
-
 	pr_debug("%s:%d", __func__, __LINE__);
 	if (!i2c_check_functionality(client->adapter,
 				I2C_FUNC_I2C | I2C_FUNC_SMBUS_BYTE_DATA)) {
@@ -907,21 +1572,13 @@ static int osp_probe(struct i2c_client *client,
 				"failed to allocate memory for packet data\n");
 			i--;
 			for (; i >= 0; i--) {
-				kfree(osp_pack[i]);	
+				kfree(osp_pack[i]);
 			}
 			return -ENOMEM;
 		}
 	}
 
 	osp->client = client;
-
-	err = osp_verify(osp);
-	if (err < 0) {
-		dev_err(&client->dev, "device not recognized\n");
-		goto err_free_mem;
-	}
-	pr_debug("%s:%d", __func__, __LINE__);
-
 	i2c_set_clientdata(client, osp);
 
 	osp_workq = create_workqueue("osp_queue");
@@ -929,27 +1586,23 @@ static int osp_probe(struct i2c_client *client,
 		INIT_WORK(&osp->osp_work, osp_work_q);
 	}
 
-	client->irq = -1;	/* Force it for now */
+	//client->irq = -1;	/* Force it for now */
 
 	if (client->irq > 0) {
-		err = request_threaded_irq(client->irq, NULL, osp_irq_thread, IRQF_TRIGGER_LOW, "osp-sh", osp);
+		err = request_irq(client->irq, osp_irq_thread, IRQF_TRIGGER_RISING, "osp-sh", osp);
 		if (err < 0) {
 			dev_err(&client->dev,
 				"irq request failed %d, error %d\n",
 				client->irq, err);
 		}
-
-	}
-
-	if (client->irq <= 0 || err < 0) {
-		setup_timer(&osp->osp_timer, osp_poll_timer, (unsigned long)osp);
-		mod_timer(&osp->osp_timer, jiffies + msecs_to_jiffies(10));
+		else
+			pr_debug("%s irq registered :%d \n", __func__, client->irq);
 	}
 	pr_debug("%s:%d", __func__, __LINE__);
-
 	OSP_CB_init();
 	/* Create child device */
 	OSP_add_child(osp);
+	init_completion(&hif_response_complete);
 	pr_debug("%s:%d", __func__, __LINE__);
 
 	return 0;
