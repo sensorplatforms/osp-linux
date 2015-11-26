@@ -1428,7 +1428,6 @@ static ssize_t sensorhub_reset_response(struct device *dev,
 	memset(buff.buffer, 0 , sizeof(buff.buffer));
 	ret = i2c_smbus_write_byte_data(gOSP->client, OSP_RESET_REG, 1);
 	pr_debug("osp reset done ret ::%d \n", ret);
-	/* wait for sensorhub to initialize before sending config command*/
 	msleep(300);
 	osp_set_config_done(PARAM_ID_CONFIG_DONE, 0, 0, 0, &buff);
 	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
