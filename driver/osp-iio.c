@@ -1,4 +1,3 @@
-#define DEBUG
 /**
  * Copyright (c) 2015 Hunyue Yau for Audience
  *
@@ -494,6 +493,7 @@ static const struct iio_info osp_sensor_info = {
 	.read_raw = &osp_sensor_read_raw,
 	.write_raw = &osp_sensor_write_raw,
 	.attrs = &osp_iio_group,
+	.attrs = NULL,
 };
 
 static const struct OSP_SensorDesc {
@@ -849,15 +849,12 @@ static int osp_iio_sensor_init(struct iio_dev *indio_dev, int sensor, int type)
 
 static int osp_iio_trigger(struct iio_trigger *trig, bool state)
 {
-	//struct iio_dev *indio_dev = trig->private_data;
 	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
 	struct osp_iio_sensor *osp_sensor;
 	osp_sensor = iio_priv(indio_dev);
-
-	pr_debug("%s",__func__);
+	pr_debug("%s :: state : %d\n",__func__, state);
 	OSP_Sensor_State(osp_sensor->sensor, osp_sensor->private, state);
 	osp_sensor->state = state;
-
 	return 0;
 }
 
@@ -868,16 +865,16 @@ static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
 	if (indio_dev->buffer->scan_timestamp){
 #if defined(KERNEL_VERSION_3_1)
-		iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
+	iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
 		osp_sensor->ts);
 #elif defined(KERNEL_VERSION_3_10)
-		*(s64 *)((u8 *)&osp_sensor->data +
-			ALIGN(sizeof(osp_sensor->data), sizeof(s64))) = osp_sensor->ts;
-		iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
+	/* *(s64 *)((u8 *)&osp_sensor->data.xyz.ts) = osp_sensor->ts;*/
+	pr_debug(" %s osp_sensor->ts : 0x%016llx actual ts : 0x%016llx\n", __func__,
+	osp_sensor->ts, osp_sensor->data.xyz.ts);
+	iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
 #endif
 	}
 	iio_trigger_notify_done(indio_dev->trig);
-
 	return IRQ_HANDLED;
 }
 
@@ -902,9 +899,9 @@ static void dataready(int sensor, int prv,
 {
 	struct iio_dev *indio_dev = private;
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-
 	osp_sensor->ts = ts;
 	osp_sensor->data = *sensordata;
+	pr_debug("%s ::: ts : %llu\n", __func__, ts);
 	if (osp_sensor->private == 0 && and_sensor[sensor].useevent) {
 		switch (sensor) {
 		case SENSOR_SIGNIFICANT_MOTION:
@@ -920,8 +917,7 @@ static void dataready(int sensor, int prv,
 	}
 	if ((osp_sensor->private == 0 && and_sensor[sensor].usebuffer) ||
 		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer)) {
-		iio_trigger_poll(osp_sensor->trigger, osp_sensor->ts);
-		pr_debug("iio trigger poll 0x%08x", ts);
+		iio_trigger_poll_chained(osp_sensor->trigger, osp_sensor->ts);
 	}
 }
 
