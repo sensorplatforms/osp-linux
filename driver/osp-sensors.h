@@ -42,6 +42,45 @@
  |    T Y P E   D E F I N I T I O N S
 \*-------------------------------------------------------------------------------------------------*/
 
+/* Enumerated error codes for MotionQ sources
+ * MQ_BAD_BUFFER: Bad buffer pointer (NULL)
+ * MQ_INVALID_PACKETID: Host interface packet ID invalid
+ * MQ_UNSUPPORTED_FEATURE: Feature currently unsupported
+ * MQ_INVALID_PARAMETER: API called with invalid argument/parameter
+ * MQ_NOT_IMPLEMENTED: API or function not implemented (mostly for stubs)
+ * MQ_PARAM_CROSS_LINKAGE: Independent parameter setting not possible
+ * MQ_UNSUPPORTED_DATA_RATE: Data rate specified is not supported
+ * MQ_UNSUPPORTED_RANGE: Range specified is not supported
+ * MQ_SENSOR_SAMPLE_DECIMATED: Sample is not available because of decimation
+ * MQ_ALGORITHM_API_ERR: Error returned by Motion library
+ * MQ_SENSOR_POWER_DOWN: Sensor is in Power Down mode or it is disable
+ * MQ_SENSOR_CANNED_DATA_NOMORE: Exhausted all simulation data
+ * (used in simulation mode)
+ * MQ_FILEIO_ERROR: Error during file operations (used in simulation mode)
+ */
+enum _MQErr {
+	MQ_SUCCESS = 0,
+	MQ_BAD_BUFFER,
+	MQ_INVALID_PACKETID,
+	MQ_UNSUPPORTED_FEATURE,
+	MQ_QUEUE_EMPTY,
+	MQ_QUEUE_FULL,
+	MQ_QUEUE_HIGH_THRESHOLD,
+	MQ_QUEUE_LOW_THRESHOLD,
+	MQ_INVALID_PARAMETER,
+	MQ_NOT_IMPLEMENTED,
+	MQ_PARAM_CROSS_LINKAGE,
+	MQ_UNSUPPORTED_DATA_RATE,
+	MQ_UNSUPPORTED_RANGE,
+	MQ_SENSOR_SAMPLE_DECIMATED,
+	MQ_ALGORITHM_API_ERR,
+	MQ_UNAVAILABLE_INPUT_SENSOR,
+	MQ_UNSUPPORTED_ALGORITHM,
+	MQ_SENSOR_POWER_DOWN,
+	MQ_SENSOR_CANNED_DATA_NOMORE,
+	MQ_FILEIO_ERROR,
+};
+
 /* Private Sensor types (translates to Android SENSOR_TYPE_DEVICE_PRIVATE_BASE start) */
 typedef enum _PSensorType {
     PSENSOR_ENUM_FIRST_SENSOR              =  0,

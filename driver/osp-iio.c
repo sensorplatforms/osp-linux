@@ -493,7 +493,10 @@ static const struct iio_info osp_sensor_info = {
 	.driver_module = THIS_MODULE,
 	.read_raw = &osp_sensor_read_raw,
 	.write_raw = &osp_sensor_write_raw,
+	#if 0
 	.attrs = &osp_iio_group,
+	#endif
+	.attrs = NULL,
 };
 
 static const struct OSP_SensorDesc {
