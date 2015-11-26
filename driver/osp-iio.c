@@ -921,7 +921,7 @@ static void dataready(int sensor, int prv,
 	if ((osp_sensor->private == 0 && and_sensor[sensor].usebuffer) ||
 		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer)) {
 		iio_trigger_poll(osp_sensor->trigger, osp_sensor->ts);
-		pr_debug("iio trigger poll 0x%08x", ts);
+		//pr_debug("iio trigger poll 0x%08x", ts);
 	}
 }
 
