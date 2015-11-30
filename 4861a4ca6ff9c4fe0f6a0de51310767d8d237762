@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_53414038",
+        "filename": "driver/SensorPackets.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006889
+      },
+      "writtenOn": "2015-11-30T23:16:52Z",
+      "side": 1,
+      "message": "This version is obsolete now. It doesn\u0027t support batching and may have bugs that were resolved with Batching related changes.",
+      "revId": "4861a4ca6ff9c4fe0f6a0de51310767d8d237762",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_335da422",
+        "filename": "driver/osp-hif-apis.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006889
+      },
+      "writtenOn": "2015-11-30T23:16:52Z",
+      "side": 1,
+      "message": "Are you guys doing a fresh take on HIF packetization/parsing? That would be duplication of work that has already been done and tested to some extent",
+      "revId": "4861a4ca6ff9c4fe0f6a0de51310767d8d237762",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_1358a831",
+        "filename": "driver/osp-sensors.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1006889
+      },
+      "writtenOn": "2015-11-30T23:16:52Z",
+      "side": 1,
+      "message": "These error codes do not belong here. We have actually added some of the codes (translated from MQ_ to OSP_STATUS_ types) to osp-types.h file so that any sources there were imported from MotionQ/Branchport implementation now use OSP_STATUS_XXX error codes.",
+      "revId": "4861a4ca6ff9c4fe0f6a0de51310767d8d237762",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_f3796c94",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006889
+      },
+      "writtenOn": "2015-11-30T23:16:52Z",
+      "side": 1,
+      "message": "the I2C driver commands are the old style ones that were being used for the Nexus-7 demo (non-batching). I am not sure if this will work with Batching. We need to discuss the design. I was thinking to have the I2C driver inline with the SPI driver and use interactions similar to Get-Cause and COnfig commands.",
+      "revId": "4861a4ca6ff9c4fe0f6a0de51310767d8d237762",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
