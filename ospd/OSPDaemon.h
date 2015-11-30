@@ -12,6 +12,14 @@
 extern "C" {
 #endif // __cplusplus
 
+#define SH_CONFIG_READ_STORE "/sys/bus/i2c/devices/2-0018/osp-output.0/sensorhub_config_read"
+#define SH_CONFIG_WRITE_STORE "/sys/bus/i2c/devices/2-0018/osp-output.0/sensorhub_config_write"
+#define SH_CONFIG_IIO_ENABLE "/sys/bus/iio/devices"
+#define	SYSFS_CMD_SIZE 1024
+#define PARAM_ID_ENABLE					1
+#define PARAM_ID_BATCH					2
+#define PARAM_ID_FLUSH					3
+
     /* Per sensor cal data size. Data larger then this is ignored */
 #define MAX_CALSIZE	2048
 
@@ -265,6 +273,9 @@ struct psen_data {
 };
 int OSPDaemon_looper(int argc, char **argv);
 int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data);
+int OSPDaemon_sensor_enable(int enable, int sensor_type);
+int OSPDaemon_batch(int sensor_type, int64_t sampling_period_ns, int64_t max_report_latency_ns);
+int OSPDaemon_flush(int sensor_type);
 
 #ifdef __cplusplus
 }

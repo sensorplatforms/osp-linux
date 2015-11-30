@@ -66,26 +66,24 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 {
     bool flags = enabled ? true : false;
     char enablePath[512];
-
-    LOGE("@@@@ enable: [%d] - %d, %d", handle, enabled, mEnabled);
+    LOGE("@@@@ enable: [%d] - %d, %d sensortype : %d ", handle, enabled, mEnabled, mSensorType);
     if (flags && flags != mEnabled) {
-        int fd;
-        enablePath[511] = '\0';
-        snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
-        fd = creat(enablePath, 0777);
-        LOGE("@@@@ HY-DBG: enable-path %s fd = %i", enablePath, fd);
-        close(fd);
         mEnabled = flags;
+	OSPDaemon_sensor_enable(enabled, mSensorType);
     } else if (!flags) {
-        enablePath[511] = '\0';
-        snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
-        LOGE("@@@@ HY-DBG: enable-path %s", enablePath);
-        unlink(enablePath);
         mEnabled = flags;
+	OSPDaemon_sensor_enable(enabled, mSensorType);
     }
     LOGE("@@@@ enable after: [%d] - %d %d", handle, enabled, mEnabled);
-
     return 0;
+}
+
+int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
+{
+	LOGE("@@@@ batch: [%d]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
+		handle, mSensorType, period_ns, timeout);
+	OSPDaemon_batch(mSensorType, period_ns, timeout);
+	return 0;
 }
 
 bool OSPQSensor::handleEvent(input_event const * event,
@@ -112,8 +110,7 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
     int fc = 0, ret, i = 0;
     struct psen_data ld;
     if (count < 1)
-        return -EINVAL;
-
+	return -EINVAL;
     if (0 == mEnabled) {
         //LOGE("Sensor %s is not enabled", uinputName);
         return 0;
