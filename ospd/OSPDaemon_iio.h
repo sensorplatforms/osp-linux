@@ -7,8 +7,12 @@
 /* TODO: Figure this out from config file */
 #define MAX_IIO_SENSOR 20
 
-#define IIO_DEVICE_DIR	"/sys/bus/iio/devices"
-
+#define SH_CONFIG_READ_STORE "/sys/bus/platform/devices/osp-output.0/sensorhub_config_read"
+#define SH_CONFIG_WRITE_STORE "/sys/bus/platform/devices/osp-output.0/sensorhub_config_write"
+#define	SYSFS_CMD_SIZE 1024
+#define PARAM_ID_ENABLE 1
+#define PARAM_ID_BATCH 2
+#define PARAM_ID_FLUSH 3
 enum {
     axis_x,
     axis_y,

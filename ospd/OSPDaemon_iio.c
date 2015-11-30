@@ -33,7 +33,7 @@
 #define DBGOUT(x...) DBG(DEBUG_INDRIVER, "IIO: "x)
 
 static struct IIO_Sensor IIOSen[MAX_IIO_SENSOR];
-
+#define HIF_ENABLE 0
 /* sysfs support */
 static void sysfs_write_val(const char *path, const int val)
 {
@@ -340,36 +340,111 @@ static int getiionum(const char *sname)
     return -1;
 }
 
-static void OSPDaemon_iio_SetState(struct IIO_Sensor *s, int state)
+static int OSPDaemon_iio_batch(struct OSPDaemon_SensorDetail *s, int handle, int64_t sampling_period_ns, int64_t max_report_latency_ns){
+    int fd, sz;
+    char buff[SYSFS_CMD_SIZE];
+    int seq_no = 1;
+    int param_id = PARAM_ID_BATCH;
+    DBGOUT("%s :: param_id : %d seq_no : %d sensor_id \n", __func__, param_id, seq_no, handle);
+    memset(buff, '\0', SYSFS_CMD_SIZE);
+    fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+    if(fd > 0){
+	sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x 0x%llx 0x%llx",\
+	handle, seq_no, param_id, sampling_period_ns, max_report_latency_ns);
+	write(fd, &buff, sz);
+    }
+    else {
+	LOGE("Failed to open the write config store");
+	return -1;
+    }
+    close(fd);
+    return 0;
+}
+
+static int OSPDaemon_iio_flush(struct OSPDaemon_SensorDetail *s, int handle){
+    int fd, sz;
+    char buff[SYSFS_CMD_SIZE];
+    int seq_no = 1;
+    int param_id = PARAM_ID_FLUSH;
+    DBGOUT("%s :: param_id : %d seq_no : %d sensor_id \n", __func__, param_id, seq_no, handle);
+    memset(buff, '\0', SYSFS_CMD_SIZE);
+    fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+    if(fd > 0){
+	sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x", handle, seq_no, param_id);
+	write(fd, &buff, sz);
+    }
+    else {
+	LOGE("Failed to open the write config store");
+	return -1;
+    }
+    close(fd);
+    return 0;
+}
+
+static int OSPDaemon_iio_SetState(struct IIO_Sensor *s, int state)
 {
     char name[PATH_MAX+1];
-
+    DBGOUT("%s ::: iionum : %d\n", __func__, s->iionum);
     if (state != 0) state = 1;
     name[PATH_MAX] = '\0';
     snprintf(name, PATH_MAX, IIO_DEVICE_DIR"/iio:device%i/enable",
             s->iionum);
-
     sysfs_write_val(name, state);
+    return 0;
+}
+
+static int OSPDaemon_enable(int sensorid, int enable){
+    int fd;
+    char buff[SYSFS_CMD_SIZE];
+    int seq_no = 1, sz;
+    int param_id = PARAM_ID_ENABLE;
+    DBGOUT("%s :: param_id : %d seq_no : %d sensor_id : %d \n", __func__, param_id, seq_no, sensorid);
+    memset(buff, '\0', SYSFS_CMD_SIZE);
+    fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+    if(fd > 0){
+		sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x %d", sensorid, seq_no, param_id, enable);
+		write(fd, &buff, sz);
+     }
+     else {
+		LOGE("Failed to open the write config store");
+		return -1;
+    }
+    close(fd);
+    return 0;
 }
 
 static int OSPDaemon_iio_enable(struct OSPDaemon_SensorDetail *s)
 {
-    struct IIO_Sensor *is;
-
-    is = s->lprivate;
-    OSPDaemon_iio_SetState(is, 1);
-
-    return 0;
+    int ret;
+    if(HIF_ENABLE){
+		DBGOUT("%s ::: sensor_id %d hif_enable : %d \n", __func__, s->sensor.SensorType, HIF_ENABLE);
+		int sensor_id = s->sensor.SensorType;
+		ret = OSPDaemon_enable(sensor_id, 1);
+    }
+	else {
+		struct IIO_Sensor *is;
+		is = s->lprivate;
+		DBGOUT("%s ::: sensor_id %d hif_enable : %d \n", __func__, s->sensor.SensorType, HIF_ENABLE);
+		ret = OSPDaemon_iio_SetState(is, 1);
+	}
+    return ret;
 }
 
 static int OSPDaemon_iio_disable(struct OSPDaemon_SensorDetail *s)
 {
-    struct IIO_Sensor *is;
-
-    is = s->lprivate;
-    OSPDaemon_iio_SetState(is, 0);
-
-    return 0;
+    int ret;
+	if(HIF_ENABLE){
+		DBGOUT("%s ::: sensor_id %d hif_enable : %d \n", __func__, s->sensor.SensorType, HIF_ENABLE);
+		int sensor_id = s->sensor.SensorType;
+		ret = OSPDaemon_enable(sensor_id, 0);
+	}
+	else {
+		struct IIO_Sensor *is;
+		is = s->lprivate;
+		DBGOUT("%s ::: sensor_id %d hif_enable : %d \n", __func__, s->sensor.SensorType, HIF_ENABLE);
+		ret = OSPDaemon_iio_SetState(is, 0);
+	}
+    return ret;
 }
 
 static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
@@ -530,6 +605,8 @@ static struct OSPDaemon_driver IIODriver = {
     .read = OSPDaemon_iio_read,
     .enable_in = OSPDaemon_iio_enable,
     .disable_in = OSPDaemon_iio_disable,
+    .batch = OSPDaemon_iio_batch,
+    .flush = OSPDaemon_iio_flush,
 }, IIOEventDriver = {
     .drvtype = DRIVER_TYPE_INPUT,
     .driver = DRIVER_IIOEVENT,
