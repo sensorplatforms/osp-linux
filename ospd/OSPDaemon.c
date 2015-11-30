@@ -14,14 +14,14 @@
 #include <unistd.h>
 #include <limits.h>
 #include <semaphore.h>
-
+#include "./../include/osp-sensors.h"
 #include "OSPDaemon.h"
 #include "OSPDaemon_queue.h"
 #include "OSPDaemon_pm.h"
 #include "OSPDaemon_driver.h"
-
+#include "OSPDaemon_iio.h"
 #include "osp-api.h"
-
+unsigned int hif_enable = 0;
 extern sem_t osp_sync;
 
 unsigned int debug_level = 255;//= 1;
@@ -294,7 +294,6 @@ static int OSPDaemon_senddata(struct OSPDaemon_SensorDetail *s)
     OSP_InputSensorData_t mod;
     OSP_STATUS_t stat;
     int ret = 0;
-
     if (!s->noprocess && s->pending) {
         memcpy(&od, &s->pdata, sizeof(s->pdata));
         stat = OSP_SetInputData(s->handle, &od);
@@ -311,7 +310,7 @@ static int OSPDaemon_senddata(struct OSPDaemon_SensorDetail *s)
 
         if (s->output) {
             if (disablepm || s->output->enable) {
-                if (modifyOutput(s->output, &od, &mod) == 1) {
+				if (modifyOutput(s->output, &od, &mod) == 1) {
                     OSPDaemon_queue_put(&s->output->q, &mod);
                 } else {
                     OSPDaemon_queue_put(&s->output->q, &od);
@@ -464,7 +463,6 @@ int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
         if (sd->sensor[i].sensor.SensorType == in_sen_type)
             break;
     }
-
     if (i == sd->sensor_count) {
         DBG(DEBUG_INIT, "Failed to find the sensor of type %d", in_sen_type);
         return -1;
@@ -482,6 +480,141 @@ int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
             out_data->val);
 
     return vallen;
+}
+
+static void sysfs_write_val(const char *path, const int val)
+{
+    FILE *f;
+
+    f = fopen(path, "w");
+    if (f) {
+		fprintf(f, "%i", val);
+		fclose(f);
+    } else {
+	DBG(DEBUG_INIT, "^^^ sysfs_write_val failed(%s) %s %d", strerror(errno), path, val);
+    }
+}
+
+ASensorType_t getsensorid(const char *str){
+	ASensorType_t sensortype;
+	if (!strcmp(str, "fm-accelerometer"))
+		sensortype = SENSOR_ACCELEROMETER;
+	else if (!strcmp(str, "fm-gyroscope"))
+		sensortype = SENSOR_GYROSCOPE;
+	else if (!strcmp(str, "fm-magnetometer"))
+		sensortype = SENSOR_MAGNETIC_FIELD;
+	else if	(!strcmp(str, "fm-compass-orientation"))
+		sensortype = SENSOR_ORIENTATION;
+	else if	(!strcmp(str, "fm-linear-acceleration"))
+		sensortype = SENSOR_LINEAR_ACCELERATION;
+	else if (!strcmp(str, "fm-gravity"))
+		sensortype = SENSOR_GRAVITY;
+	else if (!strcmp(str, "fm-rotation-vector"))
+		sensortype = SENSOR_ROTATION_VECTOR;
+	else if (!strcmp(str, "fm-uncalibrated-magnetometer"))
+		sensortype = SENSOR_MAGNETIC_FIELD_UNCALIBRATED;
+	else if (!strcmp(str, "fm-game-rotation-vector"))
+		sensortype = SENSOR_GAME_ROTATION_VECTOR;
+	else if (!strcmp(str, "fm-uncalibrated-gyroscope"))
+		sensortype = SENSOR_GYROSCOPE_UNCALIBRATED;
+	else if (!strcmp (str, "fm-geomagnetic-rotation-vector"))
+		sensortype = SENSOR_GEOMAGNETIC_ROTATION_VECTOR;
+	else if (!strcmp(str, "fm-significant-motion"))
+		sensortype = SENSOR_SIGNIFICANT_MOTION;
+	else if (!strcmp(str, "fm-step-detector"))
+		sensortype = SENSOR_STEP_DETECTOR;
+	else if (!strcmp (str, "fm-step-counter"))
+		sensortype = SENSOR_STEP_COUNTER;
+	else
+		sensortype = -1;
+	return sensortype;
+}
+
+int OSPDaemon_sensor_enable(int enable, const char *str){
+
+	if(hif_enable){
+		int fd;
+		char buff[SYSFS_CMD_SIZE];
+		int seq_no = 1, sz;
+		int param_id = PARAM_ID_FLUSH;
+		ASensorType_t sensor_id = getsensorid(str);
+		DBG(DEBUG_INIT,"%s :: param_id : %d seq_no : %d sensor_id \n", __func__, param_id, seq_no, sensor_id);
+		memset(buff, '\0', SYSFS_CMD_SIZE);
+		fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+		if(fd > 0){
+			sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x %d", sensor_id, seq_no, param_id, enable);
+			write(fd, &buff, sz);
+		}
+		else {
+			LOGE("Failed to open the write config store");
+			return -1;
+		}
+		close(fd);
+	}
+	else {
+		int i;
+		struct IIO_Sensor *is;
+		struct OSPDaemon_output *out;
+		char name[PATH_MAX+1];
+		for (i = 0; i < sd->output_count; i++) {
+			if (strcmp(sd->output[i].name, str) == 0){
+				sd->output[i].enable = enable;
+				out = &sd->output[i];
+				is = out->source->lprivate;
+			}
+		}
+		DBG(DEBUG_INIT,"%s ::: is->iionum : %d enable :: %d str = %s \n",
+			__func__, is->iionum, enable, str);
+		if (enable != 0) enable = 1;
+		name[PATH_MAX] = '\0';
+		snprintf(name, SYSFS_CMD_SIZE, SH_CONFIG_IIO_ENABLE"/iio:device%i/enable",
+			is->iionum);
+		sysfs_write_val(name, enable);
+	}
+	return 0;
+}
+
+int OSPDaemon_batch(int handle, int64_t sampling_period_ns, int64_t max_report_latency_ns)
+{
+	int fd;
+	char buff[SYSFS_CMD_SIZE];
+	int seq_no = 1, sz;
+	int param_id = PARAM_ID_FLUSH;
+	DBG(DEBUG_INIT,"%s :: param_id : %d seq_no : %d sensor_id \n", __func__, param_id, seq_no, handle);
+	memset(buff, '\0', SYSFS_CMD_SIZE);
+	fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+	if(fd > 0){
+		sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x 0x%llx 0x%llx", \
+			handle, seq_no, param_id, sampling_period_ns, max_report_latency_ns);
+		write(fd, &buff, sz);
+	}
+	else {
+		LOGE("Failed to open the write config store");
+		return -1;
+	}
+	close(fd);
+	return 0;
+}
+
+int OSPDaemon_flush(int handle)
+{
+	int fd;
+	char buff[SYSFS_CMD_SIZE];
+	int seq_no = 1, sz;
+	int param_id = PARAM_ID_FLUSH;
+	DBG(DEBUG_INIT, "%s :: param_id : %d seq_no : %d sensor_id \n", __func__, param_id, seq_no, handle);
+	memset(buff, '\0', SYSFS_CMD_SIZE);
+	fd = open(SH_CONFIG_WRITE_STORE, O_RDWR);
+	if(fd > 0){
+		sz = snprintf(buff, SYSFS_CMD_SIZE, "0x%02x %d 0x%02x", handle, seq_no, param_id);
+		write(fd, &buff, sz);
+	}
+	else {
+		LOGE("Failed to open the write config store");
+		return -1;
+	}
+	close(fd);
+	return 0;
 }
 
 static void OSPDaemon(char *confname)
