@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_bfe97b1c",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-11-30T12:20:23Z",
+      "side": 1,
+      "message": "handle event missing for step, sig-mot",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_1f0fcf31",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-11-30T12:20:23Z",
+      "side": 1,
+      "message": "s/threadFunc/ospxxx",
+      "range": {
+        "startLine": 339,
+        "startChar": 6,
+        "endLine": 339,
+        "endChar": 16
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
