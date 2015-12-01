@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <semaphore.h>
-
+#include <errno.h>
 #include "OSPDaemon.h"
 #include "OSPDaemon_queue.h"
 #include "OSPDaemon_pm.h"
