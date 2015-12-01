@@ -22,7 +22,7 @@
 #include <poll.h>
 #include <pthread.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <linux/input.h>
 
 #include <utils/Atomic.h>
@@ -91,12 +91,10 @@
 #endif
 
 sem_t osp_sync;
-
-/*****************************************************************************/
 struct uinput_user_dev;
 
 /* The SENSORS Module */
-#if (PLATFORM_VERSION_MAJOR == 5)
+#if (PLATFORM_VERSION_MAJOR >= 5)
 static struct sensor_t sSensorList[] = {
     { "OSP Accelerometer",
         "Sensor Platforms",
@@ -228,6 +226,13 @@ static int sensors__get_sensors_list(struct sensors_module_t* module,
     return ARRAY_SIZE(sSensorList);
 }
 
+#if (PLATFORM_VERSION_MAJOR >= 6)
+static int sensors__set_operation_mode(unsigned int mode)
+{
+	return -EPERM;
+}
+#endif
+
 static struct hw_module_methods_t sensors_module_methods = {
 open: open_sensors
 };
@@ -245,6 +250,9 @@ tag: HARDWARE_MODULE_TAG,
      reserved: {0}
         },
 get_sensors_list: sensors__get_sensors_list,
+#if (PLATFORM_VERSION_MAJOR >= 6)
+set_operation_mode: sensors__set_operation_mode,
+#endif
 };
 
 struct sensors_poll_context_t {
@@ -588,6 +596,13 @@ static int poll__flush(struct sensors_poll_device_1* dev, int handle)
     return ctx->flush(handle);
 }
 
+#if (PLATFORM_VERSION_MAJOR >= 6)
+int poll__inject_sensor_data(struct sensors_poll_device_1 *dev, const sensors_event_t *data)
+{
+	return -EPERM;
+}
+#endif
+
 /*****************************************************************************/
 
 /** Open a new instance of a sensor device using name */
@@ -608,6 +623,9 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
     dev->device.poll            = poll__poll;
     dev->device.batch           = poll__batch;
     dev->device.flush           = poll__flush;
+#if (PLATFORM_VERSION_MAJOR >= 6)
+	dev->device.inject_sensor_data = poll__inject_sensor_data;
+#endif
 
     *device = &dev->device.common;
     status = 0;
