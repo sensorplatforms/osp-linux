@@ -16,7 +16,7 @@
 #include <linux/uinput.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <errno.h>
 #include "OSPDaemon.h"
 #include "OSPDaemon_queue.h"
 #include "OSPDaemon_driver.h"
