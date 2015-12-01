@@ -21,9 +21,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
-
 #include <linux/input.h>
-
+#include <string.h>
 #include <cutils/log.h>
 #include "local_log_def.h"
 
