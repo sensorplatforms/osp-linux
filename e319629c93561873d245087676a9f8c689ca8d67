@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_ee7edfe3",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Check for error conditions and return the correct error to android",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_0e84fbd2",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Check for error conditions and return the correct error to android",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_2e89b7eb",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Check for error conditions and return the correct error to android",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ce7923fe",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Flush needs to be implemented",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_8e4e4bc0",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "If the sensor_type is not valid, the for loop above fails to find a reference to the OSPDaemon_SensorDetail then sensor pointer is invalid, using this will lead to an undefined behavior. Please check for erroneous cases",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ae4b07af",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Sensor Type is already a part of OSPDaemon_SensorDetail structure, no need to pass it as a sepearate argument.\n\nPlease check for erroneous cases",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_cec76311",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Sensor Type is already a part of OSPDaemon_SensorDetail structure, no need to pass it as a sepearate argument.\n\nPlease check for erroneous cases",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_4e6d1332",
+        "filename": "ospd/OSPDaemon.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "These need to be moved from either the IIO header file or a platform specific header file.\n\nNone of these macros seem to be used in the OSPDaemon.c file",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_8ee56baa",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "We need to check for the error returned from the IIO driver when the batch function is called",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_aee2279d",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "We need to check for the error returned from the IIO driver when the flush function is called",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ee309f58",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Use macros instead of global variables to switch on/off a particular feature",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_4e3fd325",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Use spaces instead of tabs. In user space code general convention followed is 1 tab is 4 spaces.",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ce1203b4",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Please use DEBUG_INDRIVER macro instead of DEBUG_INIT. Or you could use DBGOUT macro which is already configured with DEBUG_INDRIVER that is defined at the top of this file",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ee17bfa1",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-01T07:09:19Z",
+      "side": 1,
+      "message": "Can we move this function to OSPDaemon_iio_enable? or we should use this as main enable function. As of now OSPDaemon_iio_enable function does nothing but call this function",
+      "revId": "e319629c93561873d245087676a9f8c689ca8d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
