@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_c05b982c",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:06:06Z",
+      "side": 1,
+      "message": "There is an awful lot of repeated code here that could be encapsulated into a few functions.",
+      "revId": "1e2ecd432d2f3bc6191b0ecfd2f86dba4fbce057",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_e041743a",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:06:06Z",
+      "side": 1,
+      "message": "instead of #if 0 please use a symbolic #ifdef",
+      "revId": "1e2ecd432d2f3bc6191b0ecfd2f86dba4fbce057",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_003d90bb",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:06:06Z",
+      "side": 1,
+      "message": "993: firmwrae-\u003efirmware\n\npr_debug: let\u0027s standardize on one debug syntax. I prefer LOGD/LOGW/LOGE",
+      "revId": "1e2ecd432d2f3bc6191b0ecfd2f86dba4fbce057",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
