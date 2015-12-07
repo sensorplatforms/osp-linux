@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "5ac4a560_00abd0d6",
+        "filename": "etc/N7.config",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "do we still need to support output driver \u0027input\u0027? I\u0027m trying to think of a use case to justify not removing the code.",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 23
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_40b5c82f",
+        "filename": "libsensors/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "lets use an include file here instead of hard-coding the OSP files this way. My use case is for using the OSP sources outside of libsensor in QA and algorigthm deveopment",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 30
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_bfe97b1c",
         "filename": "libsensors/OSPQSensor.cpp",
         "patchSetId": 1
@@ -13,6 +59,29 @@
       "writtenOn": "2015-11-30T12:20:23Z",
       "side": 1,
       "message": "handle event missing for step, sig-mot",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_0064b0e3",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "does it make sense to conditionally include this functionality triggered via a define in the .mk?",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 22
+      },
       "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
@@ -35,6 +104,121 @@
         "startChar": 6,
         "endLine": 339,
         "endChar": 16
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_a06f7cc4",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "lets find a more descriptive name for this function.",
+      "range": {
+        "startLine": 340,
+        "startChar": 0,
+        "endLine": 346,
+        "endChar": 1
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_405ea813",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "are argc/argv still relevant? maybe it makes more sense to pull out the initialization code into the thread launcher function, and rename OSPLooper to OSPDaemon or OSPThread",
+      "range": {
+        "startLine": 590,
+        "startChar": 0,
+        "endLine": 652,
+        "endChar": 1
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_609c84c1",
+        "filename": "ospd/OSPDaemon_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "Is the \u0027input\u0027 driver type still relevant?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 26
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_809fe0b3",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "a little surprising. Aren\u0027t you using the driver model to populate the output queue here?",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 33
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_c0a9d8e0",
+        "filename": "ospd/OSPDaemon_queue.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T01:38:04Z",
+      "side": 1,
+      "message": "worth discussion. Why do we need to copy the data? Why can\u0027t the caller user the data in place, and update the queue when it is finished with it?",
+      "range": {
+        "startLine": 40,
+        "startChar": 8,
+        "endLine": 40,
+        "endChar": 77
       },
       "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
