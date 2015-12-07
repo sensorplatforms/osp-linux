@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_a0213ca1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:50:04Z",
+      "side": 1,
+      "message": "Please elaborate \"other updates to ops framework\"",
+      "revId": "aaefc7e84680af3dd29e817cf37adae9f20199cd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_e03a54cc",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:50:04Z",
+      "side": 1,
+      "message": "Please provide feedback: what does adding string.h and changing strings.h to stringh do to backwards compatibility? \n\nShould these new and changed #includes be bracketed by #if  \u003csome platform level test\u003e {\n}",
+      "revId": "aaefc7e84680af3dd29e817cf37adae9f20199cd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
