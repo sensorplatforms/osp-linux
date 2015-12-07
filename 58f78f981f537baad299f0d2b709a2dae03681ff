@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_90c4a093",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "What is the logging standard? LOGE is often used for error logging. Is there a LOGD method? Do we want to log an error if ret indicates non-success?",
+      "revId": "58f78f981f537baad299f0d2b709a2dae03681ff",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
