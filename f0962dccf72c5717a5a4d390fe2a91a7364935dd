@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_b0c19c82",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "Is there a logging standard? LOGE is often for errors. LOGD for debug messages. These seem to be the latter.\n\nDo we want to check the return value and issue an error if it is non-success?",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_b048bc2e",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "Is sd-\u003e guaranteed valid? If not then a check is in order.\n\nDo we want to change the sd-\u003e values contingent on the Driver call succeding? If so then we should make the call and check the ret value prior to updating the sd-\u003eoutput values.\n\nAre the d-\u003eoutput entries\u0027 types unique? The code stops at the first entry it finds of the given type. Is the break; at 498: necessary?\n\nret values are unused. Did this produce a compiler warning? Either check them or do not record them.",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_d0be18ff",
+        "filename": "ospd/OSPDaemon.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "14: then--\u003ethan",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_201e0c64",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "this is a style / coding standards issue, but I prefer #ifdef over if {#somethingDefined } to keep it all in the preprocessor. Then move the defines to a .h or to the makefile. Open to discussion.",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_000f502f",
+        "filename": "ospd/OSPDaemon_iio.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1006901
+      },
+      "writtenOn": "2015-12-07T00:37:33Z",
+      "side": 1,
+      "message": "I would prefer to see an function API for querying and updating the config store, instead of just a /sys fs path. As written, each consumer needs to know the syntax of the writes. How about just a function API (bool isEnabled(); setEnabled(bool); and similar functions for other features, to hide the sysfs endpoint, file open logic, error checking and command syntax.",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
