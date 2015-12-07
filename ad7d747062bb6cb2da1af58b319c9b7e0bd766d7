@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_801600a6",
+        "filename": "etc/N7.config",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "Well one of the reasons we decided to keep the \u0027input\u0027 driver type is because of the Activity HAL.\n\nSince in this version of the OSPDaemon, it runs as a separate thread in the Sensor HAL. So it becomes a part of the system server process in Android. We are not sure if the Activity HAL would be a part of the system server process or not. If it isn\u0027t we will need an IPC, for activity based sensors we thought that the \u0027input\u0027 driver would fit in perfectly.\n\nWe can probably come back to this once we start working on the Activity HAL and/or have more information about it.",
+      "parentUuid": "5ac4a560_00abd0d6",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 23
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_40b5c82f",
         "filename": "libsensors/Android.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2015-12-07T01:38:04Z",
       "side": 1,
       "message": "lets use an include file here instead of hard-coding the OSP files this way. My use case is for using the OSP sources outside of libsensor in QA and algorigthm deveopment",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 30
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_607ac4f2",
+        "filename": "libsensors/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "I wasn\u0027t aware of such a use case. I can make the OSP as a static library which I can include in the SensorHAL.\n\nBut you will have to write a small stub to invoke this static library in the main of an executable. I am not sure how we can track this new file or where it belongs to..\n\nWould that be okay?\n\nThere is one other way, you can use the Sensor HAL test bench but this will add another level of dependency for you on Android. I am sure this isn\u0027t suitable for you but just wanted to list out all the options available.",
+      "parentUuid": "5ac4a560_40b5c82f",
       "range": {
         "startLine": 28,
         "startChar": 0,
@@ -88,6 +136,30 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_a084dcd4",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "I don\u0027t think so. This version of the Sensor HAL is pretty useless without the OSP calls.\n\nIf we add conditions, when those conditions are undefined then this Sensor HAL would break its functionality",
+      "parentUuid": "5ac4a560_0064b0e3",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 22
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_1f0fcf31",
         "filename": "libsensors/sensors.cpp",
         "patchSetId": 1
@@ -99,6 +171,30 @@
       "writtenOn": "2015-11-30T12:20:23Z",
       "side": 1,
       "message": "s/threadFunc/ospxxx",
+      "range": {
+        "startLine": 339,
+        "startChar": 6,
+        "endLine": 339,
+        "endChar": 16
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_60c80423",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "Done. I have changed it to OSPThreadLauncher",
+      "parentUuid": "5ac4a560_1f0fcf31",
       "range": {
         "startLine": 339,
         "startChar": 6,
@@ -134,6 +230,30 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_e026d415",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "Done. I have changed it to OSPThreadLauncher, I hope this should be okay.",
+      "parentUuid": "5ac4a560_a06f7cc4",
+      "range": {
+        "startLine": 340,
+        "startChar": 0,
+        "endLine": 346,
+        "endChar": 1
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_405ea813",
         "filename": "ospd/OSPDaemon.c",
         "patchSetId": 1
@@ -145,6 +265,30 @@
       "writtenOn": "2015-12-07T01:38:04Z",
       "side": 1,
       "message": "are argc/argv still relevant? maybe it makes more sense to pull out the initialization code into the thread launcher function, and rename OSPLooper to OSPDaemon or OSPThread",
+      "range": {
+        "startLine": 590,
+        "startChar": 0,
+        "endLine": 652,
+        "endChar": 1
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_807d20ea",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "Reply to this is a little dependent on the other comment you raised on Android.mk.\n\nIf you want to call/use OSP outside of the Sensor HAL then having argc/argv would make the integration of OSP static library into the stub executable very easy.\n\nBut keeping in mind only the Sensor HAL, it is not relevant, I can make the modification as you suggested. It would be much cleaner.",
+      "parentUuid": "5ac4a560_405ea813",
       "range": {
         "startLine": 590,
         "startChar": 0,
@@ -203,6 +347,30 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_e06df433",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "The output queue is already populated in the call \u0027OSPDaemon_senddata\u0027 which is called while processing the input. The registration here is for enable, disable, send and recv calls. \n\nIn the \u0027Queue\u0027 method we are accessing the queue\u0027s directly so the poll function in the main loop will not know if it ready to send data. In this case the data is pulled from OSP by the Sensor HAL using the method \u0027OSPDaemon_get_sensor_data\u0027. \n\nEarlier with the \u0027input\u0027 driver, the data was pushed out from the OSPDaemon into the input device and the Sensor HAL would read from the input device.",
+      "parentUuid": "5ac4a560_809fe0b3",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 33
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_c0a9d8e0",
         "filename": "ospd/OSPDaemon_queue.c",
         "patchSetId": 1
@@ -214,6 +382,30 @@
       "writtenOn": "2015-12-07T01:38:04Z",
       "side": 1,
       "message": "worth discussion. Why do we need to copy the data? Why can\u0027t the caller user the data in place, and update the queue when it is finished with it?",
+      "range": {
+        "startLine": 40,
+        "startChar": 8,
+        "endLine": 40,
+        "endChar": 77
+      },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_c05e3876",
+        "filename": "ospd/OSPDaemon_queue.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-07T06:40:08Z",
+      "side": 1,
+      "message": "This change was done to make the queue thread safe. \n\nThe original implementation of the queue wasn\u0027t thread safe when the get and put are called from different threads. There was a chance of one thread adding to the queue while the other was reading from it, since the indexes were updated in the get function before it returns.\n\nTo fix this, there were two approaches -\n1) Split the get into two functions (the approach you are suggesting) - One function would return a pointer to the data which the caller can use to read from and another function to increment the write index once the caller has completed the read\n2) Copy the data, so the get would still be a single function.\n\nI chose the second option, since it would involve lesser amount of code changes throughout the OSP. Agreed that this has a slight overhead of the memcopy but I didn\u0027t see any impact on the performance when I measured the CPU usage as against the original OSPDaemon.",
+      "parentUuid": "5ac4a560_c0a9d8e0",
       "range": {
         "startLine": 40,
         "startChar": 8,
