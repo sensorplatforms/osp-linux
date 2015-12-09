@@ -254,6 +254,108 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_7ae18899",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "This should be a fprintf. A bad/invalid config is an error conditon not a debug info.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_9aef4487",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Please do not hide white space changes like this.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_baf2406d",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "DEBUG_INIT would not be appropriate for this. poll() errors can happen for a number of reasons such as -\nsignals received or actual descriptor going bad.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_faecb891",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Can you please explain why this should be here and not in a proper driver?\n\nThe daemon in the HAL is a special usecase of the daemon. It should not break anything in the daemon itself.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_dae9bc81",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 547,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Again, this should not be DEBUG_INIT.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_1a033443",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 647,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Please do not hide white space changes in a commit.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_405ea813",
         "filename": "ospd/OSPDaemon.c",
         "patchSetId": 1
@@ -295,6 +397,41 @@
         "endLine": 652,
         "endChar": 1
       },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_3afe3039",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "We should not be breaking this as a Daemon. OSPDaemon should remain useable as-is. Usage in the HAL is a special usage case of the daemon.",
+      "parentUuid": "5ac4a560_807d20ea",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_5afdac39",
+        "filename": "ospd/OSPDaemon.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Why is OSPDaemon_get_sensor_data here? What is the reason it is not a normal driver?",
       "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
@@ -371,6 +508,75 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_9a9664ef",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "We should not be inserting special cases like this. QUEUE should be a driver.",
+      "parentUuid": "5ac4a560_e06df433",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_ba996021",
+        "filename": "ospd/OSPDaemon_driver.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Why are debug statements being disabled? This is the whole point of the debug system. Groups of messages can be disabled/enabled.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_daa0dc45",
+        "filename": "ospd/OSPDaemon_filecsv.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "If the queue systems is being reworked, please break off the change into a seperate commit.",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_faa3d84c",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Again, why are debugs commented out?",
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_c0a9d8e0",
         "filename": "ospd/OSPDaemon_queue.c",
         "patchSetId": 1
@@ -412,6 +618,24 @@
         "endLine": 40,
         "endChar": 77
       },
+      "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac4a560_5a94cce1",
+        "filename": "ospd/OSPDaemon_queue.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 1,
+      "message": "Two things -\n1. This is an API change and should be moved into a seperate commit.\n2. Can you explain why this is needed. In particular, which threads are re-entering things. As presented in this change set, you have:\n- Sensor Manager thread\n- OSPDaemon thread\n\nUnder what conditions will the same queue access be re-entered. Not saying it isn\u0027t there. Just wanted this to be explain as a better change might be to make sure the re-entrancy does not happen so we can save a memcpy.\n\nIn addition, the read/write functions are done with different indices.",
+      "parentUuid": "5ac4a560_c05e3876",
       "revId": "ad7d747062bb6cb2da1af58b319c9b7e0bd766d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false

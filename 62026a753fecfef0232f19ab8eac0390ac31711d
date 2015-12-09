@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac4a560_5ae68cb5",
+        "filename": "etc/init.grouper.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-09T01:29:45Z",
+      "side": 0,
+      "message": "Please do not haphazardously chown dev notes. IIO devices are dynamically assigned.",
+      "revId": "62026a753fecfef0232f19ab8eac0390ac31711d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
