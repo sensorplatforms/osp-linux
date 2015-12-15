@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "5ac4a560_361712a5",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-15T23:37:19Z",
+      "side": 1,
+      "message": "This is not the proper way of handling enable/disable. Please see the code in the PM support file.",
+      "revId": "f0962dccf72c5717a5a4d390fe2a91a7364935dd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac4a560_d0be18ff",
         "filename": "ospd/OSPDaemon.h",
         "patchSetId": 4
