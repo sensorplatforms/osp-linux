@@ -1,0 +1,596 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa98f980_12044c7d",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "You can remove DEBUG from this patchset!",
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_32095096",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Please check a line for 80 Character column width.\n\nIn general Is it possible to replace send_buf with buff-\u003ebuffer?",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 94
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_52fed46c",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Do you want to use memcpy for a single byte?",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 64
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_7203d873",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Please check a line for 80 Character column width.\nIn general Is it possible to replace send_buf with buff-\u003ebuffer?",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 92
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_92f75c8c",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Can you define a macro for this?",
+      "range": {
+        "startLine": 76,
+        "startChar": 12,
+        "endLine": 76,
+        "endChar": 76
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_b269c027",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Can you keep a offset and update it to keep track of offset?",
+      "range": {
+        "startLine": 89,
+        "startChar": 19,
+        "endLine": 89,
+        "endChar": 32
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_f2734813",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "In general Is it possible to replace send_buf with buff-\u003ebuffer?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 32
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_1260cc34",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Can you define an inline function? This functionality is repeated in many functions?",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 39
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_d2dac416",
+        "filename": "driver/osp-hif-apis.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "What\u0027s SENSOR_EVT? Is this from HIF specification?",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 23
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_f2d7c8eb",
+        "filename": "driver/osp-hif-apis.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Are these macros being used anywhere?",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_b250e05f",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Is this needed?",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_d24d64c6",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Why is this commented out? If this is needed for IIO-in 3.10 please use appropriate major/minor combination macro!",
+      "range": {
+        "startLine": 496,
+        "startChar": 0,
+        "endLine": 496,
+        "endChar": 6
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_f24a68ab",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 861,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "#if 0 shall start at column 1. Delete this if not needed?",
+      "range": {
+        "startLine": 861,
+        "startChar": 1,
+        "endLine": 861,
+        "endChar": 2
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa98f980_12c7ec13",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Commenting style not as per Linux coding standard.\nCheck indentation inside if",
+      "range": {
+        "startLine": 879,
+        "startChar": 0,
+        "endLine": 879,
+        "endChar": 61
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_115e0cea",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Please use consistent debug prints across",
+      "range": {
+        "startLine": 910,
+        "startChar": 0,
+        "endLine": 910,
+        "endChar": 99
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_316310b3",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "use linux commenting style",
+      "range": {
+        "startLine": 929,
+        "startChar": 2,
+        "endLine": 929,
+        "endChar": 4
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_715d98e9",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "s/DUMMY_CONFIG_CMD/CONFIG_OSP_DEBUG",
+      "range": {
+        "startLine": 40,
+        "startChar": 7,
+        "endLine": 40,
+        "endChar": 23
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_911f5c09",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Please define a macro -\n#define u8_to_be64(byte, val) \\\n        for(i \u003d sizeof(u64) -1; i \u003e\u003d 0; i--) { \\\n            val \u003d (val \u003c\u003c 8) + byte[i];};\n\nCall the macro - \n        pOut-\u003eP.CalFixP.TimeStamp.TS64 \u003d 0;\n        u8_to_be64(pHif-\u003eCalPktFixP.TimeStamp[i], \n                         pOut-\u003eP.CalFixP.TimeStamp.TS64);\n        pHif-\u003eCalPktFixP.TS64 \u003d \n                       be64_to_cpu(pHif-\u003eCalPktFixP.TS64);",
+      "range": {
+        "startLine": 220,
+        "startChar": 54,
+        "endLine": 220,
+        "endChar": 63
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_91cd9c89",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "s/addr/reg or s/addr/reg_address",
+      "range": {
+        "startLine": 567,
+        "startChar": 28,
+        "endLine": 567,
+        "endChar": 32
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_b1caa06c",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 926,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "use consistent style across for debug statements",
+      "range": {
+        "startLine": 926,
+        "startChar": 1,
+        "endLine": 926,
+        "endChar": 9
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_31a6b0c2",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Is it possible to move this functionality within osp-hif-api.c? \n\nSomething like - \nfomat_config_write_request(buff, count);",
+      "range": {
+        "startLine": 950,
+        "startChar": 9,
+        "endLine": 950,
+        "endChar": 17
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_9194bc45",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1138,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Should this be under CONFIG_DUMMY_RESPONSE",
+      "range": {
+        "startLine": 1138,
+        "startChar": 0,
+        "endLine": 1138,
+        "endChar": 70
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_b191c054",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1388,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Use linux coding style for this.",
+      "range": {
+        "startLine": 1388,
+        "startChar": 3,
+        "endLine": 1388,
+        "endChar": 11
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_d19e4463",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1407,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Use linux coding style for this.",
+      "range": {
+        "startLine": 1407,
+        "startChar": 3,
+        "endLine": 1407,
+        "endChar": 11
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_f19b4870",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1615,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "Use linux coding style for this.",
+      "range": {
+        "startLine": 1615,
+        "startChar": 1,
+        "endLine": 1615,
+        "endChar": 3
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da9df570_1188cc21",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-21T10:45:54Z",
+      "side": 1,
+      "message": "??",
+      "range": {
+        "startLine": 1625,
+        "startChar": 0,
+        "endLine": 1625,
+        "endChar": 63
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
