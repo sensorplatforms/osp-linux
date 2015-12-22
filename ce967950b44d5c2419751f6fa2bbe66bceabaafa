@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa201ad_506eccca",
+        "filename": "etc/init.grouper.rc",
+        "patchSetId": 5
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 1006955
+      },
+      "writtenOn": "2015-12-22T00:57:17Z",
+      "side": 1,
+      "message": "These chmod/chowns are unacceptable ways of doing things. It may work at this moment but it is not robust nor proper to to do it this way.",
+      "revId": "ce967950b44d5c2419751f6fa2bbe66bceabaafa",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
