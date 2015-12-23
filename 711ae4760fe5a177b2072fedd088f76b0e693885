@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_78873510",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_12044c7d",
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_32095096",
         "filename": "driver/osp-hif-apis.c",
         "patchSetId": 7
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_987bf928",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_32095096",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 94
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_52fed46c",
         "filename": "driver/osp-hif-apis.c",
         "patchSetId": 7
@@ -53,6 +95,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "Do you want to use memcpy for a single byte?",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 64
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_b878bd2c",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_52fed46c",
       "range": {
         "startLine": 64,
         "startChar": 0,
@@ -111,6 +177,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_d8758133",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_92f75c8c",
+      "range": {
+        "startLine": 76,
+        "startChar": 12,
+        "endLine": 76,
+        "endChar": 76
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_b269c027",
         "filename": "driver/osp-hif-apis.c",
         "patchSetId": 7
@@ -157,6 +247,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_f8724548",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_f2734813",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 32
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_1260cc34",
         "filename": "driver/osp-hif-apis.c",
         "patchSetId": 7
@@ -168,6 +282,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "Can you define an inline function? This functionality is repeated in many functions?",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 39
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_188f0925",
+        "filename": "driver/osp-hif-apis.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_1260cc34",
       "range": {
         "startLine": 173,
         "startChar": 0,
@@ -203,6 +341,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_98f7798c",
+        "filename": "driver/osp-hif-apis.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "No its not required. It was added as earlier Get cause was 0x08 for sensor event.",
+      "parentUuid": "fa98f980_d2dac416",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 23
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_f2d7c8eb",
         "filename": "driver/osp-hif-apis.h",
         "patchSetId": 7
@@ -214,6 +376,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "Are these macros being used anywhere?",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_d8f10197",
+        "filename": "driver/osp-hif-apis.h",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Removing it",
+      "parentUuid": "fa98f980_f2d7c8eb",
       "range": {
         "startLine": 51,
         "startChar": 0,
@@ -249,6 +435,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_7803b573",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Nope",
+      "parentUuid": "fa98f980_b250e05f",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_d24d64c6",
         "filename": "driver/osp-iio.c",
         "patchSetId": 7
@@ -272,6 +482,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_1804697d",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "1. Ideally we should not create sysfs to enable sensors for each iio device. since we have created sysfs to accept HIF read/write request for config /calib parameters.\n\n2. will remove this changes in code cleanup patch.",
+      "parentUuid": "fa98f980_d24d64c6",
+      "range": {
+        "startLine": 496,
+        "startChar": 0,
+        "endLine": 496,
+        "endChar": 6
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa98f980_f24a68ab",
         "filename": "driver/osp-iio.c",
         "patchSetId": 7
@@ -283,6 +517,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "#if 0 shall start at column 1. Delete this if not needed?",
+      "range": {
+        "startLine": 861,
+        "startChar": 1,
+        "endLine": 861,
+        "endChar": 2
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_38092d96",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 861,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa98f980_f24a68ab",
       "range": {
         "startLine": 861,
         "startChar": 1,
@@ -364,6 +622,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_58fef16c",
+        "filename": "driver/osp-iio.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_316310b3",
+      "range": {
+        "startLine": 929,
+        "startChar": 2,
+        "endLine": 929,
+        "endChar": 4
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_715d98e9",
         "filename": "driver/osp-sh.c",
         "patchSetId": 7
@@ -375,6 +657,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "s/DUMMY_CONFIG_CMD/CONFIG_OSP_DEBUG",
+      "range": {
+        "startLine": 40,
+        "startChar": 7,
+        "endLine": 40,
+        "endChar": 23
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_98c9395d",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Removing Dummy sysfs code as it is not required now.",
+      "parentUuid": "da9df570_715d98e9",
       "range": {
         "startLine": 40,
         "startChar": 7,
@@ -410,6 +716,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_b8c6fd47",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_911f5c09",
+      "range": {
+        "startLine": 220,
+        "startChar": 54,
+        "endLine": 220,
+        "endChar": 63
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_91cd9c89",
         "filename": "driver/osp-sh.c",
         "patchSetId": 7
@@ -427,6 +757,47 @@
         "endLine": 567,
         "endChar": 32
       },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_d8c3c136",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_91cd9c89",
+      "range": {
+        "startLine": 567,
+        "startChar": 28,
+        "endLine": 567,
+        "endChar": 32
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_f8c0852c",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Use HIf format to enable/disable sensors",
       "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
@@ -467,6 +838,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "Is it possible to move this functionality within osp-hif-api.c? \n\nSomething like - \nfomat_config_write_request(buff, count);",
+      "range": {
+        "startLine": 950,
+        "startChar": 9,
+        "endLine": 950,
+        "endChar": 17
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_38e20dd6",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_31a6b0c2",
       "range": {
         "startLine": 950,
         "startChar": 9,
@@ -525,6 +920,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_58e7d1e4",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1388,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_b191c054",
+      "range": {
+        "startLine": 1388,
+        "startChar": 3,
+        "endLine": 1388,
+        "endChar": 11
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_d19e4463",
         "filename": "driver/osp-sh.c",
         "patchSetId": 7
@@ -542,6 +961,47 @@
         "endLine": 1407,
         "endChar": 11
       },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_78ec95c8",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1407,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_d19e4463",
+      "range": {
+        "startLine": 1407,
+        "startChar": 3,
+        "endLine": 1407,
+        "endChar": 11
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_d8dae116",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Remove sensorhub reset code. Will submit it in different patch.",
       "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
@@ -571,6 +1031,30 @@
     },
     {
       "key": {
+        "uuid": "9aa7fdbe_98d059f9",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1615,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_f19b4870",
+      "range": {
+        "startLine": 1615,
+        "startChar": 1,
+        "endLine": 1615,
+        "endChar": 3
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da9df570_1188cc21",
         "filename": "driver/osp-sh.c",
         "patchSetId": 7
@@ -582,6 +1066,30 @@
       "writtenOn": "2015-12-21T10:45:54Z",
       "side": 1,
       "message": "??",
+      "range": {
+        "startLine": 1625,
+        "startChar": 0,
+        "endLine": 1625,
+        "endChar": 63
+      },
+      "revId": "711ae4760fe5a177b2072fedd088f76b0e693885",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_b8cd1d60",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-23T07:17:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da9df570_1188cc21",
       "range": {
         "startLine": 1625,
         "startChar": 0,
