@@ -338,8 +338,8 @@ private:
 
 void* OSPThreadLauncher(void*)
 {
-    int count = 5;
-    char *args[] = {"", "-c", "/etc/N7.config", "-d", "255"};
+    int count = 6;
+    char *args[] = {"", "-c", "/etc/N7.config", "-d", "255", "-p"};
     OSPDaemon_looper(count, args);
 
     return 0;
@@ -380,7 +380,7 @@ sensors_poll_context_t::sensors_poll_context_t()
     launchOSPDaemon();
 
     mSensors[accel]         = new OSPQSensor(ACCEL_UINPUT_NAME,
-                                             ID_A, 
+                                             ID_A,
                                              SENSOR_TYPE_ACCELEROMETER,
                                              true);
     mSensors[gyro]          = new OSPQSensor(GYRO_UINPUT_NAME,
@@ -404,36 +404,36 @@ sensors_poll_context_t::sensors_poll_context_t()
                                              SENSOR_TYPE_LINEAR_ACCELERATION,
                                              true);
     mSensors[gravity]       = new OSPQSensor("fm-gravity",
-                                             ID_GRAV, 
+                                             ID_GRAV,
                                              SENSOR_TYPE_GRAVITY,
                                              true);
     mSensors[uncal_mag] = new OSPQSensor("fm-uncalibrated-magnetometer",
                             ID_UNCALIBRATED_MAG,
                             SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
                             true);
-     mSensors[game_rot_vec] = new OSPQSensor("fm-game-rotation-vector", 
-				 			ID_GAME_ROT_VEC, 
-				 			SENSOR_TYPE_GAME_ROTATION_VECTOR, 
+     mSensors[game_rot_vec] = new OSPQSensor("fm-game-rotation-vector",
+				 			ID_GAME_ROT_VEC,
+				 			SENSOR_TYPE_GAME_ROTATION_VECTOR,
 				 			true);
-    mSensors[uncal_gyro] = new OSPQSensor("fm-uncalibrated-gyroscope", 
-							ID_UNCALIBRATED_GYRO, 
-							SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, 
+    mSensors[uncal_gyro] = new OSPQSensor("fm-uncalibrated-gyroscope",
+							ID_UNCALIBRATED_GYRO,
+							SENSOR_TYPE_GYROSCOPE_UNCALIBRATED,
 							true);
     mSensors[sig_motion] = new OSPQSensor("fm-significant-motion",
                                                ID_SIG_MOTION,
                                                SENSOR_TYPE_SIGNIFICANT_MOTION,
 					       FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[step_detector] = new OSPQSensor("fm-step-detector", 
-							 ID_STEP_DETECTOR, 
-							 SENSOR_TYPE_STEP_DETECTOR, 
+    mSensors[step_detector] = new OSPQSensor("fm-step-detector",
+							 ID_STEP_DETECTOR,
+							 SENSOR_TYPE_STEP_DETECTOR,
 							 FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter", 
-						       ID_STEP_COUNTER, 
-						       SENSOR_TYPE_STEP_COUNTER, 
+    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter",
+						       ID_STEP_COUNTER,
+						       SENSOR_TYPE_STEP_COUNTER,
 						       FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[geo_rot_vec] = new OSPQSensor("fm-geomagnetic-rotation-vector", 
-							ID_GEOMAGNETIC_ROT_VEC, 
-							SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR, 
+    mSensors[geo_rot_vec] = new OSPQSensor("fm-geomagnetic-rotation-vector",
+							ID_GEOMAGNETIC_ROT_VEC,
+							SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
 							true);
 
     int wakeFds[2];
@@ -600,7 +600,7 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
     memset(&dev->device, 0, sizeof(sensors_poll_device_t));
 
     dev->device.common.tag = HARDWARE_DEVICE_TAG;
-    dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_0;
+    dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
     dev->device.common.module   = const_cast<hw_module_t*>(module);
     dev->device.common.close    = poll__close;
     dev->device.activate        = poll__activate;

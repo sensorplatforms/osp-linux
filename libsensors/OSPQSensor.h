@@ -36,12 +36,12 @@ class OSPQSensor : public SensorBase {
     public:
         OSPQSensor(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat);
         virtual ~OSPQSensor();
-
         virtual int readEvents(sensors_event_t* data, int count);
         virtual bool hasPendingEvents() const;
         virtual int setDelay(int32_t handle, int64_t ns);
-        virtual int enable(int32_t handle, int enabled);
-
+	virtual int enable(int32_t handle, int enabled);
+	virtual int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
+	virtual int flush(int32_t handle);
     protected:
         OSPQSensor();
         OSPQSensor(const OSPQSensor&);
@@ -50,6 +50,9 @@ class OSPQSensor : public SensorBase {
         bool mEnabled;
         bool mEventsAreFloat;
         bool mHasPendingEvent;
+		bool mIsFlushCalled;
+		bool mIsFlushEventSent;
+		int mHandle;
         char input_sysfs_path[PATH_MAX];
         int input_sysfs_path_len;
 
@@ -58,12 +61,15 @@ class OSPQSensor : public SensorBase {
         int Qscale;
         int32_t mSensorType;
         int32_t mSensorId;
+	int64_t mHostFirstReportedTime;
+	double mSHFirstReportedTime;
+	int mNumPacketsRecv;
 };
 
 
 class OSPQStepCounter : public OSPQSensor {
     public:
-        OSPQStepCounter(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat) 
+	OSPQStepCounter(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat)
             : OSPQSensor(uinputName, sensorId, sensorType, evtFloat) {
                 LOGE("creating custom handler for SIG_MOTION"); };
 
@@ -74,7 +80,7 @@ class OSPQStepCounter : public OSPQSensor {
 
 class OSPQSignificantMotion : public OSPQSensor {
     public:
-        OSPQSignificantMotion(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat) 
+	OSPQSignificantMotion(const char* uinputName, int32_t sensorId, int32_t sensorType, bool evtFloat)
             : OSPQSensor(uinputName, sensorId, sensorType, evtFloat) {
                 LOGE("creating custom handler for SIG_MOTION"); };
 
