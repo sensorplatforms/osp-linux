@@ -23,6 +23,8 @@
 #include <strings.h>
 #include <sys/select.h>
 #include <cutils/log.h>
+#include <utils/SystemClock.h>
+
 #include "local_log_def.h"
 
 #include "OSPQSensor.h"
@@ -35,24 +37,19 @@ OSPQSensor::OSPQSensor(const char* uinputName,
         bool evtFloat) :
     SensorBase(NULL, uinputName, 1),    
     mEnabled(false),
+    mIsFlushCalled(false),
     mEventsAreFloat(evtFloat),
     mHasPendingEvent(false),
     uinputName(uinputName),
     mSensorType(sensorType),
-    mSensorId(sensorId)
+    mSensorId(sensorId),
+    mHandle(-1),
+    mHostFirstReportedTime(0),
+    mSHFirstReportedTime(0.0),
+    mNumPacketsRecv(0),
+	mIsFlushEventSent(false)
 {
-    LOGE("Inside OSPQSensor");
-
-    if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD || 
-            sensorType == SENSOR_TYPE_ORIENTATION ||
-            sensorType == SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-        Qscale = (1<<12);
-    } else if (sensorType == SENSOR_TYPE_STEP_DETECTOR ||
-            sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION) {
-        Qscale = 1;
-    } else {
-        Qscale = (1<<24);
-    }
+	Qscale = (1<<24);
 }
 
 OSPQSensor::~OSPQSensor()
@@ -66,26 +63,44 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 {
     bool flags = enabled ? true : false;
     char enablePath[512];
-
-    LOGE("@@@@ enable: [%d] - %d, %d", handle, enabled, mEnabled);
+	int ret;
+    LOGE("@@@@ enable: [%d] - %d, %d sensortype : %d ", handle, enabled, mEnabled, mSensorType);
     if (flags && flags != mEnabled) {
-        int fd;
-        enablePath[511] = '\0';
-        snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
-        fd = creat(enablePath, 0777);
-        LOGE("@@@@ HY-DBG: enable-path %s fd = %i", enablePath, fd);
-        close(fd);
         mEnabled = flags;
+	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
+	/* Reset the First reported time stamp here to get new elapsed time */
+	mHostFirstReportedTime = android::elapsedRealtimeNano();
+	mSHFirstReportedTime = 0.0;
+	mNumPacketsRecv = 0;
+	mIsFlushEventSent = false;
     } else if (!flags) {
-        enablePath[511] = '\0';
-        snprintf(enablePath, 511, "/data/OSPControl/%s", uinputName);
-        LOGE("@@@@ HY-DBG: enable-path %s", enablePath);
-        unlink(enablePath);
-        mEnabled = flags;
+	mEnabled = flags;
+	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
+	mSHFirstReportedTime = 0.0;
+	mHostFirstReportedTime = 0;
     }
-    LOGE("@@@@ enable after: [%d] - %d %d", handle, enabled, mEnabled);
+    return ret;
+}
 
-    return 0;
+int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
+{
+	int ret;
+	LOGE("@@@@ batch: [%d]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
+		handle, mSensorType, period_ns, timeout);
+	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
+	LOGE("@@@@ batch after: sensortype[%d] ret : %d\n", mSensorType, ret);
+	return ret;
+}
+
+int OSPQSensor::flush(int32_t handle)
+{
+	int ret;
+	LOGE("@@@@ flush: [%d]  sensortype : %d", handle, mSensorType);
+	ret = OSPDaemon_flush(mSensorType);
+	LOGE("@@@@ flush after: sensortype[%d] ret : %d\n", mSensorType, ret);
+	mIsFlushCalled = true;
+	mHandle = handle;
+	return ret;
 }
 
 bool OSPQSensor::handleEvent(input_event const * event,
@@ -107,38 +122,53 @@ int OSPQSensor::setDelay(int32_t handle, int64_t delay_ns)
 
 int OSPQSensor::readEvents(sensors_event_t* data, int count)
 {
-    int fc = 0, ret, i = 0;
-    struct psen_data ld;
-    if (count < 1)
-        return -EINVAL;
+	int fc = 0, ret, i = 0;
+	struct psen_data ld;
+	double tsq24, delta;
+	if (count < 1)
+	return -EINVAL;
+	if (0 == mEnabled || true == mIsFlushEventSent) {
+		/* LOGE("Sensor %s is not enabled", uinputName);*/
+		return 0;
+	}
+	if (mIsFlushCalled == true){
+		data[fc].version = META_DATA_VERSION;
+		data[fc].type = SENSOR_TYPE_META_DATA;
+		data[fc].meta_data.what = META_DATA_FLUSH_COMPLETE;
+		LOGI("Flush Sending flush for sensor %d", mHandle);
+		data[fc].meta_data.sensor = mHandle;
+		fc++;
+		mIsFlushCalled = false;
+		mIsFlushEventSent = true;
+		return fc;
+	}
+	ret = OSPDaemon_get_sensor_data(mSensorType, &ld);
+	if (0 == ret || -1 == ret) {
+		LOGE("Failed to get the sensor data ret is %d", ret);
+		return fc;
+	}
+	if (ld.ts < mSHFirstReportedTime) {
+	/* Something went wrong, let's reset*/
+		mHostFirstReportedTime = 0;
+	}
 
-    if (0 == mEnabled) {
-        //LOGE("Sensor %s is not enabled", uinputName);
-        return 0;
-    }
-
-    ret = OSPDaemon_get_sensor_data(mSensorType, &ld);
-    if (0 == ret || -1 == ret) {            
-        //LOGE("Failed to get the sensor data ret is %d", ret);
-        return fc;
-    }
-
-    //LOGE("Returning %d data values for sensor type %d", ret, mSensorType);
-    data[fc].version   = sizeof(sensors_event_t);
-    data[fc].sensor    = mSensorId; 
-    data[fc].type      = mSensorType;
-    data[fc].timestamp = ld.ts;
-    if (SENSOR_TYPE_STEP_COUNTER == mSensorType) {
-        data[fc].u64.step_counter = ld.val[i];
-    } else if (SENSOR_TYPE_STEP_DETECTOR == mSensorType ||
-               SENSOR_TYPE_SIGNIFICANT_MOTION == mSensorType) {
-        data[fc].data[0] = 1.0;
-    } else {
-        for (i = 0; i < ret; i++)
-            data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
-    }
-    fc++;
-
+	if (0.0 == mSHFirstReportedTime) {
+		mSHFirstReportedTime = (double)ld.ts;
+		mSHFirstReportedTime = mSHFirstReportedTime/ (double)Qscale;
+	}
+	tsq24 = ld.ts / (double)Qscale;
+	delta = tsq24 - mSHFirstReportedTime; /* in seconds.*/
+	delta = delta * 1000000000;
+	LOGE("After delta %lf", delta);
+	data[fc].version   = sizeof(sensors_event_t);
+	data[fc].sensor    = mSensorId;
+	data[fc].type      = mSensorType;
+	data[fc].timestamp = mHostFirstReportedTime + (int64_t)delta;
+	mNumPacketsRecv++;
+	LOGE("SensorHAL timestamp is %lld , sensor : %s\n", data[fc].timestamp, uinputName);
+	for (i = 0; i < ret; i++)
+		data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
+	fc++;
     return fc;
 }
 
