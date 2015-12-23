@@ -21,19 +21,16 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <errno.h>
-
 #include <linux/iio/events.h>
 
 #include "OSPDaemon.h"
 #include "OSPDaemon_iio.h"
 #include "OSPDaemon_driver.h"
-
+#include "OSPDaemon_imu_config.h"
 #define IIO_DEVICE_DIR	"/sys/bus/iio/devices"
 
 #define DBGOUT(x...) DBG(DEBUG_INDRIVER, "IIO: "x)
-
 static struct IIO_Sensor IIOSen[MAX_IIO_SENSOR];
-
 /* sysfs support */
 static void sysfs_write_val(const char *path, const int val)
 {
@@ -201,7 +198,7 @@ static OSP_InputSensorData_t * parse_iiodata(struct IIO_Sensor *is, char *buf, i
 			else
 				outval = conf.w[0];
 			break;
-		case 64:	
+		case 64:
 			conf.b[0] = buf[is->IIOAxis[ax].offset];
 			conf.b[1] = buf[is->IIOAxis[ax].offset+1];
 			conf.b[2] = buf[is->IIOAxis[ax].offset+2];
@@ -265,7 +262,6 @@ static void setupiio(struct IIO_Sensor *is)
 	int len, ax;
 
 	snprintf(dname, PATH_MAX, IIO_DEVICE_DIR"/iio:device%i/scan_elements", is->iionum);
-	
 	d = opendir(dname);
 	if (d == NULL) return;
 
@@ -339,37 +335,43 @@ static int getiionum(const char *sname)
 	DBGOUT("^^^ %s: Couldn't locate the valid iio for %s\n", sname);
 	return -1;
 }
-
-static void OSPDaemon_iio_SetState(struct IIO_Sensor *s, int state)
+static int OSPDaemon_iio_batch(int sensor_id, int64_t sampling_period_ns,
+						int64_t max_report_latency_ns)
 {
-	char name[PATH_MAX+1];
+	int ret;
+	ret = OSPDaemon_imu_batch(sensor_id, sampling_period_ns, max_report_latency_ns);
+	return ret;
+}
 
-	if (state != 0) state = 1;
-	name[PATH_MAX] = '\0';
-	snprintf(name, PATH_MAX, IIO_DEVICE_DIR"/iio:device%i/enable",
-			s->iionum);
-
-	sysfs_write_val(name, state);
+static int OSPDaemon_iio_flush(int sensor_id)
+{
+	int ret;
+	ret = OSPDaemon_imu_flush(sensor_id);
+	return ret;
 }
 
 static int OSPDaemon_iio_enable(struct OSPDaemon_SensorDetail *s)
 {
+	int ret;
 	struct IIO_Sensor *is;
-
 	is = s->lprivate;
-	OSPDaemon_iio_SetState(is, 1);
-
-	return 0;
+	int sensor_id = s->sensor.SensorType;
+	DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
+		s->sensor.SensorType, is->iionum, is->name);
+	ret = OSPDaemon_imu_enable(sensor_id, 1);
+	return ret;
 }
 
 static int OSPDaemon_iio_disable(struct OSPDaemon_SensorDetail *s)
 {
+	int ret;
 	struct IIO_Sensor *is;
-
 	is = s->lprivate;
-	OSPDaemon_iio_SetState(is, 0);
-
-	return 0;
+	int sensor_id = s->sensor.SensorType;
+	DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
+		s->sensor.SensorType, is->iionum, is->name);
+	ret = OSPDaemon_imu_enable(sensor_id, 0);
+	return ret;
 }
 
 static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
@@ -411,9 +413,6 @@ static int OSPDaemon_iio_create(const char *name, struct IIO_Sensor *s)
 		DBGOUT("Failed to open %s with error %s", dname, strerror(errno));
 	}
 
-	if (!disablepm) {
-		OSPDaemon_iio_SetState(s, 0);
-	}
 	return fd;
 }
 
@@ -435,7 +434,7 @@ static int OSPDaemon_iioevent_create(const char *name, struct IIO_Sensor *s)
 		DBGOUT("IIOEvent failed to open %s", name);
 		return -1;
 	}
-	/* Can the main fd be closed? */	
+	/* Can the main fd be closed? */
 	ret = ioctl(fd, IIO_GET_EVENT_FD_IOCTL, &evfd);
 	return evfd;
 }
@@ -451,13 +450,17 @@ static int OSPDaemon_iio_setup(struct OSPDaemon_SensorDetail *s, int count)
 			for (j = 0; j < MAX_AXIS; j++) {
 				IIOSen[i].IIOAxis[j].index = -1;
 				IIOSen[i].index2axis[j] = -1;
-			}		
+			}
 			DBGOUT("%s:%i Setting up: %s\n", __func__, __LINE__,  s->name);
 			s->fd = OSPDaemon_iio_create(s->name, &IIOSen[i]);
 			s->lprivate = &IIOSen[i];
 			IIOSen[i].type = s->sensor.SensorType;
 			if (s->fd < 0) {
 				fprintf(stderr, "IIO: Failed on %s\n", s->name);
+			}
+			if (!disablepm) {
+				DBGOUT("%s :: disablepm : %d", __func__, disablepm);
+				OSPDaemon_iio_disable(s);
 			}
 			iiocount++;
 		} else if (s->driver == DRIVER_IIOEVENT) {
@@ -530,6 +533,8 @@ static struct OSPDaemon_driver IIODriver = {
 	.read = OSPDaemon_iio_read,
 	.enable_in = OSPDaemon_iio_enable,
 	.disable_in = OSPDaemon_iio_disable,
+	.batch = OSPDaemon_iio_batch,
+	.flush = OSPDaemon_iio_flush,
 }, IIOEventDriver = {
 	.drvtype = DRIVER_TYPE_INPUT,
 	.driver = DRIVER_IIOEVENT,
@@ -540,6 +545,12 @@ static struct OSPDaemon_driver IIODriver = {
 
 void OSPDaemon_iio_init(void)
 {
+	int ret;
 	OSPDaemon_driver_register(&IIODriver);
 	OSPDaemon_driver_register(&IIOEventDriver);
+	/* TODO: All configuration related to IMU shall be done
+	 * before config done */
+	ret = OSPDaemon_imu_config_done();
+	if (ret < 0)
+		LOGE("OSPDaemon config done failed\n");
 }

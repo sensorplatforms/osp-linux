@@ -7,8 +7,6 @@
 /* TODO: Figure this out from config file */
 #define MAX_IIO_SENSOR 20
 
-#define IIO_DEVICE_DIR	"/sys/bus/iio/devices"
-
 enum {
 	axis_x,
 	axis_y,

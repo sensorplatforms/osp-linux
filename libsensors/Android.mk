@@ -24,7 +24,7 @@ LOCAL_PRELINK_MODULE := false
 # Figure out the current Android version
 PLATFORM_VERSION_MAJOR := $(word 1, $(subst ., ,$(PLATFORM_VERSION)))
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
-LOCAL_SHARED_LIBRARIES := liblog libcutils libdl
+LOCAL_SHARED_LIBRARIES := liblog libcutils libdl libutils
 LOCAL_STATIC_LIBRARIES := libOSP
 LOCAL_MODULE_OWNER := audience 
 
@@ -39,7 +39,8 @@ OSPD_SRC_FILES := ../ospd/OSPDaemon_queue.c \
 		  ../ospd/OSPDaemon_inputreader.c \
 		  ../ospd/OSPDaemon_filecsv.c \
 		  ../ospd/OSPDaemon_pm.c \
-		  ../ospd/OSPDaemon_driver.c
+		  ../ospd/OSPDaemon_driver.c \
+		  ../ospd/OSPDaemon_imu_config.c
 
 LOCAL_SRC_FILES := \
                 sensors.cpp 			\

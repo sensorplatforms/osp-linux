@@ -31,6 +31,11 @@ int OSPDaemon_power_init(struct OSPDaemon_SensorDescription *sd)
 		return -1;
 	}
 
+	if (disablepm){
+		DBGOUT("%s :: pm disabled : %d\n", __func__, disablepm);
+		return -1;
+	}
+
 	/* Clear out the directory */
 	for (i = 0; i < sd->output_count; i++) {
 		snprintf(fname, PATH_MAX, "%s/%s",
@@ -59,30 +64,40 @@ int OSPDaemon_power_init(struct OSPDaemon_SensorDescription *sd)
 	return fd;
 }
 
-static void pm_process_output(struct OSPDaemon_output *out, int mask)
+void OSPDaemon_power_control(struct OSPDaemon_output *out , int enable)
 {
-	if (mask & IN_CREATE) {
-		/* Enable sensor */
+	if (enable) {
 		out->enable = 1;
 		OSPDaemon_driver_enable_out(out);
 		if (!out->noprocess) {
 			OSP_SubscribeSensorResult(&out->ResultDesc,
 					&out->handle);
-			DBGOUT("Subscribe");
+			DBGOUT("%s Subscribe\n ", __func__);
 		} else
 			OSPDaemon_driver_enable_in(out->source);
-		DBGOUT("Enabling %s\n", out->name);
-	} else if (mask & IN_DELETE) {
-		/* Disable sensor */
+		DBGOUT("%s Enabling %s\n", __func__, out->name);
+
+	} else {
 		out->enable = 0;
 		OSPDaemon_driver_disable_out(out);
 		if (!out->noprocess) {
 			OSP_UnsubscribeSensorResult(out->handle);
-			DBGOUT("UnSubscribe");
+		DBGOUT("%s UnSubscribe \n", __func__);
 		} else
 			OSPDaemon_driver_disable_in(out->source);
-		DBGOUT("Disabling %s\n", out->name);
+		DBGOUT("%s Disabling %s\n", __func__, out->name);
 	}
+}
+
+static void pm_process_output(struct OSPDaemon_output *out, int mask)
+{
+	if (mask & IN_CREATE) {
+	/* Enable sensor */
+		OSPDaemon_power_control(out, 1);
+	} else if (mask & IN_DELETE) {
+	/* Disable sensor */
+		OSPDaemon_power_control(out, 0);
+    }
 }
 
 int OSPDaemon_power_process(struct OSPDaemon_SensorDescription *sd, int fd)
