@@ -265,6 +265,9 @@ struct psen_data {
 };
 int OSPDaemon_looper(int argc, char **argv);
 int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data);
+int OSPDaemon_sensor_enable(int enable, int sensor_type);
+int OSPDaemon_batch(int sensor_type, int64_t sampling_period_ns, int64_t max_report_latency_ns);
+int OSPDaemon_flush(int sensor_type);
 
 #ifdef __cplusplus
 }

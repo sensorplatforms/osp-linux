@@ -63,3 +63,10 @@ int OSPDaemon_queue_isempty(struct queue *q)
 {
 	return (q->write == q->read)?1:0;
 }
+
+int OSPDaemon_queue_clear(struct queue *q)
+{
+	q->write = 0;
+	q->read = 0;
+	return 0;
+}

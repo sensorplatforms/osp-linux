@@ -131,3 +131,21 @@ int OSPDaemon_driver_disable_in(struct OSPDaemon_SensorDetail *s)
 		inmap[s->driver]->disable_in(s);
 	return 0;
 }
+
+int OSPDaemon_driver_batch(struct OSPDaemon_SensorDetail *s, int handle, int64_t sampling_period_ns, int64_t max_report_latency_ns)
+{
+	int ret;
+	if (!s) return -1;
+	if (inmap[s->driver]->batch)
+	ret = inmap[s->driver]->batch(s, handle, sampling_period_ns, max_report_latency_ns);
+	return ret;
+}
+
+int OSPDaemon_driver_flush(struct OSPDaemon_SensorDetail *s, int handle)
+{
+	int ret;
+	if (!s) return -1;
+	if (inmap[s->driver]->flush)
+	ret = inmap[s->driver]->flush(s, handle);
+	return ret;
+}
