@@ -258,6 +258,7 @@ void OSPDaemon_iio_init(void);
 void OSPDaemon_input_init(void);
 void OSPDaemon_inputreader_init(void);
 void OSPDaemon_filecsv_init(void);
+void OSPDaemon_queue_driver_init(void);
 
 struct psen_data {
 	int val[5];
