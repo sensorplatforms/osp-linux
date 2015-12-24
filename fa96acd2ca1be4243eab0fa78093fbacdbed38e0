@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa7fdbe_697cc973",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Please make a note to remove mIsFlushEventSent when the flush has actually been implemented by firmware",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_c992159f",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "We can move this to an inline helper function, since it seems to be used in a lot of functions. It will help in code maintenance. Probably can take it as an imporvement.",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_09b6dd3d",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Please make a note that we have to remove this when the flush is actually been implemented, we have to report all the sensor data back to android",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 556,
+        "endChar": 2
+      },
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_49870562",
+        "filename": "ospd/OSPDaemon_driver.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Adding this function here just get access to a function defined in the IIO file breaks the driver design.\n\nI thought we had discussed that this kind of stuff would sit in a file of its own?",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_8981ed4c",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Please convert these to macros, this was discussed earlier as well.",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_2982c152",
+        "filename": "ospd/OSPDaemon_pm.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Please maintain naming conventions.\n\nFunctions exposed here should have a prefix of OSPDaemon_power*",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa7fdbe_a995d189",
+        "filename": "ospd/OSPDaemon_queue.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2015-12-24T04:36:15Z",
+      "side": 1,
+      "message": "Better to do sanity testing for q",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
