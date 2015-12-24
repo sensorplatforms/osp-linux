@@ -293,7 +293,7 @@ static int OSPDaemon_senddata(struct OSPDaemon_SensorDetail *s)
 	OSP_InputSensorData_t mod;
 	OSP_STATUS_t stat;
 	int ret = 0;
-	int err = 0;
+
 	if (!s->noprocess && s->pending) {
 		memcpy(&od, &s->pdata, sizeof(s->pdata));
 		stat = OSP_SetInputData(s->handle, &od);
@@ -314,11 +314,6 @@ static int OSPDaemon_senddata(struct OSPDaemon_SensorDetail *s)
 					OSPDaemon_queue_put(&s->output->q, &mod);
 				} else {
 					OSPDaemon_queue_put(&s->output->q, &od);
-					err = sem_post(&osp_sync);
-					if (-1 == err) {
-						DBG(DEBUG_INIT, "Sem post failed error - %s", strerror(errno));
-						return 1;
-					}
 				}
 			}
 		}
@@ -510,6 +505,16 @@ int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
 	}
 	if (out_data->flush_completed)
 		LOGI("%s ::: Flush completed event for sensor : %d \n", __func__, sd->sensor[i].output->type);
+
+	/* Before returning check if there is more data and signal to indicate */
+	if (0 == OSPDaemon_queue_isempty(&sd->sensor[i].output->q)) {
+		ret = sem_post(&osp_sync);
+		if (-1 == ret) {
+			DBG(DEBUG_INIT, "Sem post failed error - %s", strerror(errno));
+			//return ret;
+		}
+	}
+
 	return vallen;
 }
 
@@ -734,6 +739,7 @@ int OSPDaemon_looper(int argc, char **argv)
 	OSPDaemon_inputreader_init();
 	OSPDaemon_input_init();
 	OSPDaemon_filecsv_init();
+	OSPDaemon_queue_driver_init();
 	/* End driver inits */
 
     /* once config and calib data read is complete, send config done command */

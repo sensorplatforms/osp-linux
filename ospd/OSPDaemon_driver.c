@@ -45,10 +45,8 @@ int OSPDaemon_driver_register(struct OSPDaemon_driver *ops)
 		switch (ops->driver) {
 		case DRIVER_INPUT:
 		case DRIVER_FILECSV:
-			break;
 		case DRIVER_QUEUE:
-			// Nothing to be done for this type of output
-			return 0;
+			break;
 		default:
 			return -EINVAL;
 		}
@@ -96,6 +94,9 @@ int OSPDaemon_driver_setup_out(struct OSPDaemon_output *s, int count)
 	DBG(DEBUG_DRIVER, "Calling FileCSV outbound setup\n");
 	if (outmap[DRIVER_FILECSV])
 		outmap[DRIVER_FILECSV]->setup_out(s, count);
+	DBG(DEBUG_DRIVER, "Calling QUEUE outbound setup\n");
+	if (outmap[DRIVER_QUEUE])
+		outmap[DRIVER_QUEUE]->setup_out(s, count);
 	DBG(DEBUG_DRIVER, "Done out setup\n");
 
 	return 0;
