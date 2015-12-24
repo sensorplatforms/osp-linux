@@ -40,7 +40,8 @@ OSPD_SRC_FILES := ../ospd/OSPDaemon_queue.c \
 		  ../ospd/OSPDaemon_filecsv.c \
 		  ../ospd/OSPDaemon_pm.c \
 		  ../ospd/OSPDaemon_driver.c \
-		  ../ospd/OSPDaemon_imu_config.c
+		  ../ospd/OSPDaemon_imu_config.c \
+		  ../ospd/OSPDaemon_queue_driver.c
 
 LOCAL_SRC_FILES := \
                 sensors.cpp 			\
