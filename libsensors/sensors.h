@@ -97,42 +97,118 @@ __BEGIN_DECLS
 #define EVENT_TYPE_LIGHT            REL_MISC
 
 
+#define MAX_RANGE_ACCEL		(39.2f)
+#define RESOLUTION_ACCEL	(0.01915f)
+#define MIN_DELAY_ACCEL		(16000)
+#define MAX_DELAY_ACCEL		(1000000)
+#define FIFO_RESV_EC_ACCEL	(0)
+#define FIFO_MAX_EC_ACCEL	(200)
+#define FLAGS_ACCEL		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-// 1000 LSG = 1G
-#define LSG                         (1000.0f)
+#define MAX_RANGE_GYRO		(34.906f)
+#define RESOLUTION_GYRO		(0.001067f)
+#define MIN_DELAY_GYRO		(10000)
+#define MAX_DELAY_GYRO		(1000000)
+#define FIFO_RESV_EC_GYRO	(0)
+#define FIFO_MAX_EC_GYRO	(200)
+#define FLAGS_GYRO		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-#define RANGE_PRESS                 (100000.0f)
-// data from freeMotionD is already in android units
-#define RANGE_A                     (2*GRAVITY_EARTH)
-#define RESOLUTION_A                (GRAVITY_EARTH / LSG)
+#define MAX_RANGE_MAG		(1300.0f)
+#define RESOLUTION_MAG		(0.305f)
+#define MIN_DELAY_MAG		(40000)
+#define MAX_DELAY_MAG		(1000000)
+#define FIFO_RESV_EC_MAG	(0)
+#define FIFO_MAX_EC_MAG		(200)
+#define FLAGS_MAG		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-// data from freeMotionD is already in android units
-#define RANGE_M                     (500.0f) //+/-2.5G = +/- 250uT = 500uT range
-#define RESOLUTION_M                (0.152f) //0.152uT/LSB
+#define MAX_RANGE_ORIENT	(360.0f) // Default
+#define RESOLUTION_ORIENT	(0.00001f) // Default
+#define MIN_DELAY_ORIENT	(10000)
+#define MAX_DELAY_ORIENT	(1000000)
+#define FIFO_RESV_EC_ORIENT	(0)
+#define FIFO_MAX_EC_ORIENT	(200)
+#define FLAGS_ORIENT		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-/* conversion of orientation data to degree units */
-#define CONVERT_O                   (1.0f/64.0f)
-#define CONVERT_O_A                 (CONVERT_O)
-#define CONVERT_O_P                 (CONVERT_O)
-#define CONVERT_O_R                 (-CONVERT_O)
+#define MAX_RANGE_ROT		(1.0f) // Default
+#define RESOLUTION_ROT		(0.000000001f) // Default
+#define MIN_DELAY_ROT		(10000)
+#define MAX_DELAY_ROT		(1000000)
+#define FIFO_RESV_EC_ROT	(0)
+#define FIFO_MAX_EC_ROT		(200)
+#define FLAGS_ROT		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-// data from freeMotionD is already in android units
-#define RANGE_GYRO                  (2000.0f*(float)M_PI/180.0f)
-#define RESOLUTION_GYRO             (0.000000001f)
+#define MAX_RANGE_LIN_ACCEL	(39.2f)
+#define RESOLUTION_LIN_ACCEL	(0.01915f)
+#define MIN_DELAY_LIN_ACCEL	(16000)
+#define MAX_DELAY_LIN_ACCEL	(1000000)
+#define FIFO_RESV_EC_LIN_ACCEL	(0)
+#define FIFO_MAX_EC_LIN_ACCEL	(200)
+#define FLAGS_LIN_ACCEL		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-#define CONVERT_ROT_XYZ             (1.0f)
+#define MAX_RANGE_GRAV		(39.2f)
+#define RESOLUTION_GRAV		(0.01915f)
+#define MIN_DELAY_GRAV		(16000)
+#define MAX_DELAY_GRAV		(1000000)
+#define FIFO_RESV_EC_GRAV	(0)
+#define FIFO_MAX_EC_GRAV	(200)
+#define FLAGS_GRAV		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-#define CONVERT_TEMP                (1.0f/10.0f)
-#define RANGE_T                     (85.0f)
-#define RESOLUTION_T                (0.1f)
+#define MAX_RANGE_MAG_UNCAL	(1300.0f)
+#define RESOLUTION_MAG_UNCAL	(0.305f)
+#define MIN_DELAY_MAG_UNCAL	(40000)
+#define MAX_DELAY_MAG_UNCAL	(1000000)
+#define FIFO_RESV_EC_MAG_UNCAL	(0)
+#define FIFO_MAX_EC_MAG_UNCAL	(200)
+#define FLAGS_MAG_UNCAL		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-// conversion of pressure data to mb units
-#define RANGE_P                     (1100.0f)
-#define RESOLUTION_P                (1.0f)
-/* Press sensor is in Pa, Android wants mb */
-#define CONVERT_PRESS               (1.0f/100.0f)
+#define MAX_RANGE_GAME_RV	(1.0f) // Default
+#define RESOLUTION_GAME_RV	(0.000000001f) // Default
+#define MIN_DELAY_GAME_RV	(20000)
+#define MAX_DELAY_GAME_RV	(1000000)
+#define FIFO_RESV_EC_GAME_RV	(0)
+#define FIFO_MAX_EC_GAME_RV	(200)
+#define FLAGS_GAME_RV		(SENSOR_FLAG_CONTINUOUS_MODE)
 
-#define SENSOR_STATE_MASK           (0x7FFF)
+#define MAX_RANGE_GYRO_UNCAL	(34.906f)
+#define RESOLUTION_GYRO_UNCAL	(0.001067f)
+#define MIN_DELAY_GYRO_UNCAL	(10000)
+#define MAX_DELAY_GYRO_UNCAL	(1000000)
+#define FIFO_RESV_EC_GYRO_UNCAL	(0)
+#define FIFO_MAX_EC_GYRO_UNCAL	(200)
+#define FLAGS_GYRO_UNCAL	(SENSOR_FLAG_CONTINUOUS_MODE)
+
+#define MAX_RANGE_SIG_MOT	(1.0f) // Default
+#define RESOLUTION_SIG_MOT	(1.0f) // Default
+#define MIN_DELAY_SIG_MOT	(0) // NA
+#define MAX_DELAY_SIG_MOT	(1000000)
+#define FIFO_RESV_EC_SIG_MOT	(0)
+#define FIFO_MAX_EC_SIG_MOT	(200)
+#define FLAGS_SIG_MOT		(SENSOR_FLAG_ONE_SHOT_MODE)
+
+#define MAX_RANGE_STEP_DET	(1.0f) // Default
+#define RESOLUTION_STEP_DET	(1.0f) // Default
+#define MIN_DELAY_STEP_DET	(0) // NA
+#define MAX_DELAY_STEP_DET	(1000000)
+#define FIFO_RESV_EC_STEP_DET	(0)
+#define FIFO_MAX_EC_STEP_DET	(200)
+#define FLAGS_STEP_DET		(SENSOR_FLAG_SPECIAL_REPORTING_MODE)
+
+#define MAX_RANGE_STEP_COUNT	(1000.0f) // Default
+#define RESOLUTION_STEP_COUNT	(1.0f) // Default
+#define MIN_DELAY_STEP_COUNT	(0) // NA
+#define MAX_DELAY_STEP_COUNT	(1000000)
+#define FIFO_RESV_EC_STEP_COUNT	(0)
+#define FIFO_MAX_EC_STEP_COUNT	(200)
+#define FLAGS_STEP_COUNT	(SENSOR_FLAG_ON_CHANGE_MODE)
+
+#define MAX_RANGE_GEOM_RV	(1.0f) // Default
+#define RESOLUTION_GEOM_RV	(0.000000001f) // Default
+#define MIN_DELAY_GEOM_RV	(20000)
+#define MAX_DELAY_GEOM_RV	(1000000)
+#define FIFO_RESV_EC_GEOM_RV	(0)
+#define FIFO_MAX_EC_GEOM_RV	(200)
+#define FLAGS_GEOM_RV		(SENSOR_FLAG_CONTINUOUS_MODE)
+
 
 /*****************************************************************************/
 
