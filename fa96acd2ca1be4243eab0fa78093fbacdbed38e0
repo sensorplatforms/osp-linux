@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a930d6b_ce4863cf",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-30T10:49:02Z",
+      "side": 1,
+      "message": "Removing this in flush completion patch set.",
+      "parentUuid": "9aa7fdbe_697cc973",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9aa7fdbe_c992159f",
         "filename": "ospd/OSPDaemon.c",
         "patchSetId": 1
@@ -59,6 +77,30 @@
     },
     {
       "key": {
+        "uuid": "1a930d6b_2e300756",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-30T10:49:02Z",
+      "side": 1,
+      "message": "Will be removing it in Flush implementation patch",
+      "parentUuid": "9aa7fdbe_09b6dd3d",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 556,
+        "endChar": 2
+      },
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9aa7fdbe_49870562",
         "filename": "ospd/OSPDaemon_driver.h",
         "patchSetId": 1
@@ -76,6 +118,24 @@
     },
     {
       "key": {
+        "uuid": "1a930d6b_ae3b1737",
+        "filename": "ospd/OSPDaemon_driver.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-30T10:49:02Z",
+      "side": 1,
+      "message": "will create seperate file to send commands in next patch set.",
+      "parentUuid": "9aa7fdbe_49870562",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9aa7fdbe_8981ed4c",
         "filename": "ospd/OSPDaemon_iio.c",
         "patchSetId": 1
@@ -87,6 +147,24 @@
       "writtenOn": "2015-12-24T04:36:15Z",
       "side": 1,
       "message": "Please convert these to macros, this was discussed earlier as well.",
+      "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_0e2b4bec",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-30T10:49:02Z",
+      "side": 1,
+      "message": "1. Driver supports only one syss now to subscribe sensors.\n/sys/bus/platform/devices/osp-output.0/sensorhub_config_write.\n2. We dont need individual iio device enable sysfs to subscribe sensors.\n/sys/bus/iio/devices/iio:devicex/enable.\n3. So removing this code.",
+      "parentUuid": "9aa7fdbe_8981ed4c",
       "revId": "fa96acd2ca1be4243eab0fa78093fbacdbed38e0",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
