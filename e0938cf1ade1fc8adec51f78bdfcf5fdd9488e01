@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_4e355345",
+        "filename": "ospd/OSPDaemon_pm.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2015-12-30T10:49:02Z",
+      "side": 1,
+      "message": "function name changed",
+      "revId": "e0938cf1ade1fc8adec51f78bdfcf5fdd9488e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
