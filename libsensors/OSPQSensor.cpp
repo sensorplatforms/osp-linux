@@ -70,6 +70,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
 	/* Reset the First reported time stamp here to get new elapsed time */
 	mHostFirstReportedTime = android::elapsedRealtimeNano();
+	LOGE("Enable is called at %lld", mHostFirstReportedTime);
 	mSHFirstReportedTime = 0.0;
 	mNumPacketsRecv = 0;
 	mIsFlushEventSent = false;
@@ -78,6 +79,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
 	mSHFirstReportedTime = 0.0;
 	mHostFirstReportedTime = 0;
+	LOGE("Disable - Num packets received is %d", mNumPacketsRecv);
     }
     return ret;
 }
@@ -89,6 +91,7 @@ int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 		handle, mSensorType, period_ns, timeout);
 	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
 	LOGE("@@@@ batch after: sensortype[%d] ret : %d\n", mSensorType, ret);
+	mMRL = timeout;
 	return ret;
 }
 
@@ -147,28 +150,43 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		//LOGE("Failed to get the sensor data ret is %d", ret);
 		return fc;
 	}
-	if (ld.ts < mSHFirstReportedTime) {
+
+	if (((double)ld.ts / Qscale) < mSHFirstReportedTime) {
 	/* Something went wrong, let's reset*/
-		mHostFirstReportedTime = 0;
+		LOGE("Current timestamp is lesser than first reported one");
+		LOGE("CurTS %lld FRTS %lf", ld.ts, mSHFirstReportedTime);
+		mSHFirstReportedTime = 0.0;
 	}
 
 	if (0.0 == mSHFirstReportedTime) {
 		mSHFirstReportedTime = (double)ld.ts;
 		mSHFirstReportedTime = mSHFirstReportedTime/ (double)Qscale;
 	}
+
 	tsq24 = ld.ts / (double)Qscale;
 	delta = tsq24 - mSHFirstReportedTime; /* in seconds.*/
 	delta = delta * 1000000000;
-	LOGE("After delta %lf", delta);
+	//LOGE("After delta %lf", delta);
 	data[fc].version   = sizeof(sensors_event_t);
 	data[fc].sensor    = mSensorId;
 	data[fc].type      = mSensorType;
 	data[fc].timestamp = mHostFirstReportedTime + (int64_t)delta;
 	mNumPacketsRecv++;
-	LOGE("SensorHAL timestamp is %lld , sensor : %s\n", data[fc].timestamp, uinputName);
+	//LOGE("SensorHAL timestamp is %lld , sensor : %s\n", data[fc].timestamp, uinputName);
 	for (i = 0; i < ret; i++)
 		data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
 	fc++;
+
+	if (data[fc].timestamp > (mHostFirstReportedTime + mMRL)) {
+		LOGE("TS Exceeds MRL duration");
+		LOGE("mHostFirstReportedTime %lld", mHostFirstReportedTime);
+		LOGE("mSHFirstReportedTime %lf", mSHFirstReportedTime);
+		LOGE("delta %lf", delta);
+		LOGE("ld.ts %lld", ld.ts);
+		LOGE("tsq24 %lf", tsq24);
+		LOGE("mMRL %lld", mMRL);
+	}
+
     return fc;
 }
 

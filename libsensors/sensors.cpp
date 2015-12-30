@@ -367,7 +367,7 @@ private:
 void* OSPThreadLauncher(void*)
 {
     int count = 6;
-    char *args[] = {"", "-c", "/etc/N7.config", "-d", "255", "-p"};
+    char *args[] = {"", "-c", "/etc/N7.config", "-d", "0", "-p"};
     OSPDaemon_looper(count, args);
 
     return 0;
@@ -522,6 +522,7 @@ int sensors_poll_context_t::setDelay(int handle, int64_t delay_ns) {
 int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
     int total = 0, nb;
+    bool hadData = false;
 
     //while (count) {
         int err = sem_wait(&osp_sync);
@@ -530,11 +531,14 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
             return 0;
         }
 
+    do {
+        hadData = false;
         for (int i = 0; count && i < numSensorDrivers; i++) {
             SensorBase *const sensor(mSensors[i]);
             nb = sensor->readEvents(data, count);
             //LOGE("For sensor Driver %d, events received %d", i, nb);
             if (nb > 0) {
+                hadData = true;
                 count -= nb;
                 total += nb;
                 data  += nb;
@@ -543,6 +547,8 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
             if (count <= 0)
                 break;
         }
+    } while (true == hadData && count > 0);
+
     //}
 
     return total;

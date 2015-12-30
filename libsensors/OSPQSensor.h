@@ -64,6 +64,7 @@ class OSPQSensor : public SensorBase {
 	int64_t mHostFirstReportedTime;
 	double mSHFirstReportedTime;
 	int mNumPacketsRecv;
+	int64_t mMRL;
 };
 
 
