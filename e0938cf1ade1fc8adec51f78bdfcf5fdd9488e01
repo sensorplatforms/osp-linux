@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a930d6b_ae2237ff",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-30T11:15:52Z",
+      "side": 1,
+      "message": "Please be consistent with function names!\ns/OSPDaemon_config_done/OSPDaemon_hif_config_done",
+      "range": {
+        "startLine": 385,
+        "startChar": 4,
+        "endLine": 385,
+        "endChar": 25
+      },
+      "revId": "e0938cf1ade1fc8adec51f78bdfcf5fdd9488e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a930d6b_ce1f83b6",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-30T11:15:52Z",
+      "side": 1,
+      "message": "A better name might be OSPDaemon_hif_enable",
+      "range": {
+        "startLine": 408,
+        "startChar": 11,
+        "endLine": 408,
+        "endChar": 27
+      },
+      "revId": "e0938cf1ade1fc8adec51f78bdfcf5fdd9488e01",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a930d6b_4e355345",
         "filename": "ospd/OSPDaemon_pm.h",
         "patchSetId": 4
