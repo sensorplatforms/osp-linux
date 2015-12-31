@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_4a3b73eb",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-31T08:51:57Z",
+      "side": 1,
+      "message": "Can this be added to pOut or driver private data structure?",
+      "range": {
+        "startLine": 478,
+        "startChar": 1,
+        "endLine": 478,
+        "endChar": 17
+      },
+      "revId": "6039ffb7b68394a5d4c5fa39a49765ee10dc2a5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_aa214fb6",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-31T08:51:57Z",
+      "side": 1,
+      "message": "memset(data, 0, sizeof(data));\n\tpr_debug(\"%s ::: sensor type : %d \\n\", __func__, spack-\u003eSType);\n\tswitch(spack-\u003eSType) {\n\tcase SENSOR_STEP_DETECTOR:\n\t\tif (!and_sensor[spack-\u003eSType].dataready) \n                    break;\n\t\tif(!isFlushcompleted) {\n\t\t\tdata.xyz.x \u003d spack-\u003eP.StepDetector.StepDetected;\n\t\t\tdata.xyz.y \u003d step_counter;\n\t\t\tdata.xyz.ts \u003d spack-\u003eP.StepDetector.TimeStamp.TS64;\n\t\t}",
+      "range": {
+        "startLine": 655,
+        "startChar": 0,
+        "endLine": 667,
+        "endChar": 3
+      },
+      "revId": "6039ffb7b68394a5d4c5fa39a49765ee10dc2a5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_ea2b4792",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-31T08:51:57Z",
+      "side": 1,
+      "message": "Use consistent commenting style",
+      "range": {
+        "startLine": 130,
+        "startChar": 2,
+        "endLine": 130,
+        "endChar": 4
+      },
+      "revId": "6039ffb7b68394a5d4c5fa39a49765ee10dc2a5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_0a189b83",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-31T08:51:57Z",
+      "side": 1,
+      "message": "s/){/) {",
+      "range": {
+        "startLine": 138,
+        "startChar": 28,
+        "endLine": 138,
+        "endChar": 30
+      },
+      "revId": "6039ffb7b68394a5d4c5fa39a49765ee10dc2a5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_ed19a17a",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2015-12-31T08:51:57Z",
+      "side": 1,
+      "message": "you can check for flush completion in extractOSP",
+      "range": {
+        "startLine": 483,
+        "startChar": 10,
+        "endLine": 483,
+        "endChar": 20
+      },
+      "revId": "6039ffb7b68394a5d4c5fa39a49765ee10dc2a5d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
