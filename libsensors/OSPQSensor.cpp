@@ -37,7 +37,6 @@ OSPQSensor::OSPQSensor(const char* uinputName,
         bool evtFloat) :
     SensorBase(NULL, uinputName, 1),
     mEnabled(false),
-    mIsFlushCalled(false),
     mEventsAreFloat(evtFloat),
     mHasPendingEvent(false),
     uinputName(uinputName),
@@ -46,8 +45,7 @@ OSPQSensor::OSPQSensor(const char* uinputName,
     mHandle(-1),
     mHostFirstReportedTime(0),
     mSHFirstReportedTime(0.0),
-    mNumPacketsRecv(0),
-	mIsFlushEventSent(false)
+    mNumPacketsRecv(0)
 {
 	Qscale = (1<<24);
 }
@@ -73,7 +71,6 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 	LOGE("Enable is called at %lld", mHostFirstReportedTime);
 	mSHFirstReportedTime = 0.0;
 	mNumPacketsRecv = 0;
-	mIsFlushEventSent = false;
     } else if (!flags) {
 	mEnabled = flags;
 	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
@@ -101,7 +98,6 @@ int OSPQSensor::flush(int32_t handle)
 	LOGE("@@@@ flush: [%d]  sensortype : %d", handle, mSensorType);
 	ret = OSPDaemon_flush(mSensorType);
 	LOGE("@@@@ flush after: sensortype[%d] ret : %d\n", mSensorType, ret);
-	mIsFlushCalled = true;
 	mHandle = handle;
 	return ret;
 }
@@ -130,24 +126,23 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	double tsq24, delta;
 	if (count < 1)
 	return -EINVAL;
-	if (0 == mEnabled || true == mIsFlushEventSent) {
-		/* LOGE("Sensor %s is not enabled", uinputName);*/
+	if (0 == mEnabled) {
+		//LOGE("Sensor %s is not enabled", uinputName);
 		return 0;
 	}
-	if (mIsFlushCalled == true){
+	ret = OSPDaemon_get_sensor_data(mSensorType, &ld);
+	if (0 == ret || -1 == ret) {
+		//LOGE("Failed to get the sensor data ret is %d", ret);
+		return fc;
+	}
+	if (ld.flush_completed == 1){
+		LOGI("sensor HAL received flush complete event for sensor %d \n", mHandle);
 		data[fc].version = META_DATA_VERSION;
 		data[fc].type = SENSOR_TYPE_META_DATA;
 		data[fc].meta_data.what = META_DATA_FLUSH_COMPLETE;
 		LOGI("Flush Sending flush for sensor %d", mHandle);
 		data[fc].meta_data.sensor = mHandle;
 		fc++;
-		mIsFlushCalled = false;
-		mIsFlushEventSent = true;
-		return fc;
-	}
-	ret = OSPDaemon_get_sensor_data(mSensorType, &ld);
-	if (0 == ret || -1 == ret) {
-		//LOGE("Failed to get the sensor data ret is %d", ret);
 		return fc;
 	}
 

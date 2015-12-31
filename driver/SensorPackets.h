@@ -70,6 +70,7 @@
 /* ATTRIBUTE BYTE */
 #define M_SensorSubType(st)             ((u8)((st << 4) & 0xF0))
 #define M_ParseSensorSubType(st)        ((u8)((st >> 4) & 0x0F))
+#define M_FLUSH_COMPLETED(st)			((u8)((st >> 3) & 0x01))
 
 /* ATTRIBUTE BYTE2*/
 #define M_ParseConfigParam(st)			((u8)(st & 0xFF))
