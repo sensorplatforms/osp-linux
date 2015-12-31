@@ -50,8 +50,6 @@ class OSPQSensor : public SensorBase {
         bool mEnabled;
         bool mEventsAreFloat;
         bool mHasPendingEvent;
-		bool mIsFlushCalled;
-		bool mIsFlushEventSent;
 		int mHandle;
         char input_sysfs_path[PATH_MAX];
         int input_sysfs_path_len;

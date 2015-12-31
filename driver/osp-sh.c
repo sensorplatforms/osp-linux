@@ -50,11 +50,11 @@ struct osp_data {
 	struct work_struct osp_work;
 	struct mutex lock;
 	unsigned int features;
+	u8 isFlushcompleted;
 };
 
 static struct osp_data *gOSP;
 static struct work_queue *osp_workq;
-
 /* Number of packets to parse */
 #define NUM_PACK	2
 static unsigned char *osp_pack[NUM_PACK];
@@ -446,7 +446,7 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 	/* Sanity... */
 	if ((pOut == NULL) || (pPacket == NULL))
 		return (-ENOMEM);
-
+	gOSP->isFlushcompleted = 0;
 	/* Get sensor type. */
 	sensType = M_SensorType(pHif->SensPktRaw.Q.SensorIdByte);
 	sensSubType = M_ParseSensorSubType(pHif->SensPktRaw.Q.AttributeByte);
@@ -457,6 +457,10 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 	dFormat = pHif->SensPktRaw.Q.ControlByte & DATA_FORMAT_MASK;
 	timeFormat = pHif->SensPktRaw.Q.ControlByte & TIME_FORMAT_MASK;
 	tSize = pHif->SensPktRaw.Q.AttributeByte & TIME_STAMP_SIZE_MASK;
+	gOSP->isFlushcompleted = M_FLUSH_COMPLETED(pHif->SensPktRaw.Q.AttributeByte);
+	if(gOSP->isFlushcompleted)
+		pr_info("%s :: %d Flush completed %d for sensor : %d\n",
+				__func__, __LINE__, gOSP->isFlushcompleted, sensType);
 
 	/* Check Sensor enumeration type Android or Private */
 	if (!isPrivateType) {
@@ -630,13 +634,16 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	int PSensor;
 	static int sig_counter = 0, step_counter = 0;
 	union OSP_SensorData data;
+	memset(&data, 0, sizeof(data));
 	pr_debug("%s ::: sensor type : %d \n", __func__, spack->SType);
 	switch(spack->SType) {
 	case SENSOR_STEP_DETECTOR:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.StepDetector.StepDetected;
-		data.xyz.y = step_counter;
-		data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.StepDetector.StepDetected;
+			data.xyz.y = step_counter;
+			data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
+		}
 		step_counter++;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -645,9 +652,11 @@ static void OSP_ReportSensor(struct osp_data *osp,
 
 	case SENSOR_SIGNIFICANT_MOTION:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.SigMotion.MotionDetected;
-		data.xyz.y = sig_counter;
-		data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.SigMotion.MotionDetected;
+			data.xyz.y = sig_counter;
+			data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
+		}
 		sig_counter++;
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -656,8 +665,10 @@ static void OSP_ReportSensor(struct osp_data *osp,
 
 	case SENSOR_PRESSURE:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.CalFixP.Axis[0];
-		data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.CalFixP.Axis[0];
+			data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.CalFixP.TimeStamp.TS64, &data);
@@ -665,9 +676,11 @@ static void OSP_ReportSensor(struct osp_data *osp,
 
 	case SENSOR_STEP_COUNTER:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = (uint32_t)spack->P.StepCount.NumStepsTotal;
-		data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
-		data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = (uint32_t)spack->P.StepCount.NumStepsTotal;
+			data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
+			data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.StepCount.TimeStamp.TS64, &data);
@@ -676,10 +689,12 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case SENSOR_MAGNETIC_FIELD_UNCALIBRATED:
 	case SENSOR_GYROSCOPE_UNCALIBRATED:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.UncalFixP.Axis[0];
-		data.xyz.y = spack->P.UncalFixP.Axis[1];
-		data.xyz.z = spack->P.UncalFixP.Axis[2];
-		data.xyz.ts = spack->P.UncalFixP.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.UncalFixP.Axis[0];
+			data.xyz.y = spack->P.UncalFixP.Axis[1];
+			data.xyz.z = spack->P.UncalFixP.Axis[2];
+			data.xyz.ts = spack->P.UncalFixP.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.UncalFixP.TimeStamp.TS64, &data);
@@ -689,10 +704,12 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case SENSOR_MAGNETIC_FIELD:
 	case SENSOR_GYROSCOPE:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.CalFixP.Axis[0];
-		data.xyz.y = spack->P.CalFixP.Axis[1];
-		data.xyz.z = spack->P.CalFixP.Axis[2];
-		data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64 ;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.CalFixP.Axis[0];
+			data.xyz.y = spack->P.CalFixP.Axis[1];
+			data.xyz.z = spack->P.CalFixP.Axis[2];
+			data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64 ;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.CalFixP.TimeStamp.TS64, &data);
@@ -700,10 +717,12 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case SENSOR_LINEAR_ACCELERATION:
 	case SENSOR_GRAVITY:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.x = spack->P.ThreeAxisFixP.Axis[0];
-		data.xyz.y = spack->P.ThreeAxisFixP.Axis[1];
-		data.xyz.z = spack->P.ThreeAxisFixP.Axis[2];
-		data.xyz.ts = spack->P.ThreeAxisFixP.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.ThreeAxisFixP.Axis[0];
+			data.xyz.y = spack->P.ThreeAxisFixP.Axis[1];
+			data.xyz.z = spack->P.ThreeAxisFixP.Axis[2];
+			data.xyz.ts = spack->P.ThreeAxisFixP.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.ThreeAxisFixP.TimeStamp.TS64, &data);
@@ -711,10 +730,12 @@ static void OSP_ReportSensor(struct osp_data *osp,
 
 	case SENSOR_ORIENTATION:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.xyz.y = spack->P.OrientFixP.Pitch;
-		data.xyz.z = spack->P.OrientFixP.Roll;
-		data.xyz.x = spack->P.OrientFixP.Yaw;
-		data.xyz.ts = spack->P.OrientFixP.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.y = spack->P.OrientFixP.Pitch;
+			data.xyz.z = spack->P.OrientFixP.Roll;
+			data.xyz.x = spack->P.OrientFixP.Yaw;
+			data.xyz.ts = spack->P.OrientFixP.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.OrientFixP.TimeStamp.TS64, &data);
@@ -724,11 +745,13 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
 	case SENSOR_GAME_ROTATION_VECTOR:
 		if (!and_sensor[spack->SType].dataready) break;
-		data.quat.r = spack->P.QuatFixP.Quat[0];
-		data.quat.x = spack->P.QuatFixP.Quat[1];
-		data.quat.y = spack->P.QuatFixP.Quat[2];
-		data.quat.z = spack->P.QuatFixP.Quat[3];
-		data.quat.ts = spack->P.QuatFixP.TimeStamp.TS64;
+		if (!(gOSP->isFlushcompleted)) {
+			data.quat.r = spack->P.QuatFixP.Quat[0];
+			data.quat.x = spack->P.QuatFixP.Quat[1];
+			data.quat.y = spack->P.QuatFixP.Quat[2];
+			data.quat.z = spack->P.QuatFixP.Quat[3];
+			data.quat.ts = spack->P.QuatFixP.TimeStamp.TS64;
+		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.QuatFixP.TimeStamp.TS64, &data);
@@ -737,10 +760,11 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case PSENSOR_ACCELEROMETER_UNCALIBRATED|SENSOR_DEVICE_PRIVATE_BASE:
 		PSensor = spack->SType & ~(SENSOR_DEVICE_PRIVATE_BASE);
 		if (!prv_sensor[PSensor].dataready) break;
-
-		data.xyz.x = spack->P.UncalFixP.Axis[0];
-		data.xyz.y = spack->P.UncalFixP.Axis[1];
-		data.xyz.z = spack->P.UncalFixP.Axis[2];
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.UncalFixP.Axis[0];
+			data.xyz.y = spack->P.UncalFixP.Axis[1];
+			data.xyz.z = spack->P.UncalFixP.Axis[2];
+		}
 		prv_sensor[PSensor].dataready(PSensor, 1,
 			prv_sensor[PSensor].private,
 			spack->P.UncalFixP.TimeStamp.TS64, &data);
@@ -749,9 +773,11 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	case PSENSOR_ACCELEROMETER_RAW|SENSOR_DEVICE_PRIVATE_BASE:
 		PSensor = spack->SType & ~(SENSOR_DEVICE_PRIVATE_BASE);
 		if (!prv_sensor[PSensor].dataready) break;
-		data.xyz.x = spack->P.RawSensor.Axis[0];
-		data.xyz.y = spack->P.RawSensor.Axis[1];
-		data.xyz.z = spack->P.RawSensor.Axis[2];
+		if (!(gOSP->isFlushcompleted)) {
+			data.xyz.x = spack->P.RawSensor.Axis[0];
+			data.xyz.y = spack->P.RawSensor.Axis[1];
+			data.xyz.z = spack->P.RawSensor.Axis[2];
+		}
 		prv_sensor[PSensor].dataready(PSensor, 1,
 			prv_sensor[PSensor].private,
 			spack->P.RawSensor.TStamp.TS64, &data);
