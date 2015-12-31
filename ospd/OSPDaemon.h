@@ -262,6 +262,7 @@ void OSPDaemon_filecsv_init(void);
 struct psen_data {
 	int val[5];
 	unsigned long long ts;
+	int flush_completed;
 };
 int OSPDaemon_looper(int argc, char **argv);
 int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data);

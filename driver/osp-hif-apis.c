@@ -87,6 +87,7 @@ void osp_set_batch(int paramid, int sensorid, int seqno,
 void osp_set_flush(int paramid, int sensorid, int seqno, struct hif_data *buff)
 {
 	u16 size = HIF_PACKET_SIZE(SENSOR_READ_WRITE_REQ_PKT_SZ , 0, 0);
+	pr_debug("%s :: sensor id : %d \n", __func__, sensorid);
 	format_hif_packet(buff, size, paramid, sensorid, seqno);
 }
 

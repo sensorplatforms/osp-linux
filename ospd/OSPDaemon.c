@@ -462,7 +462,7 @@ static int OSPDaemon_init_inbound(struct pollfd *pfd, int nfd, int start)
 int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
 {
 	FUNC_LOG;
-	int i, j = 0, vallen, ret;
+	int i, j = 0, vallen, ret = 0;
 	OSP_InputSensorData_t sdata;
 	for (i = 0; i < sd->sensor_count; i++) {
 		if (sd->sensor[i].sensor.SensorType == in_sen_type)
@@ -484,7 +484,32 @@ int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
 			&sdata,
 			&out_data->ts,
 			out_data->val);
-
+	out_data->flush_completed = 0;
+	switch (vallen) {
+	case 1:
+		if (!(out_data->val[0]) && !(out_data->ts))
+			out_data->flush_completed = 1;
+		break;
+	case 2:
+		if (!(out_data->val[0]) && !(out_data->val[1]) && !(out_data->ts))
+			out_data->flush_completed = 1;
+		break;
+	case 3:
+		if (!(out_data->val[0]) && !(out_data->val[1]) && !(out_data->val[2])
+			&& !(out_data->ts))
+			out_data->flush_completed = 1;
+		break;
+	case 4:
+		if (!(out_data->val[0]) && !(out_data->val[1]) && !(out_data->val[2])
+			&& !(out_data->val[3]) && !(out_data->ts))
+			out_data->flush_completed = 1;
+		break;
+	default:
+		out_data->flush_completed = 0;
+		break;
+	}
+	if (out_data->flush_completed)
+		LOGI("%s ::: Flush completed event for sensor : %d \n", __func__, sd->sensor[i].output->type);
 	return vallen;
 }
 
@@ -549,12 +574,8 @@ int OSPDaemon_flush(int sensor_type)
 	}
 	DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
 	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);
-	/* To be enabled later when firmware supports
-	ret = OSPDaemon_driver_flush(sensor, sensor_type);*/
-	if(ret == 0){
-		OSPDaemon_queue_clear(&sensor->q);
-		OSPDaemon_queue_clear(&sensor->output->q);
-	}
+	/*To be enabled later when firmware supports*/
+	ret = OSPDaemon_driver_flush(sensor, sensor_type);
 	return ret;
 }
 static void OSPDaemon(char *confname)
