@@ -811,7 +811,7 @@ int process_sensor_data(u8 *buf, int len)
 		pack_ptr += err;
 		pack_count++;
 	} while (plen > 0);
-	pr_info("OSP packet count : %d \n", pack_count);
+	pr_debug("OSP packet count : %d \n", pack_count);
 	return 0;
 }
 
@@ -1122,14 +1122,33 @@ static ssize_t sensorhub_config_write_response(struct device *dev,
 	return ret;
 }
 
+static ssize_t sensorhub_reset_response(struct device *dev,
+					struct device_attribute *attr, char *buf)
+{
+	int ret;
+	u8 reset_data = 1;
+	struct hif_data buff;
+	memset(buff.buffer, 0 , sizeof(buff.buffer));
+	ret = i2c_smbus_write_byte_data(gOSP->client, OSP_RESET_REG, 1);
+	pr_info("%s :: %d osp reset done ret ::%d \n", __func__, __LINE__, ret);
+	/* wait for sensorhub to initialize before sending config command*/
+	msleep(300);
+	osp_set_config_done(PARAM_ID_CONFIG_DONE, 0, 0, &buff);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	pr_info("%s :: %d config done command sent \n", __func__, __LINE__, ret);
+	return snprintf(buf, PAGE_SIZE, "sensorhub reset done\n");
+}
 static DEVICE_ATTR(sensorhub_config_read, 0666, sensorhub_config_read_response,
 		sensorhub_config_read_request);
 static DEVICE_ATTR(sensorhub_config_write, 0666, sensorhub_config_write_response,
 		sensorhub_config_write_request);
+static DEVICE_ATTR(sensorhub_reset, 0666, sensorhub_reset_response,
+		NULL);
 
 static struct attribute *core_sysfs_attrs[] = {
 	&dev_attr_sensorhub_config_write.attr,
 	&dev_attr_sensorhub_config_read.attr,
+	&dev_attr_sensorhub_reset.attr,
 	NULL
 };
 
@@ -1194,6 +1213,12 @@ static int osp_probe(struct i2c_client *client,
 
 	osp->client = client;
 	i2c_set_clientdata(client, osp);
+	/*reset sensorhub chip*/
+	err = i2c_smbus_write_byte_data(osp->client, OSP_RESET_REG, 1);
+	if (err < 0) {
+		dev_err(&client->dev, "device not recognized err : %d\n", err);
+		goto err_free_mem;
+	}
 	osp_workq = create_workqueue("osp_queue");
 	if (osp_workq) {
 		INIT_WORK(&osp->osp_work, osp_work_q);
