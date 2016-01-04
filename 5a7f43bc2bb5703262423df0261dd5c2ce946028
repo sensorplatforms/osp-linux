@@ -22,6 +22,30 @@
       "revId": "5a7f43bc2bb5703262423df0261dd5c2ce946028",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_00e78f41",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-04T06:13:36Z",
+      "side": 1,
+      "message": "Remove this redundant prints.\nAdded prints for flush completion in parser function",
+      "parentUuid": "fa81d914_c0ae57e7",
+      "range": {
+        "startLine": 642,
+        "startChar": 0,
+        "endLine": 642,
+        "endChar": 68
+      },
+      "revId": "5a7f43bc2bb5703262423df0261dd5c2ce946028",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
