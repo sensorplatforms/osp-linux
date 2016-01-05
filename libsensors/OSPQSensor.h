@@ -56,13 +56,14 @@ class OSPQSensor : public SensorBase {
 
         virtual bool handleEvent(input_event const * event, sensors_event_t* androidData);
         const char *uinputName;
-        int Qscale;
+       	int Qscale;
+        int Tscale;
         int32_t mSensorType;
         int32_t mSensorId;
-	int64_t mHostFirstReportedTime;
-	double mSHFirstReportedTime;
-	int mNumPacketsRecv;
-	int64_t mMRL;
+        int64_t mHostFirstReportedTime;
+        double mSHFirstReportedTime;
+        int mNumPacketsRecv;
+        int64_t mMRL;
 };
 
 

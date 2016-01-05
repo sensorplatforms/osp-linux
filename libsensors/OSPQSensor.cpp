@@ -47,7 +47,18 @@ OSPQSensor::OSPQSensor(const char* uinputName,
     mSHFirstReportedTime(0.0),
     mNumPacketsRecv(0)
 {
-	Qscale = (1<<24);
+	if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD ||
+		sensorType == SENSOR_TYPE_ORIENTATION ||
+		sensorType == SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
+			LOGE("sensortype : %d\n", sensorType);
+			Qscale = (1<<12);
+	} else if (sensorType == SENSOR_TYPE_STEP_DETECTOR ||
+				sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION) {
+				Qscale = 1;
+	} else {
+			Qscale = (1<<24);
+	}
+	Tscale = (1<<24);
 }
 
 OSPQSensor::~OSPQSensor()
@@ -62,7 +73,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
     bool flags = enabled ? true : false;
     char enablePath[512];
 	int ret;
-    LOGE("@@@@ enable: [%d] - %d, %d sensortype : %d ", handle, enabled, mEnabled, mSensorType);
+    LOGE("@@@@ enable: [%s] - %d, %d sensortype : %d ", uinputName, enabled, mEnabled, mSensorType);
     if (flags && flags != mEnabled) {
         mEnabled = flags;
 	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
@@ -84,8 +95,8 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 {
 	int ret;
-	LOGE("@@@@ batch: [%d]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
-		handle, mSensorType, period_ns, timeout);
+	LOGE("@@@@ batch: [%s]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
+		uinputName, mSensorType, period_ns, timeout);
 	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
 	LOGE("@@@@ batch after: sensortype[%d] ret : %d\n", mSensorType, ret);
 	mMRL = timeout;
@@ -95,7 +106,7 @@ int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 int OSPQSensor::flush(int32_t handle)
 {
 	int ret;
-	LOGE("@@@@ flush: [%d]  sensortype : %d", handle, mSensorType);
+	LOGE("@@@@ flush: [%s]  sensortype : %d", uinputName, mSensorType);
 	ret = OSPDaemon_flush(mSensorType);
 	LOGE("@@@@ flush after: sensortype[%d] ret : %d\n", mSensorType, ret);
 	mHandle = handle;
@@ -145,7 +156,7 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		return fc;
 	}
 
-	if (((double)ld.ts / Qscale) < mSHFirstReportedTime) {
+	if (((double)ld.ts / Tscale) < mSHFirstReportedTime) {
 	/* Something went wrong, let's reset*/
 		LOGE("Current timestamp is lesser than first reported one");
 		LOGE("CurTS %lld FRTS %lf", ld.ts, mSHFirstReportedTime);
@@ -154,10 +165,10 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 
 	if (0.0 == mSHFirstReportedTime) {
 		mSHFirstReportedTime = (double)ld.ts;
-		mSHFirstReportedTime = mSHFirstReportedTime/ (double)Qscale;
+		mSHFirstReportedTime = mSHFirstReportedTime/ (double)Tscale;
 	}
 
-	tsq24 = ld.ts / (double)Qscale;
+	tsq24 = ld.ts / (double)Tscale;
 	delta = tsq24 - mSHFirstReportedTime; /* in seconds.*/
 	delta = delta * 1000000000;
 	//LOGE("After delta %lf", delta);
