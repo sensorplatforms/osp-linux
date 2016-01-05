@@ -27,7 +27,7 @@
 
 #define  FM_DECODE_VALUE_AS_INTEGER false
 #define  FM_DECODE_VALUE_AS_FLOAT true
-
+#define  HIF_TSCALE (1<<24)
 //! use to read any floating point data from OSP provided input sensors
 /*!
  *  instantiate one these objects for every OSP provided sensor you're interested in
@@ -50,19 +50,19 @@ class OSPQSensor : public SensorBase {
         bool mEnabled;
         bool mEventsAreFloat;
         bool mHasPendingEvent;
-		int mHandle;
+        int mHandle;
         char input_sysfs_path[PATH_MAX];
         int input_sysfs_path_len;
 
         virtual bool handleEvent(input_event const * event, sensors_event_t* androidData);
         const char *uinputName;
-        int Qscale;
+       	int Qscale;
         int32_t mSensorType;
         int32_t mSensorId;
-	int64_t mHostFirstReportedTime;
-	double mSHFirstReportedTime;
-	int mNumPacketsRecv;
-	int64_t mMRL;
+        int64_t mHostFirstReportedTime;
+        double mSHFirstReportedTime;
+        int mNumPacketsRecv;
+        int64_t mMRL;
 };
 
 
