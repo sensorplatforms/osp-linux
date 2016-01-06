@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_c7c3c688",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-06T08:40:09Z",
+      "side": 1,
+      "message": "It\u0027d be better if this is defined as a macro\n#define HIF_TSCALE (1\u003c\u003c24)",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 18
+      },
+      "revId": "49b775f473119e41648f0c01d58c51f160750ec1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_87caae9f",
+        "filename": "libsensors/OSPQSensor.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-06T08:40:09Z",
+      "side": 1,
+      "message": "Is this change needed?",
+      "range": {
+        "startLine": 60,
+        "startChar": 12,
+        "endLine": 60,
+        "endChar": 18
+      },
+      "revId": "49b775f473119e41648f0c01d58c51f160750ec1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
