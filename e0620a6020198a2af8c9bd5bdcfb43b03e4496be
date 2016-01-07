@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_4dd0d753",
+        "filename": "ospd/OSPDaemon_queue_driver.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-07T05:22:17Z",
+      "side": 1,
+      "message": "Add file header with licence",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 8
+      },
+      "revId": "e0620a6020198a2af8c9bd5bdcfb43b03e4496be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_adcf93af",
+        "filename": "ospd/OSPDaemon_queue_driver.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-07T05:22:17Z",
+      "side": 1,
+      "message": "Can this be defined only once in a header file and then used anywhere else? Also, is it worth to create OSPLogger.h or something?",
+      "range": {
+        "startLine": 7,
+        "startChar": 8,
+        "endLine": 7,
+        "endChar": 14
+      },
+      "revId": "e0620a6020198a2af8c9bd5bdcfb43b03e4496be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
