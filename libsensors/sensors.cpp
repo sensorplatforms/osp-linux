@@ -507,7 +507,7 @@ int sensors_poll_context_t::activate(int handle, int enabled) {
     int index = handleToDriver(handle);
     if (index < 0) return index;
 
-    LOGE("Sensor-activate - enum sensor %d enabled %d ", index, enabled);
+    /*LOGE("Sensor-activate - enum sensor %d enabled %d ", index, enabled);*/
     int err =  mSensors[index]->enable(handle, enabled);
     LOGE_IF(err != 0, "Sensor-activate failed (%d)", err);
     if (enabled && !err) {

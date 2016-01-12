@@ -552,8 +552,6 @@ int OSPDaemon_batch(int sensor_type, int64_t sampling_period_ns, int64_t max_rep
 	}
 	DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
 	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);
-	DBG(DEBUG_INIT,"%s :: sampling period : 0x%llx MRL :: 0x%llx\n", __func__,
-	sampling_period_ns, max_report_latency_ns);
 	ret = OSPDaemon_driver_batch(sensor, sensor_type, sampling_period_ns, max_report_latency_ns);
 	return ret;
 }
@@ -574,7 +572,6 @@ int OSPDaemon_flush(int sensor_type)
 	}
 	DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
 	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);
-	/*To be enabled later when firmware supports*/
 	ret = OSPDaemon_driver_flush(sensor, sensor_type);
 	return ret;
 }
