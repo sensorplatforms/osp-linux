@@ -94,6 +94,47 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_95ee4aeb",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "Let\u0027s keep this print, as it denotes a error scenario",
+      "parentUuid": "fa81d914_b52c2e4c",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 62
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_b5ba6edf",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "We had already discussed that you could check for mMRL !\u003d 0 in the if condition, in this case it would not print anything in the continuous mode. Or we have to remove this entire if block",
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_152c1a47",
         "filename": "libsensors/OSPQSensor.cpp",
         "patchSetId": 1
@@ -163,6 +204,23 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_d5bfe2ce",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "Don\u0027t comment out debug prints in OSPDaemon, the prints are already switched off using a mask sent via Sensor HAL.",
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_95172aed",
         "filename": "ospd/OSPDaemon.c",
         "patchSetId": 1
@@ -174,6 +232,30 @@
       "writtenOn": "2016-01-12T06:21:13Z",
       "side": 1,
       "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 553,
+        "endChar": 72
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_f5b4e6f3",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "Don\u0027t comment out debug prints in OSPDaemon, the prints are already switched off using a mask sent via Sensor HAL.",
+      "parentUuid": "fa81d914_95172aed",
       "range": {
         "startLine": 553,
         "startChar": 0,
@@ -232,6 +314,30 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_15ba5ade",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "Don\u0027t comment out debug prints in OSPDaemon, the prints are already switched off using a mask sent via Sensor HAL.",
+      "parentUuid": "fa81d914_d5d8c255",
+      "range": {
+        "startLine": 359,
+        "startChar": 0,
+        "endLine": 359,
+        "endChar": 74
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_f5ddc643",
         "filename": "ospd/OSPDaemon_iio.c",
         "patchSetId": 1
@@ -243,6 +349,30 @@
       "writtenOn": "2016-01-12T06:21:13Z",
       "side": 1,
       "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 371,
+        "endChar": 74
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_35ce7e84",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-12T06:35:15Z",
+      "side": 1,
+      "message": "Don\u0027t comment out debug prints in OSPDaemon, the prints are already switched off using a mask sent via Sensor HAL.",
+      "parentUuid": "fa81d914_f5ddc643",
       "range": {
         "startLine": 371,
         "startChar": 0,
