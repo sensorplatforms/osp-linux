@@ -3,7 +3,7 @@
  *
  * Apache Licensed.
  */
-
+#include <errno.h>
 #include <semaphore.h>
 
 #include "OSPDaemon.h"
