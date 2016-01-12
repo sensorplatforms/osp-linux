@@ -356,8 +356,8 @@ static int OSPDaemon_iio_enable(struct OSPDaemon_SensorDetail *s)
 	struct IIO_Sensor *is;
 	is = s->lprivate;
 	int sensor_id = s->sensor.SensorType;
-	DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
-		s->sensor.SensorType, is->iionum, is->name);
+	/*DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
+		s->sensor.SensorType, is->iionum, is->name);*/
 	ret = OSPDaemon_imu_enable(sensor_id, 1);
 	return ret;
 }
@@ -368,8 +368,8 @@ static int OSPDaemon_iio_disable(struct OSPDaemon_SensorDetail *s)
 	struct IIO_Sensor *is;
 	is = s->lprivate;
 	int sensor_id = s->sensor.SensorType;
-	DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
-		s->sensor.SensorType, is->iionum, is->name);
+	/*DBGOUT("%s ::: sensor_id %d iionum is %d trigger_name %s \n", __func__,
+		s->sensor.SensorType, is->iionum, is->name);*/
 	ret = OSPDaemon_imu_enable(sensor_id, 0);
 	return ret;
 }

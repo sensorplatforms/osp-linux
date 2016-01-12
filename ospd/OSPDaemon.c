@@ -516,7 +516,7 @@ int OSPDaemon_get_sensor_data(int in_sen_type, struct psen_data *out_data)
 int OSPDaemon_sensor_enable(int enable, int sensor_type){
 	int i, ret;
 	struct OSPDaemon_output *out = NULL;
-	DBG(DEBUG_INIT ,"%s :: sensortype %d enable %d\n", __func__, sensor_type, enable);
+	/*DBG(DEBUG_INIT ,"%s :: sensortype %d enable %d\n", __func__, sensor_type, enable);*/
 	for (i = 0; i < sd->output_count; i++) {
 		if (sd->output[i].ResultDesc.SensorType == sensor_type){
 			out = &sd->output[i];
@@ -550,10 +550,10 @@ int OSPDaemon_batch(int sensor_type, int64_t sampling_period_ns, int64_t max_rep
 		LOGE("%s :: Invalid sensor type %d\n", __func__, sensor_type);
 		return -1;
 	}
-	DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
+	/*DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
 	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);
 	DBG(DEBUG_INIT,"%s :: sampling period : 0x%llx MRL :: 0x%llx\n", __func__,
-	sampling_period_ns, max_report_latency_ns);
+	sampling_period_ns, max_report_latency_ns);*/
 	ret = OSPDaemon_driver_batch(sensor, sensor_type, sampling_period_ns, max_report_latency_ns);
 	return ret;
 }
@@ -572,9 +572,8 @@ int OSPDaemon_flush(int sensor_type)
 		LOGE("%s :: Invalid sensor type %d\n", __func__, sensor_type);
 		return -1;
 	}
-	DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
-	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);
-	/*To be enabled later when firmware supports*/
+	/*DBG(DEBUG_INIT,"%s :: sensortype :: %d sensorname : %s \n", __func__,
+	sd->sensor[i].sensor.SensorType , sd->sensor[i].sensor.SensorName);*/
 	ret = OSPDaemon_driver_flush(sensor, sensor_type);
 	return ret;
 }

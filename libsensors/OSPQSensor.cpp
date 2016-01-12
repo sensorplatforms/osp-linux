@@ -71,14 +71,14 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 {
     bool flags = enabled ? true : false;
     char enablePath[512];
-	int ret;
-    LOGE("@@@@ enable: [%s] - %d, %d sensortype : %d ", uinputName, enabled, mEnabled, mSensorType);
+    int ret;
+    LOGI("@@@@ sensor: [%s] enabled - %d sensortype : %d ", uinputName, enabled, mSensorType);
     if (flags && flags != mEnabled) {
         mEnabled = flags;
 	ret = OSPDaemon_sensor_enable(enabled, mSensorType);
 	/* Reset the First reported time stamp here to get new elapsed time */
 	mHostFirstReportedTime = android::elapsedRealtimeNano();
-	LOGE("Enable is called at %lld", mHostFirstReportedTime);
+	/*LOGE("Enable is called at %lld", mHostFirstReportedTime);*/
 	mSHFirstReportedTime = 0.0;
 	mNumPacketsRecv = 0;
     } else if (!flags) {
@@ -97,7 +97,7 @@ int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 	LOGE("@@@@ batch: [%s]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
 		uinputName, mSensorType, period_ns, timeout);
 	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
-	LOGE("@@@@ batch after: sensortype[%d] ret : %d\n", mSensorType, ret);
+	/*LOGE("@@@@ batch after: sensortype[%d] ret : %d\n", mSensorType, ret);*/
 	mMRL = timeout;
 	return ret;
 }
@@ -107,7 +107,7 @@ int OSPQSensor::flush(int32_t handle)
 	int ret;
 	LOGE("@@@@ flush: [%s]  sensortype : %d", uinputName, mSensorType);
 	ret = OSPDaemon_flush(mSensorType);
-	LOGE("@@@@ flush after: sensortype[%d] ret : %d\n", mSensorType, ret);
+	/*LOGE("@@@@ flush after: sensortype[%d] ret : %d\n", mSensorType, ret);*/
 	mHandle = handle;
 	return ret;
 }
@@ -156,9 +156,9 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	}
 
 	if (((double)ld.ts / HIF_TSCALE) < mSHFirstReportedTime) {
-	/* Something went wrong, let's reset*/
+		/* Something went wrong, let's reset
 		LOGE("Current timestamp is lesser than first reported one");
-		LOGE("CurTS %lld FRTS %lf", ld.ts, mSHFirstReportedTime);
+		LOGE("CurTS %lld FRTS %lf", ld.ts, mSHFirstReportedTime);*/
 		mSHFirstReportedTime = 0.0;
 	}
 
@@ -166,7 +166,6 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		mSHFirstReportedTime = (double)ld.ts;
 		mSHFirstReportedTime = mSHFirstReportedTime/ (double)HIF_TSCALE;
 	}
-
 	tsq24 = ld.ts / (double)HIF_TSCALE;
 	delta = tsq24 - mSHFirstReportedTime; /* in seconds.*/
 	delta = delta * 1000000000;
@@ -182,13 +181,13 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	fc++;
 
 	if (data[fc].timestamp > (mHostFirstReportedTime + mMRL)) {
-		LOGE("TS Exceeds MRL duration");
+		/*LOGE("TS Exceeds MRL duration");
 		LOGE("mHostFirstReportedTime %lld", mHostFirstReportedTime);
 		LOGE("mSHFirstReportedTime %lf", mSHFirstReportedTime);
 		LOGE("delta %lf", delta);
 		LOGE("ld.ts %lld", ld.ts);
 		LOGE("tsq24 %lf", tsq24);
-		LOGE("mMRL %lld", mMRL);
+		LOGE("mMRL %lld", mMRL);*/
 	}
 
     return fc;
