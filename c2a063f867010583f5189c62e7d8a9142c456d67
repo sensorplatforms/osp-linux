@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_750396b8",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 62
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_f526a667",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 100,
+        "startChar": 3,
+        "endLine": 100,
+        "endChar": 7
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_d531a2a3",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 110,
+        "startChar": 3,
+        "endLine": 110,
+        "endChar": 7
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_b52c2e4c",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 62
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_152c1a47",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 36
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_751ab618",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 510,
+        "startChar": 6,
+        "endLine": 510,
+        "endChar": 10
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_551db20e",
+        "filename": "libsensors/sensors.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Can you please separate out this patch?",
+      "range": {
+        "startLine": 207,
+        "startChar": 0,
+        "endLine": 207,
+        "endChar": 33
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_95172aed",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 553,
+        "endChar": 72
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_b5d34e37",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 575,
+        "startChar": 0,
+        "endLine": 575,
+        "endChar": 72
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_d5d8c255",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 359,
+        "startChar": 0,
+        "endLine": 359,
+        "endChar": 74
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_f5ddc643",
+        "filename": "ospd/OSPDaemon_iio.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1006797
+      },
+      "writtenOn": "2016-01-12T06:21:13Z",
+      "side": 1,
+      "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 371,
+        "endChar": 74
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
