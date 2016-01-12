@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_d5652246",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_750396b8",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 62
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_f526a667",
         "filename": "libsensors/OSPQSensor.cpp",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_f55a2682",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_f526a667",
+      "range": {
+        "startLine": 100,
+        "startChar": 3,
+        "endLine": 100,
+        "endChar": 7
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_d531a2a3",
         "filename": "libsensors/OSPQSensor.cpp",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2016-01-12T06:21:13Z",
       "side": 1,
       "message": "Why not remove these completely?",
+      "range": {
+        "startLine": 110,
+        "startChar": 3,
+        "endLine": 110,
+        "endChar": 7
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_15609a31",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_d531a2a3",
       "range": {
         "startLine": 110,
         "startChar": 3,
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "fa81d914_3554be53",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_95ee4aeb",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 62
+      },
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa81d914_b5ba6edf",
         "filename": "libsensors/OSPQSensor.cpp",
         "patchSetId": 1
@@ -129,6 +225,24 @@
       "writtenOn": "2016-01-12T06:35:15Z",
       "side": 1,
       "message": "We had already discussed that you could check for mMRL !\u003d 0 in the if condition, in this case it would not print anything in the continuous mode. Or we have to remove this entire if block",
+      "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_754e36c3",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_b5ba6edf",
       "revId": "c2a063f867010583f5189c62e7d8a9142c456d67",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
