@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_d5cc4238",
+        "filename": "ospd/OSPDaemon.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1006788
+      },
+      "writtenOn": "2016-01-12T08:45:50Z",
+      "side": 0,
+      "message": "Remove this print. We are already printing sampling freq and MRL in sensorHAL",
+      "revId": "8997c6ada3f7abb5e6644627503c6a1efbe0a483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
