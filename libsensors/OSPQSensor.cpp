@@ -104,6 +104,10 @@ int OSPQSensor::flush(int32_t handle)
 {
 	int ret;
 	LOGI("@@@@ flush: [%s]  sensortype : %d", uinputName, mSensorType);
+	if (mSensorType == SENSOR_TYPE_SIGNIFICANT_MOTION){
+		LOGE("Can't send flush command for one short sensors");
+		return -EINVAL;
+	}
 	ret = OSPDaemon_flush(mSensorType);
 	mHandle = handle;
 	return ret;
