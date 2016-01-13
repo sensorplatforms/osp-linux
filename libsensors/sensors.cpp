@@ -248,6 +248,21 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
                         struct hw_device_t** device);
 
 
+
+static struct sensor_t* get_sensor_list_item(int handle)
+{
+	struct sensor_t *sensor = NULL;
+	int i = 0;
+	LOGI("%s:%d sensor list count#: %d", __func__, __LINE__, ARRAY_SIZE(sSensorList));
+	for(; i< ARRAY_SIZE(sSensorList); i++) {
+		if(handle == sSensorList[i].handle) {
+			sensor = &sSensorList[i];
+			break;
+		}
+	}
+	return sensor;
+}
+
 static int sensors__get_sensors_list(struct sensors_module_t* module,
                                      struct sensor_t const** list)
 {
@@ -578,13 +593,22 @@ int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int6
 
 int sensors_poll_context_t::flush(int handle) {
 
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
+	int index = handleToDriver(handle);
+	struct sensor_t *sensor = get_sensor_list_item(handle);
 
-    int err= mSensors[index]->flush(handle);
-    LOGE_IF(err < 0, "flush failed (%d)", err);
+	if (index < 0) return index;
+	if(sensor == NULL) {
+		LOGE("Can't find sensor in list");
+		return index;
+	}
+	if (sensor->flags & SENSOR_FLAG_ONE_SHOT_MODE) {
+		LOGE("Can't send flush command for one shot sensors");
+		return -EINVAL;
+	}
 
-    return err;
+	int err= mSensors[index]->flush(handle);
+	LOGE_IF(err < 0, "flush failed (%d)", err);
+	return err;
 }
 
 
