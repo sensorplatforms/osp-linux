@@ -50,7 +50,7 @@ OSPQSensor::OSPQSensor(const char* uinputName,
 	if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD ||
 		sensorType == SENSOR_TYPE_ORIENTATION ||
 		sensorType == SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-			LOGE("sensortype : %d\n", sensorType);
+			LOGI("sensortype : %d\n", sensorType);
 			Qscale = (1<<12);
 	} else if (sensorType == SENSOR_TYPE_STEP_DETECTOR ||
 				sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION) {
@@ -71,7 +71,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 {
     bool flags = enabled ? true : false;
     char enablePath[512];
-    int ret;
+    int ret = 0;
     LOGI("@@@@ sensor: [%s] enabled - %d sensortype : %d ", uinputName, enabled, mSensorType);
     if (flags && flags != mEnabled) {
         mEnabled = flags;
@@ -93,7 +93,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 {
 	int ret;
-	LOGI("@@@@ batch: [%s]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
+	LOGI("@@@@ batch: [%s]  sensortype : %d sampling period %lld MRL : %lld",
 		uinputName, mSensorType, period_ns, timeout);
 	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
 	mMRL = timeout;
