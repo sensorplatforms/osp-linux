@@ -569,7 +569,8 @@ int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int6
 
     int index = handleToDriver(handle);
     if (index < 0) return index;
-
+	LOGI("@@@@ batch: [%d]  sampling period %lld MRL : %lld",
+		handle, period_ns, timeout);
     int err= mSensors[index]->batch(handle, flags, period_ns, timeout);
     LOGE_IF(err < 0, "batch failed (%d)", err);
 
