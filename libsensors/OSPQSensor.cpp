@@ -50,7 +50,7 @@ OSPQSensor::OSPQSensor(const char* uinputName,
 	if (sensorType == SENSOR_TYPE_MAGNETIC_FIELD ||
 		sensorType == SENSOR_TYPE_ORIENTATION ||
 		sensorType == SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-			LOGE("sensortype : %d\n", sensorType);
+			LOGI("sensortype : %d\n", sensorType);
 			Qscale = (1<<12);
 	} else if (sensorType == SENSOR_TYPE_STEP_DETECTOR ||
 				sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION) {
@@ -71,7 +71,7 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 {
     bool flags = enabled ? true : false;
     char enablePath[512];
-    int ret;
+    int ret = 0;
     LOGI("@@@@ sensor: [%s] enabled - %d sensortype : %d ", uinputName, enabled, mSensorType);
     if (flags && flags != mEnabled) {
         mEnabled = flags;
@@ -93,7 +93,77 @@ int OSPQSensor::enable(int32_t handle, int enabled)
 int OSPQSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 {
 	int ret;
-	LOGI("@@@@ batch: [%s]  sensortype : %d sampling period 0x%llx MRL : 0x%llx ",
+	switch (mSensorType){
+	case SENSOR_ACCELEROMETER:
+		if (period_ns <= (MIN_DELAY_ACCEL * 1000))/*DELAY is in usec period_ns in nsec*/
+			period_ns = MIN_DELAY_ACCEL * 1000;
+		if (period_ns >= (MAX_DELAY_ACCEL * 1000))
+			period_ns = MAX_DELAY_ACCEL * 1000;
+		break;
+	case SENSOR_MAGNETIC_FIELD:
+		if (period_ns <= (MIN_DELAY_MAG * 1000))
+			period_ns = MIN_DELAY_MAG * 1000;
+		if (period_ns >= (MAX_DELAY_MAG * 1000))
+			period_ns = MAX_DELAY_MAG * 1000;
+		break;
+	case SENSOR_ORIENTATION:
+		if (period_ns <= (MIN_DELAY_ORIENT * 1000))
+			period_ns = MIN_DELAY_ORIENT * 1000;
+		if (period_ns >= (MAX_DELAY_ORIENT * 1000))
+			period_ns = MAX_DELAY_ORIENT * 1000;
+		break;
+	case SENSOR_GYROSCOPE:
+		if (period_ns <= (MIN_DELAY_GYRO * 1000))
+			period_ns = MIN_DELAY_GYRO * 1000;
+		if (period_ns >= (MAX_DELAY_GYRO * 1000))
+			period_ns = MAX_DELAY_GYRO * 1000;
+		break;
+	case SENSOR_GRAVITY:
+		if (period_ns <= (MIN_DELAY_GRAV * 1000))
+			period_ns = MIN_DELAY_GRAV * 1000;
+		if (period_ns >= (MAX_DELAY_GRAV * 1000))
+			period_ns = MAX_DELAY_GRAV * 1000;
+		break;
+	case SENSOR_LINEAR_ACCELERATION:
+		if (period_ns <= (MIN_DELAY_LIN_ACCEL * 1000))
+			period_ns = MIN_DELAY_LIN_ACCEL * 1000;
+		if (period_ns >= (MAX_DELAY_LIN_ACCEL * 1000))
+			period_ns >= MAX_DELAY_LIN_ACCEL * 1000;
+		break;
+	case SENSOR_ROTATION_VECTOR:
+		if (period_ns <= (MIN_DELAY_ROT * 1000))
+			period_ns = MIN_DELAY_ROT * 1000;
+		if (period_ns >= (MAX_DELAY_ROT * 1000))
+			period_ns >= MAX_DELAY_ROT * 1000;
+		break;
+	case SENSOR_MAGNETIC_FIELD_UNCALIBRATED:
+		if (period_ns <= (MIN_DELAY_MAG_UNCAL * 1000))
+			period_ns = MIN_DELAY_MAG_UNCAL * 1000;
+		if (period_ns >= (MAX_DELAY_MAG_UNCAL * 1000))
+			period_ns >= MAX_DELAY_MAG_UNCAL * 1000;
+		break;
+	case SENSOR_GAME_ROTATION_VECTOR:
+		if (period_ns <= (MIN_DELAY_GAME_RV * 1000))
+			period_ns = MIN_DELAY_GAME_RV * 1000;
+		if (period_ns >= (MAX_DELAY_GAME_RV * 1000))
+			period_ns >= MAX_DELAY_GAME_RV * 1000;
+		break;
+	case SENSOR_GYROSCOPE_UNCALIBRATED:
+		if (period_ns <= (MIN_DELAY_GYRO_UNCAL * 1000))
+			period_ns = MIN_DELAY_GYRO_UNCAL * 1000;
+		if (period_ns >= (MAX_DELAY_GYRO_UNCAL * 1000))
+			period_ns >= MAX_DELAY_GYRO_UNCAL * 1000;
+		break;
+	case SENSOR_GEOMAGNETIC_ROTATION_VECTOR:
+		if (period_ns <= (MIN_DELAY_GEOM_RV * 1000))
+			period_ns = MIN_DELAY_GEOM_RV * 1000;
+		if (period_ns >= (MAX_DELAY_GEOM_RV * 1000))
+			period_ns >= MAX_DELAY_GEOM_RV * 1000;
+		break;
+	default:
+			break;
+	}
+	LOGI("@@@@ batch: [%s]  sensortype : %d sampling period %lld MRL : %lld",
 		uinputName, mSensorType, period_ns, timeout);
 	ret = OSPDaemon_batch(mSensorType, period_ns, timeout);
 	mMRL = timeout;
