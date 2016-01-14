@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_124b452c",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-14T09:36:50Z",
+      "side": 1,
+      "message": "Should be \"else\" if (period_ns \u003e\u003d (MAX_DELAY_ACCEL * 1000)), no point in checking for both lesser than min and greater than max\n\nSame applies for each switch case. Also, would it be better to check against sSensorList, instead of a switch case?",
+      "revId": "cf887a13aa182e197c98e5bcc0f8cbbcd828735d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_7252c1de",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-14T09:36:50Z",
+      "side": 1,
+      "message": "Return error in case of unsupported sensor type",
+      "revId": "cf887a13aa182e197c98e5bcc0f8cbbcd828735d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_32c12981",
+        "filename": "libsensors/sensors.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-14T09:36:50Z",
+      "side": 1,
+      "message": "Is this required? In an earlier patch you removed lot of prints saying it affects performance, now there is an additional print..",
+      "revId": "cf887a13aa182e197c98e5bcc0f8cbbcd828735d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
