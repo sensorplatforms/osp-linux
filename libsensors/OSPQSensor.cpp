@@ -177,16 +177,6 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
 	fc++;
 
-	if (data[fc].timestamp > (mHostFirstReportedTime + mMRL) && mMRL != 0) {
-		LOGE("TS Exceeds MRL duration");
-		LOGE("mHostFirstReportedTime %lld", mHostFirstReportedTime);
-		LOGE("mSHFirstReportedTime %lf", mSHFirstReportedTime);
-		LOGE("delta %lf", delta);
-		LOGE("ld.ts %lld", ld.ts);
-		LOGE("tsq24 %lf", tsq24);
-		LOGE("mMRL %lld", mMRL);
-	}
-
     return fc;
 }
 
