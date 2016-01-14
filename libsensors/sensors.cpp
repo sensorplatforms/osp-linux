@@ -582,13 +582,21 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 {
 
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
+	int index = handleToDriver(handle);
+	struct sensor_t *sensor = get_sensor_list_item(handle);
 
-    int err= mSensors[index]->batch(handle, flags, period_ns, timeout);
-    LOGE_IF(err < 0, "batch failed (%d)", err);
+	if (index < 0 ) return index;
+	if (sensor == NULL) return -EINVAL;
 
-    return err;
+	/* Cap the minDelay and maxDelay to supported delays */
+	period_ns = (period_ns < (sensor->minDelay * 1000))? sensor->minDelay * 1000: period_ns;
+	period_ns = (period_ns > (sensor->maxDelay * 1000))? sensor->maxDelay * 1000: period_ns;
+
+	LOGI("@@@@ batch: [%d]  sampling period %lld MRL : %lld",
+		handle, period_ns, timeout);
+	int err= mSensors[index]->batch(handle, flags, period_ns, timeout);
+	LOGE_IF(err < 0, "batch failed (%d)", err);
+	return err;
 }
 
 int sensors_poll_context_t::flush(int handle) {
