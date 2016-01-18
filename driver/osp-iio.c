@@ -83,7 +83,18 @@ static struct iio_chan_spec step_channels[] = {
 		.channel2 = IIO_MOD_X,
 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
 		.scan_index = axis_x,
-		.scan_type = IIO_ST('s', 32, 32, 24),
+		.scan_type = IIO_ST('u', 32, 32, 24),
+	},
+	{
+		.type = IIO_ACCEL,
+		.modified = 1,
+		.channel = 1,
+		.address = 1,
+		/* Channel 2 is use for modifiers */
+		.channel2 = IIO_MOD_Y,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+		.scan_index = axis_y,
+		.scan_type = IIO_ST('u', 32, 32, 24),
 	},
 	IIO_CHAN_SOFT_TIMESTAMP(3),
 };
@@ -613,13 +624,13 @@ static const struct OSP_SensorDesc {
 		.useevent = 1,
 	},
 	[SENSOR_STEP_COUNTER] = {
-		.name = "osp_step",
-		.trigname = "osp_step",
+		.name = "osp_step_counter",
+		.trigname = "osp_step_counter",
 		.channels = step_channels,
 		.num_channels = ARRAY_SIZE(step_channels),
 		.info = &osp_sensor_info,
-		.usebuffer = 0,
-		.useevent = 1,
+		.usebuffer = 1,
+		.useevent = 0,
 	},
 	[SENSOR_PRESSURE] = {
 		.name = "osp_pressure",
@@ -900,11 +911,10 @@ static void dataready(int sensor, int prv,
 	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
 	osp_sensor->ts = ts;
 	osp_sensor->data = *sensordata;
-	pr_debug("%s ::: ts : %llu\n", __func__, ts);
 	if (osp_sensor->private == 0 && and_sensor[sensor].useevent) {
 		switch (sensor) {
 		case SENSOR_SIGNIFICANT_MOTION:
-		case SENSOR_STEP_COUNTER:
+		case SENSOR_STEP_DETECTOR:
 			iio_push_event(indio_dev,
 					IIO_MOD_EVENT_CODE(IIO_INTENSITY, 0,
 						IIO_MOD_X,

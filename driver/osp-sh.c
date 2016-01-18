@@ -214,8 +214,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->CalPktFixP.TimeStamp, pOut->P.CalFixP.TimeStamp.TS64);
 			pOut->P.CalFixP.TimeStamp.TS64 = be64_to_cpu(pOut->P.CalFixP.TimeStamp.TS64);
-			pr_debug("pOut->P.CalFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.CalFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = CALIBRATED_FIXP_DATA_PKT_SZ;
 		}
@@ -244,8 +242,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->QuatPktFixP.TimeStamp , pOut->P.QuatFixP.TimeStamp.TS64);
 			pOut->P.QuatFixP.TimeStamp.TS64 = be64_to_cpu(pOut->P.QuatFixP.TimeStamp.TS64);
-			pr_debug("pOut->P.QuatFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.QuatFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = QUATERNION_FIXP_DATA_PKT_SZ;
 		}
@@ -284,8 +280,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->UncalPktFixP.TimeStamp , pOut->P.UncalFixP.TimeStamp.TS64);
 			pOut->P.UncalFixP.TimeStamp.TS64 = be64_to_cpu(pOut->P.UncalFixP.TimeStamp.TS64);
-			pr_debug("pOut->P.UncalFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.QuatFixP.TimeStamp.TS64);
 			errCode = 0;
 		}
 		break;
@@ -304,8 +298,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->SignificantMotion.TimeStamp , pOut->P.UncalFixP.TimeStamp.TS64);
 			pOut->P.SigMotion.TimeStamp.TS64 = be64_to_cpu(pOut->P.SigMotion.TimeStamp.TS64);
-			pr_debug("pOut->P.UncalFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.QuatFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = SIGNIFICANTMOTION_FIXP_DATA_PKT_SZ;
 		}
@@ -326,8 +318,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->StepDetector.TimeStamp , pOut->P.StepDetector.TimeStamp.TS64);
 			pOut->P.StepDetector.TimeStamp.TS64 = be64_to_cpu(pOut->P.StepDetector.TimeStamp.TS64);
-			pr_debug("pOut->P.StepDetector.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.StepDetector.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = STEPDETECTOR_DATA_PKT_SZ;
 		}
@@ -354,8 +344,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->StepCounter.TimeStamp, pOut->P.StepCount.TimeStamp.TS64);
 			pOut->P.StepCount.TimeStamp.TS64 = be64_to_cpu(pOut->P.StepCount.TimeStamp.TS64);
-			pr_debug("pOut->P.StepCount.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.StepCount.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = STEPCOUNTER_DATA_PKT_SZ;
 		}
@@ -379,8 +367,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->OrientationFixP.TimeStamp, pOut->P.OrientFixP.TimeStamp.TS64);
 			pOut->P.OrientFixP.TimeStamp.TS64 = be64_to_cpu(pOut->P.OrientFixP.TimeStamp.TS64);
-			pr_debug("pOut->P.OrientFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.OrientFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = ORIENTATION_FIXP_DATA_PKT_SZ;
 		}
@@ -409,8 +395,6 @@ static int OSP_ParseSensorDataPkt_Android(
 			/* Extract fixed point time stamp */
 			u8_to_be64(pHif->ThreeAxisFixp.TimeStamp, pOut->P.ThreeAxisFixP.TimeStamp.TS64);
 			pOut->P.ThreeAxisFixP.TimeStamp.TS64 = be64_to_cpu(pOut->P.ThreeAxisFixP.TimeStamp.TS64);
-			pr_debug("pOut->P.ThreeAxisFixP.TimeStamp.TS64 0x%016llx \n",
-					pOut->P.ThreeAxisFixP.TimeStamp.TS64);
 			errCode = 0;
 			lengthParsed = THREEAXIS_FIXP_DATA_PKT_SZ;
 		}
@@ -681,6 +665,8 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
 			data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
 		}
+		pr_debug("%s:: data.x = %d, data.y : %d\n", __func__, data.xyz.x,
+				data.xyz.y);
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.StepCount.TimeStamp.TS64, &data);

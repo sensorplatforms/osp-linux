@@ -124,7 +124,7 @@ static inline void conv2OSP(ASensorType_t sensor,
 		d->booldata.TimeStamp = ts;
 		break;
 	case SENSOR_STEP_COUNTER:
-		d->stepcount.StepCount = val[0];
+		d->stepcount.StepCount = (uint32_t)val[0];
 		d->stepcount.TimeStamp = ts;
 		break;
 	default:

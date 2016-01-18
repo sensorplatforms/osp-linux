@@ -53,7 +53,8 @@ OSPQSensor::OSPQSensor(const char* uinputName,
 			LOGI("sensortype : %d\n", sensorType);
 			Qscale = (1<<12);
 	} else if (sensorType == SENSOR_TYPE_STEP_DETECTOR ||
-				sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION) {
+				sensorType == SENSOR_TYPE_SIGNIFICANT_MOTION ||
+				sensorType == SENSOR_TYPE_STEP_COUNTER) {
 				Qscale = 1;
 	} else {
 			Qscale = (1<<24);
@@ -172,9 +173,15 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	data[fc].type      = mSensorType;
 	data[fc].timestamp = mHostFirstReportedTime + (int64_t)delta;
 	mNumPacketsRecv++;
-	//LOGE("SensorHAL timestamp is %lld , sensor : %s\n", data[fc].timestamp, uinputName);
-	for (i = 0; i < ret; i++)
-		data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
+	if (SENSOR_TYPE_STEP_COUNTER == mSensorType) {
+		data[fc].u64.step_counter = ld.val[i];
+	} else if (SENSOR_TYPE_STEP_DETECTOR == mSensorType ||
+		SENSOR_TYPE_SIGNIFICANT_MOTION == mSensorType) {
+		data[fc].data[0] = 1.0;
+	} else {
+		for (i = 0; i < ret; i++)
+			data[fc].data[i] = (float)ld.val[i] / (float)Qscale;
+	}
 	fc++;
 
     return fc;

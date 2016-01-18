@@ -479,7 +479,7 @@ sensors_poll_context_t::sensors_poll_context_t()
 							 ID_STEP_DETECTOR,
 							 SENSOR_TYPE_STEP_DETECTOR,
 							 FM_DECODE_VALUE_AS_INTEGER);
-    mSensors[step_counter] = new OSPQStepCounter("fm-step-counter",
+    mSensors[step_counter] = new OSPQSensor("fm-step-counter",
 						       ID_STEP_COUNTER,
 						       SENSOR_TYPE_STEP_COUNTER,
 						       FM_DECODE_VALUE_AS_INTEGER);
