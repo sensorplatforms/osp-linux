@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa81d914_202621b8",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-19T04:26:39Z",
+      "side": 1,
+      "message": "Check indentation. Do we need this log?",
+      "range": {
+        "startLine": 177,
+        "startChar": 1,
+        "endLine": 178,
+        "endChar": 79
+      },
+      "revId": "7e6d106b840090e36b8419a915d5ad0d414ee0ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_403a35ce",
+        "filename": "libsensors/OSPQSensor.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-19T04:26:39Z",
+      "side": 1,
+      "message": "check identation",
+      "revId": "7e6d106b840090e36b8419a915d5ad0d414ee0ba",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
