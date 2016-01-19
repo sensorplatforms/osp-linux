@@ -597,7 +597,6 @@ static void OSPDaemon(char *confname)
 		pfd[i].fd = 0;
 		pfd[i].events = 0;
 	}
-
 	OSPDaemon_driver_setup_in(sd->sensor, sd->sensor_count);
 	r = OSPDaemon_init_inbound(pfd, nfd, r);
 	OSPDaemon_driver_setup_out(sd->output, sd->output_count);
@@ -608,6 +607,7 @@ static void OSPDaemon(char *confname)
 		pfd[nfd].events |= POLLIN;
 		nfd++;
 	}
+	OSPDaemon_driver_process_command(OSP_REGISTER_VERSION, sd->version);
 
 	for (i = 0; i < nfd; i++) {
 		DBG(DEBUG_INIT, "%i: fd %i events = %i\n", i, pfd[i].fd, pfd[i].events);

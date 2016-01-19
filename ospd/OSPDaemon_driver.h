@@ -14,6 +14,7 @@ struct OSPDaemon_driver {
 	int (*disable_in)(struct OSPDaemon_SensorDetail *);
 	int (*batch)(int , int64_t , int64_t);
 	int (*flush)(int);
+	int (*process_command)(uint8_t command, void *ptr);
 };
 
 int OSPDaemon_driver_setup_out(struct OSPDaemon_output *s, int count);
@@ -27,4 +28,5 @@ int OSPDaemon_driver_enable_in(struct OSPDaemon_SensorDetail *s);
 int OSPDaemon_driver_disable_in(struct OSPDaemon_SensorDetail *s);
 int OSPDaemon_driver_batch(struct OSPDaemon_SensorDetail *s, int sensor_id, int64_t sampling_period_ns, int64_t max_report_latency_ns);
 int OSPDaemon_driver_flush(struct OSPDaemon_SensorDetail *s, int sensor_id);
+int OSPDaemon_driver_process_command(uint8_t command, void *ptr);
 #endif

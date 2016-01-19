@@ -33,7 +33,9 @@
 #define NAME			"ospsh"
 /* Private sensors */
 #define FEAT_PRIVATE	(1<<0)
-#define MAX_BUF_SZ 20
+#define MAX_BUF_SZ 		20
+#define MAX_VERSION_LEN	64
+
 /*static struct completion hif_response_complete;*/
 static u8 sdata[PAGE_SIZE];
 static u16 error_code;
@@ -50,6 +52,8 @@ struct osp_data {
 	struct work_struct osp_work;
 	struct mutex lock;
 	unsigned int features;
+	u8 version[MAX_VERSION_LEN];
+	bool setv;
 	u8 isFlushcompleted;
 };
 
@@ -443,7 +447,7 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 	tSize = pHif->SensPktRaw.Q.AttributeByte & TIME_STAMP_SIZE_MASK;
 	gOSP->isFlushcompleted = M_FLUSH_COMPLETED(pHif->SensPktRaw.Q.AttributeByte);
 	if(gOSP->isFlushcompleted)
-		pr_info("%s :: %d Flush completed %d for sensor : %d\n",
+		pr_debug("%s :: %d Flush completed %d for sensor : %d\n",
 				__func__, __LINE__, gOSP->isFlushcompleted, sensType);
 
 	/* Check Sensor enumeration type Android or Private */
@@ -929,7 +933,7 @@ static ssize_t sensorhub_config_write_request(struct device *dev,
 		pr_debug("%s:: param_id incorrect \n", __func__);
 		return count;
 	}
-	pr_info("%s :: cmd : 0x%04x HIF Packet : 0x%08x \n", __func__,
+	pr_debug("%s :: cmd : 0x%04x HIF Packet : 0x%08x \n", __func__,
 	*(u16 *)(buff.buffer), *(u32 *)(buff.buffer + 2));
 	/*write Hif write request packet to firmware */
 	mutex_lock(&gOSP->lock);
@@ -1120,25 +1124,51 @@ static ssize_t sensorhub_reset_response(struct device *dev,
 	struct hif_data buff;
 	memset(buff.buffer, 0 , sizeof(buff.buffer));
 	ret = i2c_smbus_write_byte_data(gOSP->client, OSP_RESET_REG, 1);
-	pr_info("%s :: %d osp reset done ret ::%d \n", __func__, __LINE__, ret);
+	pr_debug("%s :: %d osp reset done ret ::%d \n", __func__, __LINE__, ret);
 	/* wait for sensorhub to initialize before sending config command*/
 	msleep(300);
 	osp_set_config_done(PARAM_ID_CONFIG_DONE, 0, 0, &buff);
 	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
-	pr_info("%s :: %d config done command sent \n", __func__, __LINE__, ret);
+	pr_debug("%s :: %d config done command sent \n", __func__, __LINE__, ret);
 	return snprintf(buf, PAGE_SIZE, "sensorhub reset done\n");
 }
+
+static ssize_t sensorhub_osp_versionr(struct device *dev,
+					struct device_attribute *attr, char *buf)
+{
+	int ret;
+	return snprintf(buf, MAX_VERSION_LEN, gOSP->version);
+}
+
+static ssize_t sensorhub_osp_versionw(struct device *dev,
+			struct device_attribute *attr,
+			const char *buf,
+			size_t count)
+{
+	if(!gOSP || gOSP->setv) {
+		pr_err("OSP version can't be set\n");
+	}
+	else {
+		sprintf(gOSP->version, "%s", buf);
+		gOSP->setv = true;
+	}
+	return count;
+}
+
 static DEVICE_ATTR(sensorhub_config_read, 0666, sensorhub_config_read_response,
 		sensorhub_config_read_request);
 static DEVICE_ATTR(sensorhub_config_write, 0666, sensorhub_config_write_response,
 		sensorhub_config_write_request);
 static DEVICE_ATTR(sensorhub_reset, 0666, sensorhub_reset_response,
 		NULL);
+static DEVICE_ATTR(osp_version, 0666, sensorhub_osp_versionr,
+		sensorhub_osp_versionw);
 
 static struct attribute *core_sysfs_attrs[] = {
 	&dev_attr_sensorhub_config_write.attr,
 	&dev_attr_sensorhub_config_read.attr,
 	&dev_attr_sensorhub_reset.attr,
+	&dev_attr_osp_version.attr,
 	NULL
 };
 
@@ -1224,8 +1254,8 @@ static int osp_probe(struct i2c_client *client,
 	/* Create child device */
 	OSP_add_child(osp);
 /*	init_completion(&hif_response_complete); */
-	pr_debug("%s:%d", __func__, __LINE__);
-
+	memset(gOSP->version, 0, sizeof(gOSP->version));
+	gOSP->setv = false;
 	return 0;
 err_free_mem:
 	kfree(osp);

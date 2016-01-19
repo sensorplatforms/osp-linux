@@ -20,7 +20,6 @@
 
 #define MAX_TAG		50
 #define NAME_LEN	80
-
 #define DBGOUT(x...) DBG(DEBUG_CONF, "CONFIG: "x)
 /* Pre-allocate storate to avoid malloc.*/
 static struct OSPDaemon_SensorDetail Sensor[MAX_TAG];
@@ -30,6 +29,7 @@ static struct OSPDaemon_output Output[MAX_TAG];
 static int output_count = 0;
 static char CalFile[PATH_MAX];
 static char powerPath[PATH_MAX];
+static char version[MAX_VERSION_LEN];
 char output_name[MAX_TAG][NAME_LEN];
 static struct OSPDaemon_SensorDescription sd;
 /*
@@ -62,6 +62,7 @@ static int proc_sensor_format(int linetype, int tag, char *val, int *taglist);
 static int proc_system_calfile(int linetype, int tag, char *val, int *taglist);
 static int proc_system_pmdir(int linetype, int tag, char *val, int *taglist);
 static int proc_option(int linetype, int tag, char *val, int *taglist);
+static int proc_system_version(int linetype, int tag, char *val, int *taglist);
 
 enum {
 	LINE_UNKNOWN,
@@ -133,6 +134,7 @@ static const struct _keymap {
 	{"format", proc_output_format},
 	{"iformat", proc_sensor_format},
 	{"option", proc_option},
+	{"version", proc_system_version},
 };
 
 /* Parse a string containing 3 comma seperated values */
@@ -202,6 +204,15 @@ static int proc_system_calfile(int linetype, int tag, char *val, int *taglist)
 	CalFile[PATH_MAX-1] = '\0';
 	DBGOUT("Cal file: %s\n", val);
 
+	return 0;
+}
+
+static int proc_system_version(int linetype, int tag, char *val, int *taglist)
+{
+	if (linetype != LINE_SYSTEM) return -1;
+	memset(version, 0, sizeof(version));
+	strncpy(version, val, MAX_VERSION_LEN);
+	DBGOUT("version: %s\n", val);
 	return 0;
 }
 static int proc_system_pmdir(int linetype, int tag, char *val, int *taglist)
@@ -315,7 +326,7 @@ static int proc_output_format(int linetype, int tag, char *val, int *taglist)
 
 	} else if (strcasecmp("integer", val) == 0) {
 		Output[taglist[tag]].format = OUT_FORMAT_INTEGER;
-		
+
 	} else if (strcasecmp("float", val) == 0) {
 		Output[taglist[tag]].format = OUT_FORMAT_FLOAT;
 	}
@@ -338,7 +349,7 @@ static int proc_sensor_format(int linetype, int tag, char *val, int *taglist)
 	/* scaleNN -> shift by NN */
 	if (strcasecmp("integer", val) == 0) {
 		Sensor[taglist[tag]].format = IN_FORMAT_INTEGER;
-		
+
 	} else if (strcasecmp("float", val) == 0) {
 		Sensor[taglist[tag]].format = IN_FORMAT_FLOAT;
 	}
@@ -665,7 +676,7 @@ struct OSPDaemon_SensorDescription *OSPDaemon_config(char *confname)
 		memset(&Output[i], 0, sizeof(Sensor[i]));
 		Output[i].fd = -1;
 	}
-	sd.powerPath = NULL;	
+	sd.powerPath = NULL;
 	powerPath[0] = '\0';
 	DBGOUT("%s:%i\n", __func__, __LINE__);
 	do {
@@ -683,6 +694,7 @@ struct OSPDaemon_SensorDescription *OSPDaemon_config(char *confname)
 	sd.output = Output;
 	sd.output_count = output_count;
 	sd.CalFile = CalFile;
+	sd.version = version;
 	if (powerPath[0] != '\0')
 		sd.powerPath = powerPath;
 	return &sd;

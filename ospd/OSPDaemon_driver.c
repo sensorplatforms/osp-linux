@@ -102,6 +102,16 @@ int OSPDaemon_driver_setup_out(struct OSPDaemon_output *s, int count)
 	return 0;
 }
 
+int OSPDaemon_driver_process_command(uint8_t command, void *ptr)
+{
+	int ret;
+	if (!ptr) return -1;
+	DBG(DEBUG_DRIVER, "Calling process command for IIO\n");
+	if (inmap[DRIVER_IIO])
+		ret = inmap[DRIVER_IIO]->process_command(command, ptr);
+	return ret;
+}
+
 int OSPDaemon_driver_enable_out(struct OSPDaemon_output *s)
 {
 	s->enable = 1;

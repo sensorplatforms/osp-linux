@@ -27,6 +27,7 @@
 #include "OSPDaemon_iio.h"
 #include "OSPDaemon_driver.h"
 #include "OSPDaemon_imu_config.h"
+
 #define IIO_DEVICE_DIR	"/sys/bus/iio/devices"
 
 #define DBGOUT(x...) DBG(DEBUG_INDRIVER, "IIO: "x)
@@ -472,7 +473,6 @@ static int OSPDaemon_iio_setup(struct OSPDaemon_SensorDetail *s, int count)
 		s++;
 	}
 	DBGOUT("IIO: Found %i iio requests\n", iiocount);
-
 	return 0;
 }
 
@@ -526,6 +526,23 @@ static int OSPDaemon_iioevent_read(struct OSPDaemon_SensorDetail *s)
 
 	return 0;
 }
+
+int OSPDaemon_iio_process_command(uint8_t command, void *ptr)
+{
+	if(!ptr)
+		return -1;
+
+	switch(command)
+	{
+		case OSP_REGISTER_VERSION:
+			OSPDaemon_imu_config_version((uint8_t*) ptr);
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+
 static struct OSPDaemon_driver IIODriver = {
 	.drvtype = DRIVER_TYPE_INPUT,
 	.driver = DRIVER_IIO,
@@ -535,13 +552,13 @@ static struct OSPDaemon_driver IIODriver = {
 	.disable_in = OSPDaemon_iio_disable,
 	.batch = OSPDaemon_iio_batch,
 	.flush = OSPDaemon_iio_flush,
+	.process_command = OSPDaemon_iio_process_command,
 }, IIOEventDriver = {
 	.drvtype = DRIVER_TYPE_INPUT,
 	.driver = DRIVER_IIOEVENT,
 	.setup_in = NULL,
 	.read = OSPDaemon_iioevent_read,
 };
-
 
 void OSPDaemon_iio_init(void)
 {

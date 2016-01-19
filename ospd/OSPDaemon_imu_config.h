@@ -11,6 +11,7 @@
  */
 #define SH_CONFIG_READ_STORE "/sys/bus/platform/devices/osp-output.0/sensorhub_config_read"
 #define SH_CONFIG_WRITE_STORE "/sys/bus/platform/devices/osp-output.0/sensorhub_config_write"
+#define SH_CONFIG_HOST_VERSION			"/sys/bus/platform/devices/osp-output.0/osp_version"
 #define	SYSFS_CMD_SIZE 1024
 #define PARAM_ID_ENABLE 1
 #define PARAM_ID_BATCH 2
@@ -22,3 +23,4 @@ int OSPDaemon_imu_batch(int handle,
 int OSPDaemon_imu_flush(int handle);
 int OSPDaemon_imu_config_done();
 int OSPDaemon_imu_enable(int sensorid, int enable);
+void OSPDaemon_imu_config_version(uint8_t *version);

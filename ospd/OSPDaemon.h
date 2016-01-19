@@ -14,6 +14,7 @@ extern "C" {
 
 /* Per sensor cal data size. Data larger then this is ignored */
 #define MAX_CALSIZE	2048
+#define MAX_VERSION_LEN	64
 
 struct OSPDaemon_SensorDetail;
 
@@ -60,6 +61,11 @@ enum {
 enum {
 	DRIVER_TYPE_INPUT,
 	DRIVER_TYPE_OUTPUT,
+};
+
+/* Commands that can be sent to different drivers */
+enum {
+	OSP_REGISTER_VERSION,
 };
 
 /* Output embedded time stamps */
@@ -221,6 +227,7 @@ struct OSPDaemon_SensorDescription {
 	int output_count;	
 	char *CalFile;
 	char *powerPath;
+	char *version;
 	int powerfd;
 };
 
@@ -251,10 +258,9 @@ struct OSPDaemon_CalRecord {
 extern unsigned int debug_level;
 extern unsigned int mainstatus;
 extern unsigned int disablepm;
-
 struct OSPDaemon_SensorDescription * OSPDaemon_config(char *);
 
-void OSPDaemon_iio_init(void);
+void OSPDaemon_iio_init();
 void OSPDaemon_input_init(void);
 void OSPDaemon_inputreader_init(void);
 void OSPDaemon_filecsv_init(void);

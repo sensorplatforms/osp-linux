@@ -116,3 +116,19 @@ int OSPDaemon_imu_enable(int sensorid, int enable)
 	close(fd);
 	return 0;
 }
+
+void OSPDaemon_imu_config_version(uint8_t *version)
+{
+	int fd;
+	if (!version)
+		return -1;
+	fd = open(SH_CONFIG_HOST_VERSION, O_RDWR);
+	if(fd > 0){
+		write(fd, version, MAX_VERSION_LEN);
+	}
+	else {
+		LOGE("Failed to open the write config store");
+		return -1;
+	}
+	close(fd);
+}
