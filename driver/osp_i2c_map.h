@@ -33,6 +33,7 @@
 #define OSP_SET_CONFIG 0x03 /*RW to send Setconfig command*/
 #define OSP_GET_DATA 0x48 /*RO to Read sensor data*/
 #define OSP_RESET_REG 0x7A /*reset register*/
+#define OSP_SUSPEND_RESUME_REG 0x7B /*suspend/resume register*/
 /*
  * General protocol notes:
  *	1. Reads of OSP_INT_REASON has side effects. Host should

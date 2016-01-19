@@ -538,10 +538,6 @@ static int osp_i2c_write(u8 reg_addr, u8 *data, int len)
 }
 
 
-static void osp_disable(struct osp_data *osp)
-{
-}
-
 /* ------------ Call back management code -------------- */
 static void OSP_CB_init(void)
 {
@@ -1278,17 +1274,23 @@ static int osp_remove(struct i2c_client *client)
 #ifdef CONFIG_PM_SLEEP
 static int osp_suspend(struct device *dev)
 {
+	int ret;
 	struct i2c_client *client = to_i2c_client(dev);
 	struct osp_data *osp = i2c_get_clientdata(client);
 
-	mutex_lock(&osp->lock);
-	osp_disable(osp);
-	mutex_unlock(&osp->lock);
+	pr_debug("%s:%d\n", __func__, __LINE__);
+	ret = i2c_smbus_write_byte_data(gOSP->client, OSP_SUSPEND_RESUME_REG, 1);
+
 	return 0;
 }
 
 static int osp_resume(struct device *dev)
 {
+	int ret;
+
+	pr_debug("%s:%d\n", __func__, __LINE__);
+	ret = i2c_smbus_write_byte_data(gOSP->client, OSP_SUSPEND_RESUME_REG, 1);
+
 	return 0;
 }
 #endif
