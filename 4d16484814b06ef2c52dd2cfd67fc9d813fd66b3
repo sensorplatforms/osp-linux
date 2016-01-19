@@ -16,6 +16,24 @@
       "revId": "4d16484814b06ef2c52dd2cfd67fc9d813fd66b3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa81d914_52068ccf",
+        "filename": "driver/osp-sh.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1269,
+      "author": {
+        "id": 1006787
+      },
+      "writtenOn": "2016-01-19T11:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa81d914_52ea0c10",
+      "revId": "4d16484814b06ef2c52dd2cfd67fc9d813fd66b3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
