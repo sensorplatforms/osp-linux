@@ -166,9 +166,9 @@ on boot
     chown system system /sys/bus/iio/devices/iio:device4/enable
     chown system system /sys/bus/iio/devices/iio:device4/buffer/length
     chown system system /sys/bus/iio/devices/iio:device4/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_anglvel_x_en
-    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_anglvel_y_en
-    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_anglvel_z_en
+    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_accel_x_en
+    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_accel_y_en
+    chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_accel_z_en
     chown system system /sys/bus/iio/devices/iio:device4/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device4/trigger/current_trigger
     
@@ -184,47 +184,47 @@ on boot
     chown system system /sys/bus/iio/devices/iio:device6/enable
     chown system system /sys/bus/iio/devices/iio:device6/buffer/length
     chown system system /sys/bus/iio/devices/iio:device6/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_accel_x_en
-    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_accel_y_en
-    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_accel_z_en
+    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_quaternion_r_en
+    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_quaternion_z_en
+    chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_quaternion_y_en
+	chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_quaternion_x_en
     chown system system /sys/bus/iio/devices/iio:device6/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device6/trigger/current_trigger
 
     chown system system /sys/bus/iio/devices/iio:device7/enable
     chown system system /sys/bus/iio/devices/iio:device7/buffer/length
     chown system system /sys/bus/iio/devices/iio:device7/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_quaternion_r_en
-    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_quaternion_z_en
-    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_quaternion_y_en
-    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_quaternion_x_en
+    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_magn_x_en
+    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_magn_y_en
+    chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_magn_z_en
     chown system system /sys/bus/iio/devices/iio:device7/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device7/trigger/current_trigger
 
     chown system system /sys/bus/iio/devices/iio:device8/enable
     chown system system /sys/bus/iio/devices/iio:device8/buffer/length
     chown system system /sys/bus/iio/devices/iio:device8/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_magn_x_en
-    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_magn_y_en
-    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_magn_z_en
+    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_quaternion_r_en
+    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_quaternion_z_en
+    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_quaternion_y_en
+    chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_quaternion_x_en
     chown system system /sys/bus/iio/devices/iio:device8/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device8/trigger/current_trigger
 
     chown system system /sys/bus/iio/devices/iio:device9/enable
     chown system system /sys/bus/iio/devices/iio:device9/buffer/length
     chown system system /sys/bus/iio/devices/iio:device9/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_quaternion_r_en
-    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_quaternion_z_en
-    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_quaternion_y_en
-    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_quaternion_x_en
+    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_anglvel_x_en
+    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_anglvel_y_en
+    chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_anglvel_z_en
     chown system system /sys/bus/iio/devices/iio:device9/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device9/trigger/current_trigger
 
     chown system system /sys/bus/iio/devices/iio:device10/enable
     chown system system /sys/bus/iio/devices/iio:device10/buffer/length
     chown system system /sys/bus/iio/devices/iio:device10/buffer/enable
-    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_anglvel_x_en
-    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_anglvel_y_en
-    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_anglvel_z_en
+    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_accel_x_en
+    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_accel_y_en
+    chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_accel_z_en
     chown system system /sys/bus/iio/devices/iio:device10/scan_elements/in_timestamp_en
     chown system system /sys/bus/iio/devices/iio:device10/trigger/current_trigger
 

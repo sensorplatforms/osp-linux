@@ -629,6 +629,8 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
 		}
 		step_counter++;
+		pr_debug("%s:: step detector data.x = %d, data.y : %d\n", __func__,
+			data.xyz.x, data.xyz.y);
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.StepDetector.TimeStamp.TS64, &data);
@@ -642,6 +644,8 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
 		}
 		sig_counter++;
+		pr_debug("%s:: significant motion data.x = %d, data.y : %d\n", __func__,
+			data.xyz.x, data.xyz.y);
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.SigMotion.TimeStamp.TS64, &data);
@@ -665,8 +669,8 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
 			data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
 		}
-		pr_debug("%s:: data.x = %d, data.y : %d\n", __func__, data.xyz.x,
-				data.xyz.y);
+		pr_debug("%s:: step counter data.x = %d, data.y : %d\n", __func__,
+				data.xyz.x, data.xyz.y);
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
 			spack->P.StepCount.TimeStamp.TS64, &data);
