@@ -599,6 +599,7 @@ int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int6
 int sensors_poll_context_t::flush(int handle) {
 
 	int index = handleToDriver(handle);
+	uint8_t flags;
 	struct sensor_t *sensor = get_sensor_list_item(handle);
 
 	if (index < 0) return index;
@@ -606,7 +607,8 @@ int sensors_poll_context_t::flush(int handle) {
 		LOGE("Can't find sensor in Sensor list");
 		return -EINVAL;
 	}
-	if (sensor->flags & SENSOR_FLAG_ONE_SHOT_MODE) {
+	flags = sensor->flags & ~(SENSOR_FLAG_WAKE_UP);
+	if (flags == SENSOR_FLAG_ONE_SHOT_MODE) {
 		LOGE("Can't send flush command for one shot sensors");
 		return -EINVAL;
 	}

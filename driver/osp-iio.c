@@ -98,6 +98,37 @@ static struct iio_chan_spec step_channels[] = {
 	},
 	IIO_CHAN_SOFT_TIMESTAMP(3),
 };
+
+static struct iio_chan_spec step_detector_channels[] = {
+	{
+		.type = IIO_ACCEL,	/* Nothing better defined */
+		.modified = 1,
+		.channel = 0,
+		.address = 0,
+		/* Channel 2 is use for modifiers */
+		.channel2 = IIO_MOD_X,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+		.scan_index = axis_x,
+		.scan_type = IIO_ST('u', 32, 32, 24),
+	},
+	IIO_CHAN_SOFT_TIMESTAMP(3),
+};
+
+static struct iio_chan_spec sig_mot_channels[] = {
+	{
+		.type = IIO_ACCEL,	/* Nothing better defined */
+		.modified = 1,
+		.channel = 0,
+		.address = 0,
+		/* Channel 2 is use for modifiers */
+		.channel2 = IIO_MOD_X,
+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+		.scan_index = axis_x,
+		.scan_type = IIO_ST('u', 32, 32, 24),
+	},
+	IIO_CHAN_SOFT_TIMESTAMP(3),
+};
+
 static struct iio_chan_spec accel_channels[] = {
 	/*
 	 * 'modified' (i.e. axis specified) acceleration channel
@@ -617,26 +648,26 @@ static const struct OSP_SensorDesc {
 	[SENSOR_SIGNIFICANT_MOTION] = {
 		.name = "osp_sigmot",
 		.trigname = "osp_sigmot",
-		.channels = NULL,
-		.num_channels = 0,
+		.channels = sig_mot_channels,
+		.num_channels = ARRAY_SIZE(sig_mot_channels),
 		.info = &osp_sensor_info,
-		.usebuffer = 0,
-		.useevent = 1,
+		.usebuffer = 1,
+		.useevent = 0,
+	},
+	[SENSOR_STEP_DETECTOR] = {
+		.name = "osp_step_detector",
+		.trigname = "osp_step_detector",
+		.channels = step_detector_channels,
+		.num_channels = ARRAY_SIZE(step_detector_channels),
+		.info = &osp_sensor_info,
+		.usebuffer = 1,
+		.useevent = 0,
 	},
 	[SENSOR_STEP_COUNTER] = {
 		.name = "osp_step_counter",
 		.trigname = "osp_step_counter",
 		.channels = step_channels,
 		.num_channels = ARRAY_SIZE(step_channels),
-		.info = &osp_sensor_info,
-		.usebuffer = 1,
-		.useevent = 0,
-	},
-	[SENSOR_PRESSURE] = {
-		.name = "osp_pressure",
-		.trigname = "osp_pressure",
-		.channels = NULL,
-		.num_channels = 0,
 		.info = &osp_sensor_info,
 		.usebuffer = 1,
 		.useevent = 0,

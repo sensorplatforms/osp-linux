@@ -120,7 +120,7 @@ static inline void conv2OSP(ASensorType_t sensor,
 		break;
 	case SENSOR_SIGNIFICANT_MOTION:
 	case SENSOR_STEP_DETECTOR:
-		d->booldata.data = val[0];
+		d->booldata.data = (uint8_t)val[0];
 		d->booldata.TimeStamp = ts;
 		break;
 	case SENSOR_STEP_COUNTER:
