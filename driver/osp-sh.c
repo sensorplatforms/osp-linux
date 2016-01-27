@@ -473,7 +473,6 @@ static int16_t OSP_ParseSensorDataPkt(SensorPacketTypes_t *pOut,
 
 static int osp_i2c_read(u8 addr, u8 *data, int len)
 {
-#if 1
 	struct i2c_msg msgs[] = {
 		{
 			.addr = gOSP->client->addr,
@@ -488,37 +487,7 @@ static int osp_i2c_read(u8 addr, u8 *data, int len)
 			.buf = data,
 		},
 	};
-
 	return i2c_transfer(gOSP->client->adapter, msgs, 2);
-#else
-	struct i2c_msg msgs[3];
-
-	msgs[0].addr = osp->client->addr;
-	msgs[0].flags = osp->client->flags;
-	msgs[0].len = 1;
-	msgs[0].buf = &addr;
-
-	if (len > 4096) {
-		msgs[1].addr = osp->client->addr;
-		msgs[1].flags = osp->client->flags | I2C_M_RD;
-		msgs[1].len = len;
-		msgs[1].buf = data;
-
-		msgs[2].addr = osp->client->addr;
-		msgs[2].flags = osp->client->flags | I2C_M_RD;
-		msgs[2].len = len-4096;
-		msgs[2].buf = data+4096;
-
-		return i2c_transfer(osp->client->adapter, msgs, 3);
-	} else {
-		msgs[1].addr = osp->client->addr;
-		msgs[1].flags = osp->client->flags | I2C_M_RD;
-		msgs[1].len = len;
-		msgs[1].buf = data;
-		return i2c_transfer(osp->client->adapter, msgs, 2);
-	}
-
-#endif
 }
 
 static int osp_i2c_write(u8 reg_addr, u8 *data, int len)
@@ -1314,17 +1283,12 @@ static struct i2c_driver osp_driver = {
 	.remove		= osp_remove,
 	.id_table	= osp_id,
 };
-#if 0
-module_i2c_driver(osp_driver);
-#else
 static int __init osp_init(void)
 {
 	pr_debug("%s:%d", __func__, __LINE__);
 	return i2c_add_driver(&osp_driver);
 }
 module_init(osp_init);
-#endif
-
 
 MODULE_DESCRIPTION("OSP driver");
 MODULE_AUTHOR("Hunyue Yau <hy-git@hy-research.com>");

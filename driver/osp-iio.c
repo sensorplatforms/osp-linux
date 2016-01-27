@@ -50,23 +50,6 @@ enum {
 	axis_r,
 };
 
-static ssize_t osp_iio_renable(struct device *dev,
-			struct device_attribute *attr, char *buf);
-static ssize_t osp_iio_wenable(struct device *dev,
-			struct device_attribute *attr,
-			const char *buf, size_t len);
-
-static IIO_DEVICE_ATTR(enable, S_IWUSR|S_IRUSR|S_IRGRP|S_IWGRP,
-			&osp_iio_renable, &osp_iio_wenable, 0);
-
-static struct attribute *osp_iio_attrs[] = {
-	&iio_dev_attr_enable.dev_attr.attr,
-	NULL,
-};
-
-static const struct attribute_group osp_iio_group = {
-	.attrs = osp_iio_attrs,
-};
 /*
  * Description of available channels
  *
@@ -486,27 +469,6 @@ static struct iio_chan_spec rotvec_channels[] = {
 	 */
 	IIO_CHAN_SOFT_TIMESTAMP(4),
 };
-#if 0
-static struct iio_chan_spec press_channels[] = {
-	{
-		.type = IIO_PRESSURE,
-		.modified = 1,
-		/* Channel 2 is use for modifiers */
-		.channel2 = IIO_MOD_X,
-		.info_mask_separate =
-		/*
-		 * Internal bias correction value. Applied
-		 * by the hardware or driver prior to userspace
-		 * seeing the readings. Typically part of hardware
-		 * calibration.
-		 */
-		0,
-		.scan_index = axis_x,
-		.scan_type = IIO_ST('s', 32, 32, 24),
-	},
-	IIO_CHAN_SOFT_TIMESTAMP(1),
-};
-#endif
 struct osp_iio_sensor {
 	struct iio_dev *indio_dev;
 	struct iio_trigger *trigger;
@@ -698,39 +660,6 @@ static const struct OSP_SensorDesc {
 	},
 };
 
-/* ------- sysfs ------- */
-
-static ssize_t osp_iio_renable(struct device *dev,
-			struct device_attribute *attr,
-			char *buf)
-{
-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-	ssize_t len = 0;
-
-	len += sprintf(buf, "%i\n", osp_sensor->state);
-
-	return len;
-}
-
-static ssize_t osp_iio_wenable(struct device *dev,
-			struct device_attribute *attr,
-			const char *buf, size_t len)
-{
-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-	int en;
-
-	if (buf[0] == '1')
-		en = 1;
-	else
-		en = 0;
-
-	OSP_Sensor_State(osp_sensor->sensor, osp_sensor->private, en);
-	osp_sensor->state = en;
-
-	return len;
-}
 
 /* --------------------- */
 
@@ -805,86 +734,6 @@ static int osp_sensor_write_raw(struct iio_dev *indio_dev,
 			       int val2,
 			       long mask)
 {
-#if 0
-	int i;
-	int ret = 0;
-	struct iio_dummy_state *st = iio_priv(indio_dev);
-	pr_debug("%s:%i called\n", __func__, __LINE__);
-
-	switch (mask) {
-	case 0:
-		if (chan->output == 0)
-			return -EINVAL;
-
-		/* Locking not required as writing single value */
-		mutex_lock(&st->lock);
-		st->dac_val = val;
-		mutex_unlock(&st->lock);
-		return 0;
-	case IIO_CHAN_INFO_CALIBBIAS:
-		mutex_lock(&st->lock);
-		/* Compare against table - hard matching here */
-		for (i = 0; i < ARRAY_SIZE(dummy_scales); i++)
-			if (val == dummy_scales[i].val &&
-			    val2 == dummy_scales[i].val2)
-				break;
-		if (i == ARRAY_SIZE(dummy_scales))
-			ret = -EINVAL;
-		else
-			st->accel_calibscale = &dummy_scales[i];
-		mutex_unlock(&st->lock);
-		return ret;
-	default:
-		return -EINVAL;
-	}
-#else
-	return 0;
-#endif
-}
-
-/**
- * osp_iio_sensor_init() - Sets up sensor specific details.
- * @indio_dev: the iio device structure
- *
- * Most drivers have one of these to set up default values,
- * reset the device to known state etc.
- *
- * Init data to known values for debugging.
- */
-static int osp_iio_sensor_init(struct iio_dev *indio_dev, int sensor, int type)
-{
-	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-
-	osp_sensor->indio_dev = indio_dev;
-	memset(&osp_sensor->data, 0, sizeof(osp_sensor->data));
-	osp_sensor->sensor = sensor;
-
-	if (type == 0) {
-		switch (sensor) {
-		case SENSOR_ACCELEROMETER:
-			osp_sensor->data.xyz.x = 0;
-			osp_sensor->data.xyz.y = 1;
-			osp_sensor->data.xyz.z = 2;
-			break;
-		case SENSOR_GYROSCOPE:
-			osp_sensor->data.xyz.x = 2002;
-			osp_sensor->data.xyz.y = 2003;
-			osp_sensor->data.xyz.z = 2004;
-			break;
-		case SENSOR_MAGNETIC_FIELD:
-			osp_sensor->data.xyz.x = 4002;
-			osp_sensor->data.xyz.y = 4003;
-			osp_sensor->data.xyz.z = 4004;
-			break;
-		case SENSOR_ROTATION_VECTOR:
-			osp_sensor->data.quat.x = 6001;
-			osp_sensor->data.quat.y = 6002;
-			osp_sensor->data.quat.z = 6003;
-			osp_sensor->data.quat.r = 1004;
-			break;
-		}
-	}
-
 	return 0;
 }
 
@@ -897,26 +746,6 @@ static int osp_iio_trigger(struct iio_trigger *trig, bool state)
 	/* OSP_Sensor_State(osp_sensor->sensor, osp_sensor->private, state);*/
 	osp_sensor->state = state;
 	return 0;
-}
-
-static irqreturn_t osp_iio_trigger_handler(int irq, void *p)
-{
-	struct iio_poll_func *pf = p;
-	struct iio_dev *indio_dev = pf->indio_dev;
-	struct osp_iio_sensor *osp_sensor = iio_priv(indio_dev);
-	if (indio_dev->buffer->scan_timestamp){
-#if defined(KERNEL_VERSION_3_1)
-	iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
-		osp_sensor->ts);
-#elif defined(KERNEL_VERSION_3_10)
-	/* *(s64 *)((u8 *)&osp_sensor->data.xyz.ts) = osp_sensor->ts;*/
-	pr_debug(" %s osp_sensor->ts : 0x%016llx actual ts : 0x%016llx\n", __func__,
-	osp_sensor->ts, osp_sensor->data.xyz.ts);
-	iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
-#endif
-	}
-	iio_trigger_notify_done(indio_dev->trig);
-	return IRQ_HANDLED;
 }
 
 static const struct iio_trigger_ops osp_iio_trigger_ops = {
@@ -957,7 +786,12 @@ static void dataready(int sensor, int prv,
 	}
 	if ((osp_sensor->private == 0 && and_sensor[sensor].usebuffer) ||
 		(osp_sensor->private == 1 && prv_sensor[sensor].usebuffer)) {
-		iio_trigger_poll_chained(osp_sensor->trigger, osp_sensor->ts);
+#if defined(KERNEL_VERSION_3_1)
+		iio_push_to_buffer(indio_dev->buffer, (u8 *)&osp_sensor->data,
+						osp_sensor->ts);
+#elif defined(KERNEL_VERSION_3_10)
+		iio_push_to_buffers(indio_dev, (u8 *)&osp_sensor->data);
+#endif
 	}
 }
 
@@ -982,9 +816,6 @@ static int osp_iio_destroy(int sensor, int space)
 
 	/* Buffered capture related cleanup */
 	iio_buffer_unregister(indio_dev);
-#if 0
-	iio_simple_dummy_unconfigure_buffer(indio_dev);
-#endif
 	/* Free all structures */
 	iio_device_free(indio_dev);
 	return 1;
@@ -1038,8 +869,6 @@ static int osp_iio_create(int index, int space, void *dev)
 	st->data.xyz.y = 0;
 	st->data.xyz.z = 0;
 	mutex_init(&st->lock);
-	osp_iio_sensor_init(indio_dev, index, 0);
-
 	indio_dev->dev.parent = dev;
 
 	osp_sensor[index] = st;
@@ -1097,7 +926,7 @@ static int osp_iio_create(int index, int space, void *dev)
 #elif defined(KERNEL_VERSION_3_10)
 		ret = iio_triggered_buffer_setup(indio_dev,
 				&iio_pollfunc_store_time,
-				&osp_iio_trigger_handler, NULL);
+				NULL, NULL);
 		indio_dev->buffer->scan_timestamp = 1;
 		if (ret < 0)
 			goto error_free_device;
@@ -1111,12 +940,6 @@ static int osp_iio_create(int index, int space, void *dev)
 	return 0;
 error_unregister_buffer:
 	iio_buffer_unregister(indio_dev);
-#if 0
-error_unconfigure_buffer:
-	iio_simple_dummy_unconfigure_buffer(indio_dev);
-error_unregister_events:
-	iio_simple_dummy_events_unregister(indio_dev);
-#endif
 error_free_device:
 	/* Note free device should only be called, before registration
 	 * has succeeded. */
@@ -1124,35 +947,6 @@ error_free_device:
 error_ret:
 	return ret;
 }
-#if 0
-/* Dummy signal generator */
-static void osp_poll_timer(unsigned long unused)
-{
-	int i;
-	struct osp_iio_sensor *osp_sensor;;
-
-	for (i = 0; i < NUM_ANDROID_SENSOR_TYPE; i++) {
-		if (osp_sensors_and[i]) {
-			osp_sensor = osp_sensors_and[i];
-			if (i == SENSOR_ROTATION_VECTOR) {
-				osp_sensor->data.quat.x++;
-				osp_sensor->data.quat.y++;
-				osp_sensor->data.quat.z++;
-				osp_sensor->data.quat.r++;
-				osp_sensor->data.quat.ts = 0x3fffffff00000000LL+jiffies;
-			} else {
-				osp_sensor->data.xyz.x++;
-				osp_sensor->data.xyz.y++;
-				osp_sensor->data.xyz.z++;
-				osp_sensor->data.xyz.ts = 0x7fffffff00000000LL+jiffies;
-			}
-			if (and_sensor[i].usebuffer)
-				iio_trigger_poll(osp_sensor->trigger, osp_sensor->ts);
-		}
-	}
-	mod_timer(&osp_timer, jiffies+msecs_to_jiffies(500));
-}
-#endif
 static int osp_iio_probe(struct platform_device *pdev)
 {
 	int ret, i;
@@ -1164,22 +958,6 @@ static int osp_iio_probe(struct platform_device *pdev)
 	for (i = 0; i < NUM_PRIVATE_SENSOR_TYPE; i++) {
 		osp_sensors_prv[i] = NULL;
 	}
-#if 0
-	osp_iio_create(SENSOR_GYROSCOPE, 0, NULL);
-	osp_iio_create(SENSOR_GYROSCOPE_UNCALIBRATED, 0, NULL);
-	osp_iio_create(SENSOR_ACCELEROMETER, 0, NULL);
-	osp_iio_create(SENSOR_GRAVITY, 0, NULL);
-	osp_iio_create(SENSOR_MAGNETIC_FIELD, 0, NULL);
-	osp_iio_create(SENSOR_MAGNETIC_FIELD_UNCALIBRATED, 0, NULL);
-	osp_iio_create(SENSOR_ORIENTATION, 0, NULL);
-	osp_iio_create(SENSOR_LINEAR_ACCELERATION, 0, NULL);
-	osp_iio_create(SENSOR_ROTATION_VECTOR, 0, NULL);
-	osp_iio_create(SENSOR_GAME_ROTATION_VECTOR, 0, NULL);
-	osp_iio_create(SENSOR_GEOMAGNETIC_ROTATION_VECTOR, 0, NULL);
-	osp_iio_create(SENSOR_SIGNIFICANT_MOTION, 0, NULL);
-	osp_iio_create(SENSOR_STEP_COUNTER, 0, NULL);
-#endif
-#if 1
 	for (i = 0; i < NUM_ANDROID_SENSOR_TYPE; i++) {
 		if (and_sensor[i].name) {
 			ret = osp_iio_create(i, 0, NULL);
@@ -1188,34 +966,6 @@ static int osp_iio_probe(struct platform_device *pdev)
 			}
 		}
 	}
-#if 0
-	for (i = 0; i < NUM_PRIVATE_SENSOR_TYPE; i++) {
-		if (prv_sensor[i].name) {
-			ret = osp_iio_create(i, 1, NULL);
-			if (ret < 0) {
-				pr_debug("Cannot create %s\n", and_sensor[i].name);
-			}
-		}
-	}
-#endif
-#endif
-#if 0
-	ret = osp_iio_create(SENSOR_ACCELEROMETER, 0, NULL);
-	ret = osp_iio_create(SENSOR_GYROSCOPE, 0, NULL);
-	ret = osp_iio_create(SENSOR_MAGNETIC_FIELD, 0, NULL);
-	ret = osp_iio_create(SENSOR_ROTATION_VECTOR, 0, NULL);
-	ret = osp_iio_create(SENSOR_ORIENTATION, 0, NULL);
-	ret = osp_iio_create(SENSOR_LINEAR_ACCELERATION, 0, NULL);
-	ret = osp_iio_create(SENSOR_GRAVITY, 0, NULL);
-	ret = osp_iio_create(SENSOR_MAGNETIC_FIELD_UNCALIBRATED, 0, NULL);
-#endif
-#if 0
-	/* For dummy signal generator */
-	if (ret >= 0) {
-		setup_timer(&osp_timer, osp_poll_timer, 0);
-		mod_timer(&osp_timer, jiffies + msecs_to_jiffies(1000));
-	}
-#endif
 	return 0;
 }
 
