@@ -171,6 +171,11 @@
 #define PARAM_ID_DYNAMIC_CAL_QUALITY    0x1E
 #define PARAM_ID_DYNAMIC_CAL_SOURCE     0x1F
 #define PARAM_ID_CONFIG_DONE            0x20
+#define PARAM_ID_TSYNC_SET_TIME			0x21
+#define PARAM_ID_TSYNC_START			0x22
+#define PARAM_ID_TSYNC_FOLLOWUP			0x23
+#define PARAM_ID_TSYNC_END				0x24
+
 
 
 /* Parameter Size */
