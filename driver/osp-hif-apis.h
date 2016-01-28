@@ -1,3 +1,5 @@
+#ifndef OSP_HIF_APIS_H
+#define OSP_HIF_APIS_H
 /* osp-hif-apis.h  --  Audience Sensorhub HIF interface apis
  *
  * Copyright 2011 Audience, Inc.
@@ -8,7 +10,6 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-
 /* macros/ data structures */
 #include <linux/skbuff.h>
 #define HIF_WRITE_CONTROL_REQ 1
@@ -29,14 +30,15 @@ struct hif_data{
 #define MPU_GYRO_IRQ_GPIO 185
 
 /* Cause and Error Macros */
-#define RESERVED			0x00
+#define RESERVED				0x00
 #define SENSOR_DATA_READY		0x01
 #define MAG_CALIB_DT_UPDATE		0x02
-#define ACCEL_CALIB_DT_UPDATE		0x03
-#define GYRO_CALIB_DT_UPDATE		0x04
+#define ACCEL_CALIB_DT_UPDATE	0x03
+#define GYRO_CALIB_DT_UPDATE	0x04
 #define TEMP_CHANGE_DETECT		0x05
 #define CONFIG_CMD_RESP			0x06
-#define UNRECOVER_ERR_MOTIONQ		0x07
+#define UNRECOVER_ERR_MOTIONQ	0x07
+#define TS_DELAY_REQ			0x08
 
 /*Error code macros*/
 #define ERROR_CODE_SUCCESS 0
@@ -44,7 +46,7 @@ struct hif_data{
 #define ERROR_CODE_CMD_NOT_SUPPORTED -2
 #define ERROR_CODE_INVALID_CONFIG_PKT -3
 #define ERROR_CODE_PKT_CHECKSUM_FAIL -4
-
+	
 /* set config parameters format functions for creating read
     control request packet*/
 void osp_read_packet(int paramid, int sensorid, int seqno,
@@ -54,3 +56,21 @@ void osp_set_config_done(int paramid, int sensorid, int seqno,
 void osp_sensor_enable(int paramid, int sensorid, int seqno,
 		u8 enable, struct hif_data *buff);
 bool format_config_write_request(const char *buf, struct hif_data *buff);
+void osp_set_sensorhub_tsinit(struct hif_data *buff);
+void osp_sensorhub_ts_followup(u64 ts, struct hif_data *buff);
+void osp_sensorhub_ts_end(u64 ts, struct hif_data *buff);
+u64 osp_sensorhub_ts_start(struct hif_data *buff);
+static inline u64 time_get_ns(void)
+{
+#if 0
+	struct timespec ts;
+	getrawmonotonic(&ts);
+	return ktime_to_ns(timespec_to_ktime(ts));
+	ktime_t now;
+	now = ktime_get();
+	return ktime_to_ns(now);
+#else
+	return cpu_clock(smp_processor_id());
+#endif
+}
+#endif

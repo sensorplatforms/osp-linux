@@ -153,6 +153,7 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		return fc;
 	}
 
+#if 0
 	if (((double)ld.ts / HIF_TSCALE) < mSHFirstReportedTime) {
 		/* Something went wrong, let's reset*/
 		LOGE("Current timestamp is lesser than first reported one");
@@ -168,10 +169,15 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	delta = tsq24 - mSHFirstReportedTime; /* in seconds.*/
 	delta = delta * 1000000000;
 	//LOGE("After delta %lf", delta);
+#endif
 	data[fc].version   = sizeof(sensors_event_t);
 	data[fc].sensor    = mSensorId;
 	data[fc].type      = mSensorType;
-	data[fc].timestamp = mHostFirstReportedTime + (int64_t)delta;
+	tsq24 = ld.ts / (double) HIF_TSCALE;
+	data[fc].timestamp = tsq24 * 1000000000;
+	/* LOGD("tsq24 %lf", tsq24);
+	LOGD("ld.ts %lld TS-Sensorhub %lld TS-Host %lld", ld.ts, data[fc].timestamp, android::elapsedRealtimeNano()); */
+	/* mHostFirstReportedTime + (int64_t)delta; */
 	mNumPacketsRecv++;
 	if (SENSOR_TYPE_STEP_COUNTER == mSensorType) {
 		data[fc].u64.step_counter = ld.val[i];
