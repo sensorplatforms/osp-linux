@@ -9,10 +9,18 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+#include <linux/sched.h>
+#include <linux/delay.h>
 #include "osp-hif-apis.h"
 #include "osp-sensors.h"
 #include "SensorPackets.h"
- /* functions */
+
+#define TS_DRIFT_THRESHOLD 		(150*1000000)
+
+extern atomic_t enable_count;
+extern void osp_timesync_start(void);
+extern u64 ts_drift;
+/* functions */
 int FormatSensorReadWriteReq(u8 *pDest,
 		int paramid,
 		int sType,
@@ -47,6 +55,7 @@ int FormatSensorReadWriteReq(u8 *pDest,
 	/* Return the length of the packet */
 	return SENSOR_READ_WRITE_REQ_PKT_SZ;
 }
+
 inline void format_hif_packet(struct hif_data *buff, u16 size,
 						int paramid, int sensorid, int seqno)
 {
@@ -58,6 +67,7 @@ inline void format_hif_packet(struct hif_data *buff, u16 size,
 	pr_debug("%s:%d size 0x%04x buffer size : %d \n",
 		__func__, __LINE__, cmd, buff->size);
 }
+
 void osp_sensor_enable(int paramid, int sensorid, int seqno,
 		u8 enable, struct hif_data *buff)
 {
@@ -66,6 +76,52 @@ void osp_sensor_enable(int paramid, int sensorid, int seqno,
 	buff->buffer[SET_CONFIG_SZ + SENSOR_READ_WRITE_REQ_PKT_SZ] = enable;
 	pr_debug("%s:%d Sending sensor enable command sensor id : %d enable : %d  \n",
 			__func__, __LINE__, sensorid, enable);
+}
+
+void osp_sensorhub_ts_init(struct hif_data *buff)
+{
+	u16 size = HIF_PACKET_SIZE(SENSOR_READ_WRITE_REQ_PKT_SZ ,
+				sizeof(u64), 1);
+	u64 tsinit = time_get_ns();
+	pr_debug("%s :: tsinit: %llu\n",	__func__, tsinit);
+	format_hif_packet(buff, size, PARAM_ID_TSYNC_SET_TIME, 0, 0);
+	tsinit = cpu_to_be64(tsinit);
+	memcpy(buff->buffer + SET_CONFIG_SZ + SENSOR_READ_WRITE_REQ_PKT_SZ,
+			&tsinit, sizeof(u64));
+	return;
+}
+
+u64 osp_sensorhub_ts_start(struct hif_data *buff)
+{
+	u16 size = HIF_PACKET_SIZE(SENSOR_READ_WRITE_REQ_PKT_SZ, 0, 0);
+	u64 ts = time_get_ns();
+	pr_debug("%s :: ts-start\n", __func__);
+	format_hif_packet(buff, size, PARAM_ID_TSYNC_START, 0, 0);
+	return ts;
+}
+
+void osp_sensorhub_ts_followup(u64 ts, struct hif_data *buff)
+{
+	u16 size = HIF_PACKET_SIZE(SENSOR_READ_WRITE_REQ_PKT_SZ ,
+				sizeof(u64), 1);
+	pr_debug("%s :: ts-send: %llu\n",	__func__, ts);
+	ts = cpu_to_be64(ts);
+	format_hif_packet(buff, size, PARAM_ID_TSYNC_FOLLOWUP, 0, 0);
+	memcpy(buff->buffer + SET_CONFIG_SZ + SENSOR_READ_WRITE_REQ_PKT_SZ,
+			&ts, sizeof(u64));
+	return;
+}
+
+void osp_sensorhub_ts_end(u64 ts, struct hif_data *buff)
+{
+	u16 size = HIF_PACKET_SIZE(SENSOR_READ_WRITE_REQ_PKT_SZ ,
+				sizeof(u64), 1);
+	pr_debug("%s :: ts-send: %llu\n",	__func__, ts);
+	format_hif_packet(buff, size, PARAM_ID_TSYNC_END, 0, 0);
+	ts = cpu_to_be64(ts);
+	memcpy(buff->buffer + SET_CONFIG_SZ + SENSOR_READ_WRITE_REQ_PKT_SZ,
+			&ts, sizeof(u64));
+	return;
 }
 
 void osp_set_batch(int paramid, int sensorid, int seqno,
@@ -280,9 +336,23 @@ bool format_config_write_request(const char *buf, struct hif_data *buff)
 		sscanf(buf + HIF_PARAM_STR_LEN, "%c", &enable);
 		enable = enable - '0';
 		pr_debug("%s enable = %d\n", __func__, enable);
+		if(enable) {
+			if((atomic_read(&enable_count) == 0)
+					&& ts_drift > TS_DRIFT_THRESHOLD) {
+					osp_timesync_start();
+					msleep(50);
+			}
+			atomic_inc(&enable_count);
+		}
+		else {
+			if(atomic_read(&enable_count) > 0) {
+				atomic_dec(&enable_count);
+			}
+		}
 		osp_sensor_enable(param_id, sensor_id, seq_no, enable, buff);
 		break;
 	}
+
 	case PARAM_ID_BATCH:
 	{
 		u64 data[2];
