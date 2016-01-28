@@ -24,6 +24,9 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/platform_device.h>
+#include <asm/atomic.h>
+#include <linux/smp.h>
+#include <linux/sched.h>
 #include "osp-sensors.h"
 #include "SensorPackets.h"
 #include "osp_i2c_map.h"
@@ -37,6 +40,7 @@
 #define MAX_VERSION_LEN	64
 
 /*static struct completion hif_response_complete;*/
+
 static u8 sdata[PAGE_SIZE];
 static u16 error_code;
 static u8 rxbuf[MAX_BUF_SZ];
@@ -59,6 +63,7 @@ struct osp_data {
 
 static struct osp_data *gOSP;
 static struct work_queue *osp_workq;
+atomic_t enable_count = ATOMIC_INIT(0);
 /* Number of packets to parse */
 #define NUM_PACK	2
 static unsigned char *osp_pack[NUM_PACK];
@@ -67,6 +72,7 @@ static unsigned char *osp_pack[NUM_PACK];
 		val = (val << 8) + byte[i];};
 
 /* ------------ OSP Packet parsing code -------------------- */
+
 /***********************************************************************
  * @fn	  ParseSensorDataPkt
  *		  Top level parser for Sensor Data Packets.
@@ -506,7 +512,44 @@ static int osp_i2c_write(u8 reg_addr, u8 *data, int len)
 	return i2c_transfer(gOSP->client->adapter, msgs, 1);
 }
 
+static void sensorhub_set_ts(void)
+{
+	int ret;
+	struct hif_data buff;
+	memset(&buff, 0, sizeof(buff));
+	osp_set_sensorhub_tsinit(&buff);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	pr_debug("%s :: %d sensorhub time set command sent\n", __func__, __LINE__, ret);
+}
 
+void osp_timesync_start(void)
+{
+	int ret;
+	u64 t1;
+	struct hif_data buff;
+	pr_info("%s:%d start timesync\n", __func__, __LINE__);
+	memset(&buff, 0, sizeof(buff));
+	t1 = osp_sensorhub_ts_start(&buff);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	pr_info("%s:%d i2c_write %d tsstart %llu\n",
+			__func__, __LINE__, ret, t1);
+	memset(&buff, 0, sizeof(buff));
+	osp_sensorhub_ts_followup(t1, &buff);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	pr_info("%s:%d i2c_write %d tsfollowup\n",
+			__func__, __LINE__, ret);
+}
+void osp_timesync_end(void)
+{
+	int ret;
+	u64 t4 = time_get_ns();
+	struct hif_data buff;
+	memset(&buff, 0, sizeof(buff));
+	osp_sensorhub_ts_end(t4, &buff);
+	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
+	pr_info("%s:%d i2c_write %d sensorhub timesync end %llu\n",
+			__func__, __LINE__, ret, t4);
+}
 /* ------------ Call back management code -------------- */
 static void OSP_CB_init(void)
 {
@@ -585,6 +628,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	SensorPacketTypes_t *spack)
 {
 	int PSensor;
+	u64 ts = 0, threshold;
 	static int sig_counter = 0, step_counter = 0;
 	union OSP_SensorData data;
 	memset(&data, 0, sizeof(data));
@@ -595,7 +639,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!(gOSP->isFlushcompleted)) {
 			data.xyz.x = spack->P.StepDetector.StepDetected;
 			data.xyz.y = step_counter;
-			data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.StepDetector.TimeStamp.TS64;
 		}
 		step_counter++;
 		pr_debug("%s:: step detector data.x = %d, data.y : %d\n", __func__,
@@ -610,7 +654,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!(gOSP->isFlushcompleted)) {
 			data.xyz.x = spack->P.SigMotion.MotionDetected;
 			data.xyz.y = sig_counter;
-			data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.SigMotion.TimeStamp.TS64;
 		}
 		sig_counter++;
 		pr_debug("%s:: significant motion data.x = %d, data.y : %d\n", __func__,
@@ -624,7 +668,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!and_sensor[spack->SType].dataready) break;
 		if (!(gOSP->isFlushcompleted)) {
 			data.xyz.x = spack->P.CalFixP.Axis[0];
-			data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -636,7 +680,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 		if (!(gOSP->isFlushcompleted)) {
 			data.xyz.x = (uint32_t)spack->P.StepCount.NumStepsTotal;
 			data.xyz.y = (uint32_t)(spack->P.StepCount.NumStepsTotal >> 32);
-			data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.StepCount.TimeStamp.TS64;
 		}
 		pr_debug("%s:: step counter data.x = %d, data.y : %d\n", __func__,
 				data.xyz.x, data.xyz.y);
@@ -652,7 +696,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.x = spack->P.UncalFixP.Axis[0];
 			data.xyz.y = spack->P.UncalFixP.Axis[1];
 			data.xyz.z = spack->P.UncalFixP.Axis[2];
-			data.xyz.ts = spack->P.UncalFixP.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.UncalFixP.TimeStamp.TS64;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -667,7 +711,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.x = spack->P.CalFixP.Axis[0];
 			data.xyz.y = spack->P.CalFixP.Axis[1];
 			data.xyz.z = spack->P.CalFixP.Axis[2];
-			data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64 ;
+			ts = data.xyz.ts = spack->P.CalFixP.TimeStamp.TS64 ;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -680,7 +724,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.x = spack->P.ThreeAxisFixP.Axis[0];
 			data.xyz.y = spack->P.ThreeAxisFixP.Axis[1];
 			data.xyz.z = spack->P.ThreeAxisFixP.Axis[2];
-			data.xyz.ts = spack->P.ThreeAxisFixP.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.ThreeAxisFixP.TimeStamp.TS64;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -693,7 +737,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.y = spack->P.OrientFixP.Pitch;
 			data.xyz.z = spack->P.OrientFixP.Roll;
 			data.xyz.x = spack->P.OrientFixP.Yaw;
-			data.xyz.ts = spack->P.OrientFixP.TimeStamp.TS64;
+			ts = data.xyz.ts = spack->P.OrientFixP.TimeStamp.TS64;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -709,7 +753,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.quat.x = spack->P.QuatFixP.Quat[1];
 			data.quat.y = spack->P.QuatFixP.Quat[2];
 			data.quat.z = spack->P.QuatFixP.Quat[3];
-			data.quat.ts = spack->P.QuatFixP.TimeStamp.TS64;
+			ts = data.quat.ts = spack->P.QuatFixP.TimeStamp.TS64;
 		}
 		and_sensor[spack->SType].dataready(spack->SType, 0,
 			and_sensor[spack->SType].private,
@@ -723,6 +767,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.x = spack->P.UncalFixP.Axis[0];
 			data.xyz.y = spack->P.UncalFixP.Axis[1];
 			data.xyz.z = spack->P.UncalFixP.Axis[2];
+			ts = spack->P.UncalFixP.TimeStamp.TS64;
 		}
 		prv_sensor[PSensor].dataready(PSensor, 1,
 			prv_sensor[PSensor].private,
@@ -736,6 +781,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 			data.xyz.x = spack->P.RawSensor.Axis[0];
 			data.xyz.y = spack->P.RawSensor.Axis[1];
 			data.xyz.z = spack->P.RawSensor.Axis[2];
+			ts = spack->P.RawSensor.TStamp.TS64;
 		}
 		prv_sensor[PSensor].dataready(PSensor, 1,
 			prv_sensor[PSensor].private,
@@ -745,6 +791,7 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	default:
 		break;
 	}
+	pr_debug("ts %llu host-ts %llu", ts, time_get_ns());
 }
 
 int process_sensor_data(u8 *buf, int len)
@@ -755,7 +802,6 @@ int process_sensor_data(u8 *buf, int len)
 	int pack_count = 0;
 	int plen = len;
 	pack_ptr = buf;
-	pr_debug("%s %i\n", __func__, __LINE__);
 	do {
 		err = OSP_ParseSensorDataPkt(&spack, pack_ptr, plen);
 		if (err > 0) {
@@ -810,6 +856,7 @@ read_again:
 		}
 		break;
 	}
+
 	case MAG_CALIB_DT_UPDATE:
 	/* Send notification to userspace */
 		break;
@@ -847,6 +894,10 @@ read_again:
 	}
 	case UNRECOVER_ERR_MOTIONQ:
 	/* TBD */
+		break;
+
+	case TS_DELAY_REQ:
+		osp_timesync_end();
 		break;
 	default:
 		break;
@@ -1091,6 +1142,8 @@ static ssize_t sensorhub_reset_response(struct device *dev,
 	pr_debug("%s :: %d osp reset done ret ::%d \n", __func__, __LINE__, ret);
 	/* wait for sensorhub to initialize before sending config command*/
 	msleep(300);
+	sensorhub_set_ts();
+	msleep(300);
 	osp_set_config_done(PARAM_ID_CONFIG_DONE, 0, 0, &buff);
 	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
 	return snprintf(buf, PAGE_SIZE, "sensorhub reset done\n");
@@ -1099,7 +1152,10 @@ static ssize_t sensorhub_reset_response(struct device *dev,
 static ssize_t sensorhub_osp_versionr(struct device *dev,
 					struct device_attribute *attr, char *buf)
 {
-	return snprintf(buf, MAX_VERSION_LEN, gOSP->version);
+	int ret;
+	char prbuf[MAX_VERSION_LEN];
+	sprintf(prbuf, "%s\n", gOSP->version);
+	return snprintf(buf, MAX_VERSION_LEN, prbuf);
 }
 
 static ssize_t sensorhub_osp_versionw(struct device *dev,
@@ -1201,6 +1257,8 @@ static int osp_probe(struct i2c_client *client,
 		dev_err(&client->dev, "device not recognized err : %d\n", err);
 		goto err_free_mem;
 	}
+	msleep(300);
+	sensorhub_set_ts();
 	osp_workq = create_workqueue("osp_queue");
 	if (osp_workq) {
 		INIT_WORK(&osp->osp_work, osp_work_q);
