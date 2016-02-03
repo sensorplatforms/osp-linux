@@ -132,6 +132,7 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 	int fc = 0, ret, i = 0;
 	struct psen_data ld;
 	double tsq24, delta;
+	uint64_t ts;
 	if (count < 1)
 	return -EINVAL;
 	if (0 == mEnabled) {
@@ -153,10 +154,15 @@ int OSPQSensor::readEvents(sensors_event_t* data, int count)
 		return fc;
 	}
 
+	ts = (uint64_t)(((double)(ld.ts/(double)HIF_TSCALE)) * 1000000000ULL);
+	if(mHostFirstReportedTime > ts) {
+		LOGE("Dropping a stale packet ts received %llu mHostFirstReportedTime %llu", ts, mHostFirstReportedTime);
+		return fc;
+	}
+	data[fc].timestamp = ts;
 	data[fc].version   = sizeof(sensors_event_t);
 	data[fc].sensor    = mSensorId;
 	data[fc].type      = mSensorType;
-	data[fc].timestamp = ((ld.ts * 1000000000ULL) >> 24);
 	/*LOGD("ld.ts %lld TS-Sensorhub %lld TS-Host %lld", ld.ts, data[fc].timestamp, android::elapsedRealtimeNano()); */
 	/* mHostFirstReportedTime + (int64_t)delta; */
 	mNumPacketsRecv++;

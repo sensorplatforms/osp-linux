@@ -38,7 +38,6 @@
 #define MAX_BUF_SZ				20
 #define MAX_VERSION_LEN			64
 #define FEAT_PRIVATE			(1<<0)
-#define TS_DRIFT_THRESHOLD 		(150*1000000)
 
 /*static struct completion hif_response_complete;*/
 
@@ -65,7 +64,6 @@ struct osp_data {
 static struct osp_data *gOSP;
 static struct work_queue *osp_workq;
 atomic_t enable_count = ATOMIC_INIT(0);
-u64 ts_drift;
 /* Number of packets to parse */
 #define NUM_PACK	2
 static unsigned char *osp_pack[NUM_PACK];
@@ -74,7 +72,6 @@ static unsigned char *osp_pack[NUM_PACK];
 		val = (val << 8) + byte[i];};
 
 /* (ts/1<<24) * 1000000000 = ts*59.604xxxx*/
-#define FIXEDPT_TO_FLT(x)		((x * 1000000000ULL) >> 24)
 /* ------------ OSP Packet parsing code -------------------- */
 
 /***********************************************************************
@@ -527,8 +524,6 @@ static void sensorhub_set_ts(void)
 	memset(&buff, 0, sizeof(buff));
 	osp_sensorhub_ts_init(&buff);
 	ret = osp_i2c_write(OSP_SET_CONFIG, buff.buffer, buff.size);
-	ts_drift = TS_DRIFT_THRESHOLD + 1; /* Init, timesync for first enable always */
-	pr_debug("%s :: %d sensorhub time set command sent\n", __func__, __LINE__, ret);
 }
 
 void osp_timesync_start(void)
@@ -800,13 +795,6 @@ static void OSP_ReportSensor(struct osp_data *osp,
 	default:
 		break;
 	}
-	ts_drift = time_get_ns() - FIXEDPT_TO_FLT(ts);
-	pr_debug("%s: ts %llu sensorhub-ts %llu host-ts %llu drift %llu",
-			__func__,
-			ts,
-			FIXEDPT_TO_FLT(ts),
-			time_get_ns(),
-			ts_drift);
 }
 
 int process_sensor_data(u8 *buf, int len)

@@ -19,7 +19,6 @@
 
 extern atomic_t enable_count;
 extern void osp_timesync_start(void);
-extern u64 ts_drift;
 /* functions */
 int FormatSensorReadWriteReq(u8 *pDest,
 		int paramid,
@@ -339,7 +338,6 @@ bool format_config_write_request(const char *buf, struct hif_data *buff)
 		if(enable) {
 			if((atomic_read(&enable_count) == 0)) {
 					osp_timesync_start();
-					msleep(10);
 			}
 			atomic_inc(&enable_count);
 		}
